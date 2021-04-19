@@ -3,6 +3,11 @@ from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
+from nltk.tokenize import sent_tokenize
+import re as regex
+# import nltk
+# nltk.download('punkt')
+
 
 MAX_PAGES = 1500
 
@@ -68,15 +73,27 @@ class Preprocessor:
             counter += 1
         return None
 
+    def clean_text(self, text):
+        sentences = sent_tokenize(text)
+        clean_text = ""
+        for sentence in sentences:
+            garbage = regex.search("~|,,", sentence)
+            if garbage:
+                print("garbage: ", sentence)
+            else:
+                clean_text += sentence + " "
+        return clean_text
+
 
 if __name__ == '__main__':
     preprocessor = Preprocessor()
 
-    preprocessor.set_start_page(9)
-    preprocessor.set_end_page(81)
+    # preprocessor.set_start_page(9)
+    # preprocessor.set_end_page(81)
+    # for page in preprocessor.page_by_page('inputs/modeling.pdf'):
+    #     print(page)
+    #     print()
+    # print("Finished")
 
-    for page in preprocessor.page_by_page('inputs/modeling.pdf'):
-        print(page)
-        print()
-
-    print("Finished")
+    page = preprocessor.get_page('inputs/modeling.pdf', 23)
+    print(preprocessor.clean_text(page))
