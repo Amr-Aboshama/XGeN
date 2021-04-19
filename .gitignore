@@ -1,1 +1,4 @@
+# ignore inputs files but not inputs folder
 Preprocessor/inputs/*
+
+!Preprocessor/inputs/.gitkeep
