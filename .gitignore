@@ -5,3 +5,4 @@ Preprocessor/inputs/*
 *.xml
 *.iml
 *.json
+*__pycache__*
