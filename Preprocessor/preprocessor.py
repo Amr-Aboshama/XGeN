@@ -5,15 +5,15 @@ from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from nltk.tokenize import sent_tokenize
 from wordsegmentation import WordSegment
-import spacy
-nlp = spacy.load('en')
-import neuralcoref
-neuralcoref.add_to_pipe(nlp)
 
+import spacy
+import neuralcoref
 import re as regex
 # import nltk
 # nltk.download('punkt')
 
+nlp = spacy.load('en')
+neuralcoref.add_to_pipe(nlp)
 
 MAX_PAGES = 1500
 
@@ -47,8 +47,8 @@ class Preprocessor:
         if paragraph_number < 0 or paragraph_number >= len(self.paragraphs):
             raise Exception("Coreference: paragraph number out of range")
         doc = nlp(self.paragraphs[paragraph_number])
-        self.paragraphs[paragraph_number] = doc._.coref_resolved 
-        return  self.paragraphs[paragraph_number]
+        self.paragraphs[paragraph_number] = doc._.coref_resolved
+        return self.paragraphs[paragraph_number]
 
     def set_start_page(self, start):
         self.start = start

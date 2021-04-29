@@ -1,3 +1,5 @@
 pdfminer~=20191125
-nltk~=3.6.1
-wordsegmentation
+nltk~=3.6.2
+wordsegmentation~=0.3.5
+spacy~=2.3.5
+neuralcoref~=4.0
