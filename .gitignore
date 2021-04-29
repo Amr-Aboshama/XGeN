@@ -4,3 +4,4 @@ Preprocessor/inputs/*
 !Preprocessor/inputs/.gitkeep
 *.xml
 *.iml
+*.json

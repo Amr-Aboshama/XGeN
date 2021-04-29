@@ -4,6 +4,8 @@ from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from nltk.tokenize import sent_tokenize
+from wordsegmentation import WordSegment
+
 import re as regex
 # import nltk
 # nltk.download('punkt')
@@ -63,15 +65,11 @@ class Preprocessor:
             file_handler.close()
 
     def get_page(self, path, page_number):
-        self.set_start_page(1)
-        self.set_end_page(MAX_PAGES)
+        self.set_start_page(page_number)
+        self.set_end_page(page_number + 1)
 
-        counter = 1
         for Page in self.page_by_page(path):
-            if counter == page_number:
-                return Page
-            counter += 1
-        return None
+            return Page
 
     def clean_text(self, text):
         sentences = sent_tokenize(text)
