@@ -5,6 +5,7 @@ from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from nltk.tokenize import sent_tokenize
 from wordsegmentation import WordSegment
+import neuralcoref
 
 import re as regex
 # import nltk
