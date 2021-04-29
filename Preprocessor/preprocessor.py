@@ -3,17 +3,8 @@ from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from nltk.tokenize import sent_tokenize
-from wordsegmentation import WordSegment
+from utilities import solve_coreference, clean_text, word_segmentation
 
-import spacy
-import neuralcoref
-import re as regex
-# import nltk
-# nltk.download('punkt')
-
-nlp = spacy.load('en')
-neuralcoref.add_to_pipe(nlp)
 
 MAX_PAGES = 1500
 
@@ -42,13 +33,6 @@ class Preprocessor:
             raise Exception("Can't open file: ", path)
         text = file.read()
         self.paragraphs = text.split('\n\n')
-
-    def solve_coreference(self, paragraph_number):
-        if paragraph_number < 0 or paragraph_number >= len(self.paragraphs):
-            raise Exception("Coreference: paragraph number out of range")
-        doc = nlp(self.paragraphs[paragraph_number])
-        self.paragraphs[paragraph_number] = doc._.coref_resolved
-        return self.paragraphs[paragraph_number]
 
     def set_start_page(self, start):
         self.start = start
@@ -92,17 +76,6 @@ class Preprocessor:
         for Page in self.page_by_page(path):
             return Page
 
-    def clean_text(self, text):
-        sentences = sent_tokenize(text)
-        clean_text = ""
-        for sentence in sentences:
-            garbage = regex.search("~|,,", sentence)
-            if garbage:
-                print("garbage: ", sentence)
-            else:
-                clean_text += sentence + " "
-        return clean_text
-
 
 if __name__ == '__main__':
     preprocessor = Preprocessor()
@@ -115,11 +88,20 @@ if __name__ == '__main__':
     # print("Finished")
 
     # page = preprocessor.get_page('inputs/modeling.pdf', 23)
-    # print(preprocessor.clean_text(page))
+    # print(clean_text(page))
 
     preprocessor.read_text('inputs/coreference.txt')
-    print("____________________________________________\n")
-    for i in range(len(preprocessor.paragraphs)):
-        paragraph = preprocessor.solve_coreference(i)
-        print(paragraph)
+    print("Coreference____________________________________________\n")
+    for paragraph in preprocessor.paragraphs:
+        print("Before: \n", paragraph)
         print()
+        paragraph = solve_coreference(paragraph)
+        print("After: \n", paragraph)
+        print()
+
+    preprocessor.read_text('inputs/wordsegment.txt')
+    print("Word Segmentation____________________________________________\n")
+    print("Before: \n", preprocessor.paragraphs[0])
+    print()
+    print("After: \n", word_segmentation(preprocessor.paragraphs[0]))
+    print()
