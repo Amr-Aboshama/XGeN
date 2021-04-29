@@ -5,7 +5,10 @@ from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from nltk.tokenize import sent_tokenize
 from wordsegmentation import WordSegment
+import spacy
+nlp = spacy.load('en')
 import neuralcoref
+neuralcoref.add_to_pipe(nlp)
 
 import re as regex
 # import nltk
@@ -39,6 +42,13 @@ class Preprocessor:
             raise Exception("Can't open file: ", path)
         text = file.read()
         self.paragraphs = text.split('\n\n')
+
+    def solve_coreference(self, paragraph_number):
+        if paragraph_number < 0 or paragraph_number >= len(self.paragraphs):
+            raise Exception("Coreference: paragraph number out of range")
+        doc = nlp(self.paragraphs[paragraph_number])
+        self.paragraphs[paragraph_number] = doc._.coref_resolved 
+        return  self.paragraphs[paragraph_number]
 
     def set_start_page(self, start):
         self.start = start
@@ -108,7 +118,8 @@ if __name__ == '__main__':
     # print(preprocessor.clean_text(page))
 
     preprocessor.read_text('inputs/coreference.txt')
-
-    for paragraph in preprocessor.paragraphs:
+    print("____________________________________________\n")
+    for i in range(len(preprocessor.paragraphs)):
+        paragraph = preprocessor.solve_coreference(i)
         print(paragraph)
         print()
