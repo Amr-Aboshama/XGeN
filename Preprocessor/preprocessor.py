@@ -21,6 +21,7 @@ class Preprocessor:
         self.pages = None
         self.start = 1
         self.end = MAX_PAGES
+        self.paragraphs = None
 
     def __read_pdf(self, path):
         try:
@@ -29,6 +30,15 @@ class Preprocessor:
         except OSError:
             raise Exception("Can't open file: ", path)
         self.pages = PDFPage.get_pages(file, caching=True, check_extractable=True)
+
+    def read_text(self, path):
+        try:
+            file = open(path, 'r')
+            self.path = path
+        except OSError:
+            raise Exception("Can't open file: ", path)
+        text = file.read()
+        self.paragraphs = text.split('\n\n')
 
     def set_start_page(self, start):
         self.start = start
@@ -94,5 +104,11 @@ if __name__ == '__main__':
     #     print()
     # print("Finished")
 
-    page = preprocessor.get_page('inputs/modeling.pdf', 23)
-    print(preprocessor.clean_text(page))
+    # page = preprocessor.get_page('inputs/modeling.pdf', 23)
+    # print(preprocessor.clean_text(page))
+
+    preprocessor.read_text('inputs/coreference.txt')
+
+    for paragraph in preprocessor.paragraphs:
+        print(paragraph)
+        print()
