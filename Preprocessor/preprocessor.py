@@ -3,7 +3,7 @@ from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from utilities import solve_coreference, clean_text, word_segmentation
+from utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
 
 
 MAX_PAGES = 1500
@@ -93,15 +93,19 @@ if __name__ == '__main__':
     preprocessor.read_text('inputs/coreference.txt')
     print("Coreference____________________________________________\n")
     for paragraph in preprocessor.paragraphs:
-        print("Before: \n", paragraph)
+        print("Original: \n", paragraph)
         print()
+        if need_segmentation(paragraph):
+            paragraph = word_segmentation(paragraph)
+            print("After Segmentation: \n", paragraph)
+            print()
         paragraph = solve_coreference(paragraph)
-        print("After: \n", paragraph)
+        print("After Coreference: \n", paragraph)
         print()
 
     preprocessor.read_text('inputs/wordsegment.txt')
     print("Word Segmentation____________________________________________\n")
-    print("Before: \n", preprocessor.paragraphs[0])
+    print("Original: \n", preprocessor.paragraphs[0])
     print()
-    print("After: \n", word_segmentation(preprocessor.paragraphs[0]))
+    print("After Segmentation: \n", word_segmentation(preprocessor.paragraphs[0]))
     print()

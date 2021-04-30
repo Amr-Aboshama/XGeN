@@ -5,7 +5,7 @@ import re as regex
 # import nltk
 # nltk.download('punkt')
 
-from nltk.tokenize import sent_tokenize
+from nltk.tokenize import sent_tokenize, word_tokenize
 from wordsegment import load, segment
 
 nlp = spacy.load('en')
@@ -28,8 +28,20 @@ def clean_text(text):
             clean_text += sentence + " "
     return clean_text
 
-def word_segmentation(small_sentence):
-    sentence = ""
-    for word in segment(small_sentence):
-        sentence += word + " "
-    return sentence
+def word_segmentation(paragraph):
+    output = ""
+    for sentence in sent_tokenize(paragraph):
+        words = segment(sentence)
+        sentence = ""
+        for word in words:
+            sentence += word + " "
+        output += sentence[:-1] + ". "
+    return output
+    
+def need_segmentation(paragraph):
+    words = word_tokenize(paragraph)
+    sum = 0
+    for word in words:
+        sum += len(word)
+    average = sum / len(words)
+    return average > 10
