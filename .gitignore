@@ -1,6 +1,6 @@
 # ignore inputs files but not inputs folder
 InfoExtractor/inputs/*
-! InfoExtractor/inputs/.gitkeep
+!InfoExtractor/inputs/.gitkeep
 *.xml
 *.iml
 *.json
