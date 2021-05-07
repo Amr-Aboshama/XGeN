@@ -1,4 +1,4 @@
-from utilities import clean
+from utilities import clean, ner, pos
 from collections import Counter
 
 import spacy
@@ -34,3 +34,9 @@ if __name__ == '__main__':
 
     Bag = info_extractor.bag_of_words()
     print(Bag.most_common(10))
+
+    print("NER_________________________")
+    print(ner(Book))
+
+    print("POS_________________________")
+    print(pos(Book))
