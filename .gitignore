@@ -6,3 +6,6 @@ InfoExtractor/inputs/*
 *.json
 *__pycache__*
 *.ipynb
+.vscode
+.ipynb_checkpoints
+NLTK Test.ipynb
