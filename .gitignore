@@ -5,3 +5,4 @@ InfoExtractor/inputs/*
 *.iml
 *.json
 *__pycache__*
+*.ipynb
