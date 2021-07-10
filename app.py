@@ -40,6 +40,12 @@ app = Flask(__name__)
 def uploadPDF():
     file = request.files.get('pdf')
     cur_uuid = uuid.uuid1()
+    
+    path = 'data/' + str(cur_uuid)
+    os.mkdir(path)
+
+    file.save(path + 'PDF.pdf')
+    
     topics = []
 
     # TODO : Handle Converting PDF to Text
@@ -66,6 +72,11 @@ def uploadPDF():
 def uploadText():
     text = request.form.get('text')
     cur_uuid = uuid.uuid1()
+    
+    path = 'data/' + str(cur_uuid)
+
+    os.mkdir(path)
+    
     topics = []
 
     # TODO : Call the function to preprocess the text
