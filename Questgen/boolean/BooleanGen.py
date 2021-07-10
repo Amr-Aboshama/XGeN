@@ -12,23 +12,7 @@ class BoolGen(QGen):
         QGen.__init__(self, loader)
         
 
-    def predict_boolq(self,payload):
-        text = payload.get("input_text")
-        topics_num = payload.get('topics_num')
-
-        sentences = tokenize_sentences(text)
-        joiner = " "
-        modified_text = joiner.join(sentences)
-        
-        keywords = get_keywords(self.nlp,modified_text,topics_num,self.s2v,self.fdist,self.normalized_levenshtein,len(sentences) )
-
-        
-        
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
-        
-        for k in keyword_sentence_mapping.keys():
-            text_snippet = " ".join(keyword_sentence_mapping[k][:3])
-            keyword_sentence_mapping[k] = text_snippet
+    def predict_boolq(self, keyword_sentence_mapping, modified_text):
         
         batch_text = []
         answers = keyword_sentence_mapping.keys()

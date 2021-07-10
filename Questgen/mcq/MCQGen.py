@@ -12,46 +12,26 @@ class MCQGen(QGen):
         QGen.__init__(self, loader)
 
         
-    def predict_mcq(self, payload):
-        start = time.time()
-        inp = {
-            "input_text": payload.get("input_text"),
-            "max_questions": payload.get("max_questions", 4)
-        }
-
-        text = inp['input_text']
-        sentences = tokenize_sentences(text)
-        joiner = " "
-        modified_text = joiner.join(sentences)
+    def predict_mcq(self, keyword_sentence_mapping, modified_text):
         
-        keywords = get_keywords(self.nlp,modified_text,inp['max_questions'],self.s2v,self.fdist,self.normalized_levenshtein,len(sentences) )
-
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
-        
-        for k in keyword_sentence_mapping.keys():
-            text_snippet = " ".join(keyword_sentence_mapping[k][:3])
-            keyword_sentence_mapping[k] = text_snippet
-   
         final_output = {}
 
         if len(keyword_sentence_mapping.keys()) == 0:
             return final_output
         else:
             try:
-                generated_questions = self.generate_questions_mcq(keyword_sentence_mapping,self.s2v,self.normalized_levenshtein)
+                generated_questions = self.__generate_questions_mcq(keyword_sentence_mapping,self.s2v,self.normalized_levenshtein)
 
             except:
                 return final_output
-            end = time.time()
 
             final_output["statement"] = modified_text
             final_output["questions"] = generated_questions["questions"]
-            final_output["time_taken"] = end-start
             
             return final_output
 
 
-    def generate_questions_mcq(self, keyword_sent_mapping,sense2vec,normalized_levenshtein):
+    def __generate_questions_mcq(self, keyword_sent_mapping,sense2vec,normalized_levenshtein):
         answers = keyword_sent_mapping.keys()
         output_array = {}
         output_array["questions"] = []

@@ -11,17 +11,7 @@ class TFGen(QGen):
         QGen.__init__(self, loader)
             
 
-    def predict_tf(self,payload):
-        
-        text = payload.get("input_text")
-        topics_num = payload.get('topics_num')
-        sentences = tokenize_sentences(text)
-        joiner = " "
-        modified_text = joiner.join(sentences)
-        
-        keywords = get_keywords(self.nlp,modified_text,topics_num,self.s2v,self.fdist,self.normalized_levenshtein,len(sentences) )
-
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
+    def predict_tf(self, keyword_sentence_mapping):
         
         output_array ={}
         output_array["questions"] =[]
