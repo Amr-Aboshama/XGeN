@@ -1,27 +1,17 @@
 import re
 import random
 import torch
-from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword,\
+from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword,
                             get_options
 
+from QGen import QGen
 
-class BoolGen:
+
+class BoolGen(QGen):
     
-    def __init__(self, base):
-        self.tokenizer = base.tokenizer
+    def __init__(self, loader):
+        QGen.__init__(self, loader)
         
-        self.nlp = base.nlp
- 
-        self.s2v = base.s2v
-        
-        model = base.model
-        device = base.device
-        model.to(device)
-        self.device = device
-        self.model = model
-
-        self.fdist = base.fdist
-        self.normalized_levenshtein = base.normalized_levenshtein    
 
     def predict_boolq(self,payload):
         text = payload.get("input_text")
