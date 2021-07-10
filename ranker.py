@@ -10,12 +10,14 @@ class Ranker:
         self.phrases = phrases
     
     def filter_phrases(self):
-        filtered_phrases = []
+        filtered_phrases = {}
         
         for p in self.phrases:
+            filtered_phrases[p] = []
             for k in self.keywords:
                 if p.lower().find(k):
-                    filtered_phrases.append(p)
-                    break
+                    filtered_phrases[p].append(k)
+            if len(filtered_phrases[p]) == 0:
+                del filtered_phrases[p]
 
         return filtered_phrases
