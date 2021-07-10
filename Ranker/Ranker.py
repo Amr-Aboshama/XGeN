@@ -22,7 +22,7 @@ def rank_phrases(selected_keywords, phrases):
     for phrase in phrases:
         for key in selected_keywords:
             if key in phrases[phrase]:
-                ranked_phrases.append[(phrase, phrases[phrase])]
+                ranked_phrases.append((phrase, phrases[phrase]))
                 break
     
     return ranked_phrases

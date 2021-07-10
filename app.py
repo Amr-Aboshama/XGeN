@@ -73,22 +73,24 @@ def uploadPDF():
 
     cur_uuid = uuid.uuid1()
         
-    path = 'data/' + str(cur_uuid) + '/'
-    os.mkdir(path)
+    directory_path = 'data/' + str(cur_uuid)
+    os.mkdir(directory_path)
 
-    file.save(path + 'PDF.pdf')
+    file_path = directory_path + '/PDF.pdf'
+
+    file.save(file_path)
     
     # Handle Converting PDF to Text
-    preprocessor = Preprocessor()
+    preprocessor = Preprocessor(file_path)
     phrases = []
     text = ""
-    for page in preprocessor.page_by_page('inputs/modeling.pdf'):
+    for page in preprocessor.page_by_page():   # TODO: Check more arguments
         page = preprocess(page)
         phrases.append(page)
         text += " " + page
 
     # Process the text    
-    keywords = process(text, phrases, path)
+    keywords = process(text, phrases, directory_path)
     
     return {
         "uuid" : cur_uuid,
@@ -98,26 +100,26 @@ def uploadPDF():
 
 @app.route("/api/upload/text", methods=['POST'])
 def uploadText():
-    text = request.form.get('text')
+    text_payload = request.form.get('text')
 
-    if text is None:
+    if text_payload is None:
         return {
             "error": "No text uploaded!"
         }, 422
 
     cur_uuid = uuid.uuid1()
     
-    path = 'data/' + str(cur_uuid) + '/'
+    directory_path = 'data/' + str(cur_uuid)
 
     # Preprocess the text
     phrases = []
     text = ""
-    for phrase in text.split('\n\n'):
+    for phrase in text_payload.split('\n\n'):
         phrase = preprocess(phrase)
         text += " " + phrase
 
     # Process the text    
-    keywords = process(text, phrases, path)
+    keywords = process(text, phrases, directory_path)
     
     return {
         "uuid" : cur_uuid,
@@ -133,7 +135,7 @@ def examSpecifications():
     tfq_count = request.form.get('tfq_count')
     mcq_count = request.form.get('mcq_count')
 
-    path = 'data/' + cur_uuid + '/'
+    directory_path = 'data/' + str(cur_uuid)
 
     wh_questions = []
     bool_questions = []
@@ -142,13 +144,13 @@ def examSpecifications():
 
     # Load the user paragraphs & topics
     phrases = {}
-    file = open(path + "paragraph_topics.txt", 'r')
-    while True:
-        phrase = file.readline()
-        if not phrase:
-            break
-        topics = file.readline().split(';')
-        phrases[phrase] = topics
+    with open(directory_path + "paragraph_topics.txt", 'r') as file:
+        while True:
+            phrase = file.readline()
+            if not phrase:
+                break
+            topics = file.readline().split(';')
+            phrases[phrase] = topics
 
     # Filter The paragraphs based on the selected topics
     filtered_phrases = rank_phrases(selected_topics, phrases)
