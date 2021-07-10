@@ -1,3 +1,4 @@
+import os
 from pprint import pprint
 from Questgen.Loader import Loader
 from Questgen.QGen import QGen
@@ -6,6 +7,7 @@ from Questgen.boolean.BooleanGen import BoolGen
 from Questgen.tf.TFGen import TFGen
 from Questgen.shortq.ShortGen import ShortGen
 from Questgen.longq.LongGen import LongGen
+from Questgen.TopicExtractor import TopicExtractor
 
 payload = {
             "input_text": "Sachin Ramesh Tendulkar is a former international cricketer from India and a former captain of the Indian national team. He is widely regarded as one of the greatest batsmen in the history of cricket. He is the highest run scorer of all time in International cricket.",
@@ -15,8 +17,16 @@ payload = {
 
 loader = Loader()
 print("Done Loader")
-qgen = QGen(loader)
+qgen = QGen(Loader)
 print("Done QGen")
+
+def testTopicExtractor():
+    directory = "test/"
+    topicExtractor = TopicExtractor(loader)
+    payload = {"paragraph1":["topic1","topic2"], "paragraph2":["topic1","topic3"]}
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    topicExtractor.write_paragraphs_topics(payload, directory)
 
 def testTF():
     tfGen = TFGen(qgen)
@@ -44,6 +54,9 @@ def testLongQ():
     output = longGen.paraphrase(payload)
     pprint(output)
 
+
+
+
 """ def testParaphrasing():
     qg = main.QGen(base)
     output = qg.paraphrase(payload)
@@ -51,8 +64,8 @@ def testLongQ():
     return output
  """
 
-print("\nBoolean::")
-testBoolean()
+""" print("\nBoolean::")
+testBoolean() """
 """ print("\nTrue/False::")
 testTF()
 print("\nMCQ::")

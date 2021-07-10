@@ -1,9 +1,4 @@
 from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
-import spacy
-from sense2vec import Sense2Vec
-from nltk import FreqDist
-from nltk.corpus import brown
-from similarity.normalized_levenshtein import NormalizedLevenshtein
 
 
 class TopicExtractor:
@@ -16,11 +11,12 @@ class TopicExtractor:
         self.normalized_levenshtein = loader.normalized_levenshtein
 
     # payload: {"paragraph1":["topic1","topic2"], "paragraph2":["topic1","topic3"]}
-    def prepare_text(self, payload, output_directory):
+    def write_paragraphs_topics(self, payload, output_directory):
         
-        with open(output_directory + '/paragraph_topics.txt', 'w') as f:
+        with open(output_directory + 'paragraph_topics.txt', 'w+') as f:
             for para, topic_list in payload.items():
-                f.writeline(para)
+                f.write(para)
+                f.write('\n')
                 for topic in topic_list:
                     f.write(topic + ';')
                 f.write('\n')
@@ -42,4 +38,4 @@ class TopicExtractor:
         #     keyword_sentence_mapping[k] = text_snippet
 
         # return keyword_sentence_mapping, modified_text
-        return keyword
+        return keywords
