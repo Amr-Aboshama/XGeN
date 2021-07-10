@@ -1,13 +1,13 @@
 import os
 from pprint import pprint
-from Questgen.Loader import Loader
-from Questgen.QGen import QGen
-from Questgen.mcq.MCQGen import MCQGen
-from Questgen.boolean.BooleanGen import BoolGen
-from Questgen.tf.TFGen import TFGen
-from Questgen.shortq.ShortGen import ShortGen
-from Questgen.longq.LongGen import LongGen
-from Questgen.TopicExtractor import TopicExtractor
+from QAGen.Loader import Loader
+from QAGen.QGen import QGen
+from QAGen.mcq.MCQGen import MCQGen
+from QAGen.boolean.BooleanGen import BoolGen
+from QAGen.tf.TFGen import TFGen
+from QAGen.shortq.ShortGen import ShortGen
+from QAGen.longq.LongGen import LongGen
+from QAGen.TopicExtractor import TopicExtractor
 
 payload = {
             "input_text": "Sachin Ramesh Tendulkar is a former international cricketer from India and a former captain of the Indian national team. He is widely regarded as one of the greatest batsmen in the history of cricket. He is the highest run scorer of all time in International cricket.",
