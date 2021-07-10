@@ -30,15 +30,21 @@ topicExtract = TopicExtractor(loader)
 app = Flask(__name__)
 
 
-@app.route("/api/upload/PDF", methods['POST'])
+@app.route("/api/upload/PDF", methods=['POST'])
 def uploadPDF():
     file = request.files.get('pdf')
+
+    if file is None:
+        return {
+            "error": "No file uploaded!"
+        }, 422
+
     cur_uuid = uuid.uuid1()
     
     path = 'data/' + str(cur_uuid)
     os.mkdir(path)
 
-    file.save(path + 'PDF.pdf')
+    file.save(path + '/PDF.pdf')
     
     topics = []
 
@@ -56,9 +62,15 @@ def uploadPDF():
     }
 
 
-@app.route("/api/upload/text", methods['POST'])
+@app.route("/api/upload/text", methods=['POST'])
 def uploadText():
     text = request.form.get('text')
+
+    if text is None:
+        return {
+            "error": "No text uploaded!"
+        }, 422
+
     cur_uuid = uuid.uuid1()
     
     path = 'data/' + str(cur_uuid)
@@ -78,7 +90,7 @@ def uploadText():
         "topics": topics,
     }
 
-@app.route("/api/examSpecifications", methods['POST'])
+@app.route("/api/examSpecifications", methods=['POST'])
 def examSpecifications():
     cur_uuid = request.form.get('uuid')
     selected_topics = request.form.getlist('topics')
