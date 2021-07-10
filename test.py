@@ -3,6 +3,7 @@ from Questgen import main
 from Questgen.mcq.MCQGen import MCQGen
 from Questgen.boolean.BooleanGen import BoolGen
 from Questgen.base import Base
+from Questgen.tf.TFGen import TFGen
 
 payload = {
             "input_text": "Sachin Ramesh Tendulkar is a former international cricketer from India and a former captain of the Indian national team. He is widely regarded as one of the greatest batsmen in the history of cricket. He is the highest run scorer of all time in International cricket.",
@@ -13,8 +14,13 @@ payload = {
 base = Base()
 
 def testTF():
+    tfGen = TFGen(base)
+    output = tfGen.predict_tf(payload)
+    pprint(output)
+
+def testBoolean():
     boolGen = BoolGen(base)
-    output = boolGen.predict_tf(payload)
+    output = boolGen.predict_boolq(payload)
     pprint(output)
 
 def testMCQ():
@@ -33,7 +39,10 @@ def testParaphrasing():
     pprint(output)
     return output
 
-print("\nTrue/False::")
+
+print("\nBoolean::")
+testBoolean()
+""" print("\nTrue/False::")
 testTF()
 print("\nMCQ::")
 testMCQ()
@@ -52,7 +61,7 @@ payload3 = {
 output = answer.predict_answer(payload3)
 print(output)
 
-
+ """
 """ payload4 = {
     "input_text" : '''Sachin Ramesh Tendulkar is a former international cricketer from 
               India and a former captain of the Indian national team. He is widely regarded 
