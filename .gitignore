@@ -1,8 +1,3 @@
-# ignore inputs files but not inputs folder
-Preprocessor/inputs/*
+Questgen/models
 
-!Preprocessor/inputs/.gitkeep
-*.xml
-*.iml
-*.json
 *__pycache__*
