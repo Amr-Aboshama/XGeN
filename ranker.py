@@ -15,7 +15,7 @@ class Ranker:
         for p in self.phrases:
             filtered_phrases[p] = []
             for k in self.keywords:
-                if p.lower().find(k):
+                if p.lower().find(k) != -1:
                     filtered_phrases[p].append(k)
             if len(filtered_phrases[p]) == 0:
                 del filtered_phrases[p]
