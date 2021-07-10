@@ -1,4 +1,0 @@
-paragraph1
-topic1;topic2;
-paragraph2
-topic1;topic3;
