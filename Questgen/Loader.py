@@ -8,7 +8,7 @@ from nltk.corpus import brown
 from similarity.normalized_levenshtein import NormalizedLevenshtein
 
 
-class Base:
+class Loader:
     def __init__(self):
         
         self.tokenizer = T5Tokenizer.from_pretrained('t5-base')
