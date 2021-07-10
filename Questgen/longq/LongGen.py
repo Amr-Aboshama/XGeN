@@ -1,7 +1,7 @@
 import torch
 import os
 from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
-from QGen import QGen
+from Questgen.QGen import QGen
 
 
 class LongGen(QGen):
@@ -21,7 +21,7 @@ class LongGen(QGen):
         encoding = self.tokenizer.encode_plus(self.text,pad_to_max_length=True, return_tensors="pt")
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
 
-        beam_outputs = self.model.generate(
+        beam_outputs = self.qg_model.generate(
             input_ids=input_ids,
             attention_mask=attention_masks,
             max_length= 50,

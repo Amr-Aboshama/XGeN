@@ -1,10 +1,9 @@
 import re
 import random
 import torch
-from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword,
-                            get_options
+from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, get_options
 
-from QGen import QGen
+from Questgen.QGen import QGen
 
 
 class BoolGen(QGen):
@@ -41,7 +40,7 @@ class BoolGen(QGen):
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
 
         with torch.no_grad():
-            outs = self.model.generate( input_ids=input_ids,
+            outs = self.bq_model.generate( input_ids=input_ids,
                                         attention_mask=attention_masks,
                                         max_length=256,
                                         num_beams=10,

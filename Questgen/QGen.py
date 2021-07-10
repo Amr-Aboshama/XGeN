@@ -1,4 +1,5 @@
 
+from Questgen.Loader import Loader
 
 class QGen:
     
@@ -10,5 +11,8 @@ class QGen:
         self.normalized_levenshtein = loader.normalized_levenshtein
  
         self.tokenizer = loader.tokenizer
-        self.device = device
-        self.model = model
+        self.device = loader.device
+
+        self.qg_model = loader.qg_model
+        self.bq_model = loader.bq_model
+        self.ap_model = loader.ap_model

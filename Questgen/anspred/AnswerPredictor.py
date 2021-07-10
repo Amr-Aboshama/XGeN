@@ -5,19 +5,18 @@
 import torch
 from transformers import T5ForConditionalGeneration,T5Tokenizer
 import os
-import numpy 
+import numpy
+
+from Questgen.Loader import Loader
+
 
 
 class AnswerPredictor:
           
-    def __init__(self):
-        self.tokenizer = T5Tokenizer.from_pretrained('t5-base')
-        model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/Questgen/models/answer_predictor")
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model.to(device)
-        # model.eval()
-        self.device = device
-        self.model = model
+    def __init__(self, loader):
+        self.tokenizer = loader.tokenizer
+        self.device = loader.device
+        self.model = loader.ap_model
         self.set_seed(42)
         
     def set_seed(self,seed):

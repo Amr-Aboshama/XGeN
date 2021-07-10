@@ -1,7 +1,7 @@
 import torch
 import os
 from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
-from QGen import QGen
+from Questgen.QGen import QGen
 
 class ShortGen(QGen):
 
@@ -33,7 +33,7 @@ class ShortGen(QGen):
             return final_output
         else:
             
-            generated_questions = __generate_normal_questions(keyword_sentence_mapping,self.device,self.tokenizer,self.model)
+            generated_questions = __generate_normal_questions(keyword_sentence_mapping,self.device,self.tokenizer,self.qg_model)
             
             
         final_output["statement"] = modified_text
