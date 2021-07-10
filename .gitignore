@@ -1,0 +1,8 @@
+# ignore inputs files but not inputs folder
+Preprocessor/inputs/*
+
+!Preprocessor/inputs/.gitkeep
+*.xml
+*.iml
+*.json
+*__pycache__*
