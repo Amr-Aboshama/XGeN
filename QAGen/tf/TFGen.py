@@ -1,8 +1,8 @@
 import re
 import random
-from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, \
+from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, \
                             get_options
-from Questgen.QGen import QGen
+from QAGen.QGen import QGen
 
 
 class TFGen(QGen):
