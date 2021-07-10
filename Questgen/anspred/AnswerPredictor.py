@@ -2,14 +2,6 @@
 #nltk.download('stopwords')
 #nltk.download('popular')
 
-import torch
-from transformers import T5ForConditionalGeneration,T5Tokenizer
-import os
-import numpy
-
-from Questgen.Loader import Loader
-
-
 
 class AnswerPredictor:
           
@@ -17,13 +9,6 @@ class AnswerPredictor:
         self.tokenizer = loader.tokenizer
         self.device = loader.device
         self.model = loader.ap_model
-        self.set_seed(42)
-        
-    def set_seed(self,seed):
-        numpy.random.seed(seed)
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)
 
     def greedy_decoding (inp_ids,attn_mask,model,tokenizer):
         greedy_output = model.generate(input_ids=inp_ids, attention_mask=attn_mask, max_length=256)

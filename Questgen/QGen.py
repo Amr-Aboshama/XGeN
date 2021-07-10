@@ -1,6 +1,4 @@
 
-from Questgen.Loader import Loader
-
 class QGen:
     
     def __init__(self, loader):

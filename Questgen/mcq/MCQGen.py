@@ -3,19 +3,14 @@ import time
 from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, \
                              filter_phrases, get_options
 
+from Questgen.QGen import QGen
 
 
-class MCQGen:
-    
-    def __init__(self, base):
-        self.nlp = base.nlp
- 
-        self.s2v = base.s2v
-        
-        self.fdist = base.fdist
-        
-        self.normalized_levenshtein = base.normalized_levenshtein
-        
+class MCQGen(QGen):
+
+    def __init__(self, loader):
+        QGen.__init__(self, loader)
+
         
     def predict_mcq(self, payload):
         start = time.time()

@@ -1,9 +1,11 @@
 from pprint import pprint
-from Questgen import main
+from Questgen.Loader import Loader
+from Questgen.QGen import QGen
 from Questgen.mcq.MCQGen import MCQGen
 from Questgen.boolean.BooleanGen import BoolGen
-from Questgen.base import Base
 from Questgen.tf.TFGen import TFGen
+from Questgen.shortq.ShortGen import ShortGen
+from Questgen.longq.LongGen import LongGen
 
 payload = {
             "input_text": "Sachin Ramesh Tendulkar is a former international cricketer from India and a former captain of the Indian national team. He is widely regarded as one of the greatest batsmen in the history of cricket. He is the highest run scorer of all time in International cricket.",
@@ -11,34 +13,43 @@ payload = {
             "topics_num": 3
           }
 
-base = Base()
+loader = Loader()
+print("Done Loader")
+qgen = QGen(loader)
+print("Done QGen")
 
 def testTF():
-    tfGen = TFGen(base)
+    tfGen = TFGen(qgen)
     output = tfGen.predict_tf(payload)
     pprint(output)
 
 def testBoolean():
-    boolGen = BoolGen(base)
+    boolGen = BoolGen(qgen)
+    print("Done BoolGen")
     output = boolGen.predict_boolq(payload)
     pprint(output)
 
 def testMCQ():
-    mcqGen = MCQGen(base)
+    mcqGen = MCQGen(qgen)
     output = mcqGen.predict_mcq(payload)
     pprint(output)
 
-def testFAQ():
-    qg = main.QGen(base)
-    output = qg.predict_shortq(payload)
+def testShortQ():
+    shortGen = ShortGen(qgen)
+    output = shortGen.predict_shortq(payload)
     pprint(output)
 
-def testParaphrasing():
+def testLongQ():
+    longGen = LongGen(qgen)
+    output = longGen.paraphrase(payload)
+    pprint(output)
+
+""" def testParaphrasing():
     qg = main.QGen(base)
     output = qg.paraphrase(payload)
     pprint(output)
     return output
-
+ """
 
 print("\nBoolean::")
 testBoolean()

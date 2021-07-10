@@ -1,6 +1,4 @@
 import torch
-import os
-from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
 from Questgen.QGen import QGen
 
 

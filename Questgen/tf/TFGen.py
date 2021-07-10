@@ -2,21 +2,14 @@ import re
 import random
 from Questgen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, \
                             get_options
+from Questgen.QGen import QGen
 
 
+class TFGen(QGen):
 
-class TFGen:
-       
-    def __init__(self, base):
-        
-        self.nlp = base.nlp
- 
-        self.s2v = base.s2v
-        
-        self.fdist = base.fdist
-        
-        self.normalized_levenshtein = base.normalized_levenshtein
-        
+    def __init__(self, loader):
+        QGen.__init__(self, loader)
+            
 
     def predict_tf(self,payload):
         
