@@ -1,5 +1,5 @@
 import torch
-from Questgen.QGen import QGen
+from QAGen.QGen import QGen
 
 
 class LongGen(QGen):
