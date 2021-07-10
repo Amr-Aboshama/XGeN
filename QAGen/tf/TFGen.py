@@ -11,7 +11,14 @@ class TFGen(QGen):
         QGen.__init__(self, loader)
             
 
-    def predict_tf(self, keyword_sentence_mapping):
+    def predict_tf(self, keywords, modified_text):
+
+        keyword_sentence_mapping = get_sentences_for_keyword(keywords, modified_text)
+              
+        for k in keyword_sentence_mapping.keys():
+            text_snippet = " ".join(keyword_sentence_mapping[k][:3])
+            keyword_sentence_mapping[k] = text_snippet
+
         
         output_array ={}
         output_array["questions"] =[]

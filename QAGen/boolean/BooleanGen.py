@@ -12,8 +12,14 @@ class BoolGen(QGen):
         QGen.__init__(self, loader)
         
 
-    def predict_boolq(self, keyword_sentence_mapping, modified_text):
+    def predict_boolq(self, keywords, modified_text):
         
+        keyword_sentence_mapping = get_sentences_for_keyword(keywords, modified_text)
+              
+        for k in keyword_sentence_mapping.keys():
+            text_snippet = " ".join(keyword_sentence_mapping[k][:3])
+            keyword_sentence_mapping[k] = text_snippet
+
         batch_text = []
         answers = keyword_sentence_mapping.keys()
         for answer in answers:

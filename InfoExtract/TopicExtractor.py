@@ -10,7 +10,7 @@ class TopicExtractor:
         self.fdist = loader.fdist
         self.normalized_levenshtein = loader.normalized_levenshtein
 
-    # payload: {"paragraph1":["topic1","topic2"], "paragraph2":["topic1","topic3"]}
+    # payload: {"phrase1":["topic1","topic2"], "phrase2":["topic1","topic3"]}
     def write_paragraphs_topics(self, payload, output_directory):
         
         with open(output_directory + 'paragraph_topics.txt', 'w+') as f:
@@ -21,10 +21,8 @@ class TopicExtractor:
                     f.write(topic + ';')
                 f.write('\n')
 
-    def extract_keywords(self, payload):
+    def extract_keywords(self, text, topics_num = 40):
         
-        text = payload.get("input_text")
-        topics_num = payload.get('topics_num')
         sentences = tokenize_sentences(text)
         joiner = " "
         modified_text = joiner.join(sentences)

@@ -8,10 +8,7 @@ class LongGen(QGen):
         QGen.__init__(self, loader)
 
   
-    def paraphrase(self,payload):
-        
-        text = payload.get("input_text")
-        num = payload.get("max_questions", 3)
+    def paraphrase(self,text, q_num = 3):
         
         self.sentence= text
         self.text= "paraphrase: " + self.sentence + " </s>"
@@ -24,7 +21,7 @@ class LongGen(QGen):
             attention_mask=attention_masks,
             max_length= 50,
             num_beams=50,
-            num_return_sequences=num,
+            num_return_sequences=q_num,
             no_repeat_ngram_size=2,
             early_stopping=True
             )
@@ -37,7 +34,7 @@ class LongGen(QGen):
         
         output= {}
         output['Paragraph']= text
-        output['Count']= num
+        output['Count']= q_num
         output['Paraphrased Questions']= final_outputs
         
 
