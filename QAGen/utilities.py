@@ -2,9 +2,13 @@ import random
 from collections import OrderedDict
 import string
 import pke
+from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-from nltk.tokenize import sent_tokenize
+from nltk.tokenize import sent_tokenize, word_tokenize
 from flashtext import KeywordProcessor
+
+stopwords_set = set(stopwords.words('english'))
+lemma = WordNetLemmatizer()
 
 def MCQs_available(word,s2v):
     word = word.replace(" ", "_")
@@ -74,6 +78,13 @@ def tokenize_sentences(text):
     # Remove any short sentences less than 20 letters.
     sentences = [sentence.strip() for sentence in sentences if len(sentence) > 20]
     return sentences
+
+
+def words_freq_dist(text):
+    words_tokens = word_tokenize(text)
+    words = [i.lower() for i in words_tokens if i.lower() not in stopwords_set]
+    print(len(words), len(words_tokens))
+    return words 
 
 
 def get_sentences_for_keyword(keywords, sentences):
@@ -175,8 +186,16 @@ def get_keywords(nlp,text,max_keywords,s2v,fdist,normalized_levenshtein,no_of_se
     max_keywords = int(max_keywords)
 
     keywords = get_nouns_multipartite(text)
+    print(1)
+    print(keywords)
     keywords = sorted(keywords, key=lambda x: fdist[x])
+    for k in keywords:
+        print(k, fdist[k])
+    print(2)
+    print(keywords)
     keywords = filter_phrases(keywords, max_keywords,normalized_levenshtein )
+    print(3)
+    print(keywords)
 
     phrase_keys = get_phrases(doc)
     filtered_phrases = filter_phrases(phrase_keys, max_keywords,normalized_levenshtein )

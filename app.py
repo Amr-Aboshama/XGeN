@@ -1,5 +1,6 @@
 from flask import Flask, request
 import os
+import sys
 import uuid
 
 from Preprocessor.preprocessor import Preprocessor
@@ -21,17 +22,24 @@ from Ranker.Ranker import filter_phrases, rank_phrases
 
 loader = Loader()
 print("Done Loader")
-qgen = QGen(Loader)
+qgen = QGen(loader)
 print("Done QGen")
 
 tfGen = TFGen(qgen)
+print("Done TFGen")
 boolGen = BoolGen(qgen)
+print("Done BooleanGen")
 mcqGen = MCQGen(qgen)
+print("Done MCQGen")
 shortGen = ShortGen(qgen)
+print("Done ShortGen")
 longGen = LongGen(qgen)
+print("Done LongGen")
 ansPredict = AnswerPredictor(loader)
+print("Done AnswerPredictor")
 
 topicExtract = TopicExtractor(loader)
+print("Done TopicExtractor")
 
 
 app = Flask(__name__)
@@ -40,9 +48,14 @@ app = Flask(__name__)
 
 def preprocess(phrase):
     phrase = clean_text(phrase)
+    print('cleaned')
     if need_segmentation(phrase):
+        print('need segmentation')
         phrase = word_segmentation(phrase)
+        print('segmented')
+    
     phrase = solve_coreference(phrase)
+    print('coreferenced')
     
     return phrase
 
@@ -64,31 +77,37 @@ def process(text, phrases, path):
 
 @app.route("/api/upload/PDF", methods=['POST'])
 def uploadPDF():
-    file = request.files.get('pdf')
+    # file = request.files.get('pdf')
 
-    if file is None:
-        return {
-            "error": "No file uploaded!"
-        }, 422
+    # if file is None:
+    #     return {
+    #         "error": "No file uploaded!"
+    #     }, 422
 
-    cur_uuid = uuid.uuid1()
+    # cur_uuid = uuid.uuid1()
+    cur_uuid = uuid.UUID('9001a540-e1f0-11eb-92bf-0be814cdc50d')
         
     directory_path = 'data/' + str(cur_uuid)
-    os.mkdir(directory_path)
-
+    # os.mkdir(directory_path)
+    sys.setrecursionlimit(1500)
+    print(sys.getrecursionlimit())
+    
     file_path = directory_path + '/PDF.pdf'
 
-    file.save(file_path)
-    
+    # file.save(file_path)
+    print('file saved!')
     # Handle Converting PDF to Text
     preprocessor = Preprocessor(file_path)
     phrases = []
     text = ""
+    i = 1
     for page in preprocessor.page_by_page():
         page = preprocess(page)
         phrases.append(page)
-        text += " " + page
-
+        text += page + " "
+        print(i)
+        i += 1
+    print(text)
     # Process the text    
     keywords = process(text, phrases, directory_path)
     
@@ -106,25 +125,31 @@ def uploadText():
         return {
             "error": "No text uploaded!"
         }, 422
-
-    cur_uuid = uuid.uuid1()
     
+    cur_uuid = uuid.uuid1()
     directory_path = 'data/' + str(cur_uuid)
-
+    
+    os.mkdir(directory_path)
+    
     # Preprocess the text
     phrases = []
     text = ""
     for phrase in text_payload.split('\n\n'):
+        print(phrase)
+        print(text_payload.split('\n\n'))
         phrase = preprocess(phrase)
         text += " " + phrase
 
+    print(7)
     # Process the text    
     keywords = process(text, phrases, directory_path)
+    print(8)
     
     return {
         "uuid" : cur_uuid,
         "topics": keywords,
     }
+    
 
 @app.route("/api/examSpecifications", methods=['POST'])
 def examSpecifications():

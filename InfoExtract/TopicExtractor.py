@@ -1,5 +1,5 @@
-from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
-
+from QAGen.utilities import tokenize_sentences, words_freq_dist, get_keywords, get_sentences_for_keyword
+from nltk import FreqDist
 
 class TopicExtractor:
 
@@ -24,6 +24,7 @@ class TopicExtractor:
     def extract_keywords(self, text, topics_num = 40):
         
         sentences = tokenize_sentences(text)
+        self.fdist = FreqDist(words_freq_dist(text))
         joiner = " "
         modified_text = joiner.join(sentences)
         
