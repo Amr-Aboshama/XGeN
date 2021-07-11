@@ -208,23 +208,25 @@ def examSpecifications():
         "mcq_questions" : mcq_questions, 
     }
     # Generate Boolean Questions
+    count += whq_count
+    while(i < len(filtered_phrases) and i < count):
+        print(0)
+        wh_questions.append(shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0]))
+        i += 1
+        print(1)
+        if i < len(filtered_phrases):
+            wh_questions.append(longGen.paraphrase(filtered_phrases[i][0]))
+            i += 1
+    # TODO : Filter Questions
+    print(7)
+    # Generate Boolean Questions
     count += boolq_count
     while(i < len(filtered_phrases) and i < count):
         bool_questions.append(boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0]))
         i += 1
     # TODO : Filter Questions
-    print(bool_questions)
+    print(8)
     
-    # Generate Boolean Questions
-    count += whq_count
-    while(i < len(filtered_phrases) and i < count):
-        print(0)
-        wh_questions.append(shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0]))
-        print(1)
-        wh_questions.append(longGen.paraphrase(filtered_phrases[i][0]))
-        i += 1
-    # TODO : Filter Questions
-    print(7)
     
     return {
         "wh_questions" : wh_questions,
