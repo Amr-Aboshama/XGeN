@@ -193,25 +193,26 @@ def get_keywords(nlp,text,max_keywords,s2v,fdist,normalized_levenshtein,no_of_se
         print(k, fdist[k])
     print(2)
     print(keywords)
-    keywords = filter_phrases(keywords, max_keywords,normalized_levenshtein )
-    print(3)
-    print(keywords)
+    # keywords = filter_phrases(keywords, max_keywords,normalized_levenshtein )
+    # print(3)
+    # print(keywords)
 
-    phrase_keys = get_phrases(doc)
-    filtered_phrases = filter_phrases(phrase_keys, max_keywords,normalized_levenshtein )
+    # phrase_keys = get_phrases(doc)
+    # filtered_phrases = filter_phrases(phrase_keys, max_keywords,normalized_levenshtein )
 
-    total_phrases = keywords + filtered_phrases
+    # total_phrases = keywords + filtered_phrases
 
-    total_phrases_filtered = filter_phrases(total_phrases, min(max_keywords, 2*no_of_sentences),normalized_levenshtein )
+    # total_phrases_filtered = filter_phrases(total_phrases, min(max_keywords, 2*no_of_sentences),normalized_levenshtein )
 
 
-    answers = []
-    for answer in total_phrases_filtered:
-        if answer not in answers and MCQs_available(answer,s2v):
-            answers.append(answer)
+    # answers = []
+    # for answer in total_phrases_filtered:
+    #     if answer not in answers and MCQs_available(answer,s2v):
+    #         answers.append(answer)
 
-    answers = answers[:max_keywords]
-    return answers
+    # answers = answers[:max_keywords]
+    # return answers
+    return keywords
 
 
 def random_choice():

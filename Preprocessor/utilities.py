@@ -26,7 +26,7 @@ def clean_text(text):
         # sentence.replace("•", " ")
         # sentence.replace("~", " ")
         # sentence.replace(",,", " ")
-        sentence = regex.sub("~|•|,,", " ", sentence)
+        sentence = regex.sub("~|•|,,|◆", " ", sentence)
         #garbage = regex.search("~|,,", sentence)
         #if garbage:
         #    print("garbage: ", sentence)

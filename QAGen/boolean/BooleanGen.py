@@ -13,9 +13,9 @@ class BoolGen(QGen):
         
 
     def predict_boolq(self, keywords, modified_text):
+        sentences = tokenize_sentences(modified_text)
         
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, modified_text)
-              
+        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)     
         for k in keyword_sentence_mapping.keys():
             text_snippet = " ".join(keyword_sentence_mapping[k][:3])
             keyword_sentence_mapping[k] = text_snippet

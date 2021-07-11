@@ -1,4 +1,5 @@
 from flask import Flask, request
+import ast
 import os
 import sys
 import uuid
@@ -75,7 +76,7 @@ def process(text, phrases, path):
     return keywords
 
 
-@app.route("/api/upload/PDF", methods=['POST'])
+@app.route("/api/upload/pdf", methods=['POST'])
 def uploadPDF():
     # file = request.files.get('pdf')
 
@@ -90,7 +91,6 @@ def uploadPDF():
     directory_path = 'data/' + str(cur_uuid)
     # os.mkdir(directory_path)
     sys.setrecursionlimit(1500)
-    print(sys.getrecursionlimit())
     
     file_path = directory_path + '/PDF.pdf'
 
@@ -107,9 +107,9 @@ def uploadPDF():
         text += page + " "
         print(i)
         i += 1
-    print(text)
+    
     # Process the text    
-    keywords = process(text, phrases, directory_path)
+    keywords = process(text, phrases, directory_path + '/')
     
     return {
         "uuid" : cur_uuid,
@@ -142,7 +142,7 @@ def uploadText():
 
     print(7)
     # Process the text    
-    keywords = process(text, phrases, directory_path)
+    keywords = process(text, phrases, directory_path + '/')
     print(8)
     
     return {
@@ -154,32 +154,34 @@ def uploadText():
 @app.route("/api/examSpecifications", methods=['POST'])
 def examSpecifications():
     cur_uuid = request.form.get('uuid')
-    selected_topics = request.form.getlist('topics')
-    whq_count = request.form.get('whq_count')
-    boolq_count = request.form.get('boolq_count')
-    tfq_count = request.form.get('tfq_count')
-    mcq_count = request.form.get('mcq_count')
-
+    selected_topics = request.form.get('topics')
+    whq_count = int(request.form.get('whq_count'))
+    boolq_count = int(request.form.get('boolq_count'))
+    tfq_count = int(request.form.get('tfq_count'))
+    mcq_count = int(request.form.get('mcq_count'))
+    
     directory_path = 'data/' + str(cur_uuid)
 
     wh_questions = []
     bool_questions = []
     tf_questions = []
     mcq_questions = []
-
+    # Convert it from string to list
+    selected_topics = ast.literal_eval(selected_topics)
+    
     # Load the user paragraphs & topics
     phrases = {}
-    with open(directory_path + "paragraph_topics.txt", 'r') as file:
+    with open(directory_path + "/paragraph_topics.txt", 'r') as file:
         while True:
             phrase = file.readline()
             if not phrase:
                 break
             topics = file.readline().split(';')
             phrases[phrase] = topics
-
+    
     # Filter The paragraphs based on the selected topics
     filtered_phrases = rank_phrases(selected_topics, phrases)
-
+    
     # Generate MCQ Questions
     i = 0
     count = mcq_count
@@ -188,31 +190,42 @@ def examSpecifications():
         i += 1
     # TODO : Filter Questions
     
+    
     # Generate TF Questions
     count += tfq_count
     while(i < len(filtered_phrases) and i < count):
         tf_questions.append(tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0]))
         i += 1
     # TODO : Filter Questions
-
+    #print(tf_questions)
+    return {
+        "wh_questions" : wh_questions,
+        "bool_questions" : bool_questions,
+        "tf_questions" : tf_questions,
+        "mcq_questions" : mcq_questions, 
+    }
     # Generate Boolean Questions
     count += boolq_count
     while(i < len(filtered_phrases) and i < count):
         bool_questions.append(boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0]))
         i += 1
     # TODO : Filter Questions
-
+    print(bool_questions)
+    
     # Generate Boolean Questions
     count += whq_count
     while(i < len(filtered_phrases) and i < count):
+        print(0)
         wh_questions.append(shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0]))
+        print(1)
         wh_questions.append(longGen.paraphrase(filtered_phrases[i][0]))
         i += 1
     # TODO : Filter Questions
-
+    print(7)
+    
     return {
         "wh_questions" : wh_questions,
         "bool_questions" : bool_questions,
         "tf_questions" : tf_questions,
-        "mc_questions" : mcq_questions, 
+        "mcq_questions" : mcq_questions, 
     }

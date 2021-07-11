@@ -20,9 +20,10 @@ def rank_phrases(selected_keywords, phrases):
     ranked_phrases = []
     
     for phrase in phrases:
+        topics = []
         for key in selected_keywords:
             if key in phrases[phrase]:
-                ranked_phrases.append((phrase, phrases[phrase]))
-                break
+                topics.append(key)
+        ranked_phrases.append((phrase, topics))
     
     return ranked_phrases

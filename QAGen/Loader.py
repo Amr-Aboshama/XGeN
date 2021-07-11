@@ -20,8 +20,8 @@ class Loader:
         self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
         
-        #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        #self.qg_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/question_generator").to(self.device)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.qg_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/question_generator").to(self.device)
         #self.bq_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/t5_boolean_questions").to(self.device)
         #self.ap_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/answer_predictor").to(self.device) 
         
@@ -31,7 +31,7 @@ class Loader:
         # self.fdist = None
         # self.normalized_levenshtein = None
         
-        self.device = None
-        self.qg_model = None
+        #self.device = None
+        #self.qg_model = None
         self.bq_model = None
         self.ap_model = None   

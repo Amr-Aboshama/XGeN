@@ -1,7 +1,9 @@
 import re
 import random
-from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, \
-                            get_options
+from difflib import SequenceMatcher
+#from nltk.stem import PorterStemmer
+
+from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword, get_options
 from QAGen.QGen import QGen
 
 
@@ -13,28 +15,52 @@ class TFGen(QGen):
 
     def predict_tf(self, keywords, modified_text):
 
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, modified_text)
-              
-        for k in keyword_sentence_mapping.keys():
-            text_snippet = " ".join(keyword_sentence_mapping[k][:3])
-            keyword_sentence_mapping[k] = text_snippet
-
+        sentences = tokenize_sentences(modified_text.replace(".",". "))
+        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
         
         output_array ={}
         output_array["questions"] =[]
 
+        used_sentences = []
+        #key = random.choice(list(keyword_sentence_mapping.keys()))
         for key in keyword_sentence_mapping.keys():
+            # choosing a sentence not used before
             sentence = keyword_sentence_mapping[key][0]
-            
+            found_sentence = False
+            for sentence in keyword_sentence_mapping[key]:
+                if sentence not in used_sentences:
+                    used_sentences.append(sentence)
+                    found_sentence = True
+                    break
+            if not found_sentence:
+                break
+
             answer = "T"
             # Make a false question
-            if(bool(random.getrandbits(1))):
-                options = get_options(key, self.s2v)
-                correction = options[0][0] + " -> " + key
-                answer = "F,        " + correction
-                sentence = re.sub(re.escape(key), options[0][0], sentence, flags=re.IGNORECASE)
-            
-            output_array["questions"].append({"question": sentence, "answer": answer})
-                    
+            if(bool(random.getrandbits(1)) and sentence.find(key) != -1):
+                option = self.find_alternative(key)
+                if option != key:
+                    correction = option + " -> " + key
+                    answer = "F,        " + correction
+                    sentence = re.sub(re.escape(key), option, sentence, flags=re.IGNORECASE)
+            question = {"question": sentence, "answer": answer}
+        #if(question not in output_array["questions"]):    
+            output_array["questions"].append(question)
+                
         return output_array
+
     
+    def find_alternative(self, key):
+        options = get_options(key, self.s2v)
+        
+        #if len(options[0]):
+        #    option = options[0][0]
+            # Note: The next line may cause an infinite loop
+            #while SequenceMatcher(None, option.lower(), key.lower()).ratio() > 0.7:
+            #    print(option, key, SequenceMatcher(None, option, key).ratio())
+            #    option = random.choice(options[0])
+        for option in options[0]:
+            if SequenceMatcher(None, option.lower(), key.lower()).ratio() < 0.7:
+                #print(option, key, SequenceMatcher(None, option, key).ratio())
+                return option
+        return key
