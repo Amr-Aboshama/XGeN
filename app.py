@@ -84,7 +84,7 @@ def uploadPDF():
     preprocessor = Preprocessor(file_path)
     phrases = []
     text = ""
-    for page in preprocessor.page_by_page():   # TODO: Check more arguments
+    for page in preprocessor.page_by_page():
         page = preprocess(page)
         phrases.append(page)
         text += " " + page
