@@ -17,7 +17,7 @@ class Loader:
         self.s2v = Sense2Vec().from_disk(os.getcwd()+"/QAGen/models/s2v_old")
         # self.fdist = FreqDist(brown.words())
         self.fdist = None
-        self.fdist = FreqDist()
+        # self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

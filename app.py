@@ -1,5 +1,6 @@
 from flask import Flask, request
 import ast
+from flask_cors import CORS
 import os
 import sys
 import uuid
@@ -44,7 +45,7 @@ print("Done TopicExtractor")
 
 
 app = Flask(__name__)
-
+CORS(app)
 
 
 def preprocess(phrase):
@@ -78,7 +79,7 @@ def process(text, phrases, path):
 
 @app.route("/api/upload/pdf", methods=['POST'])
 def uploadPDF():
-    # file = request.files.get('pdf')
+    file = request.files.get('file')
 
     # if file is None:
     #     return {
@@ -96,6 +97,7 @@ def uploadPDF():
 
     # file.save(file_path)
     print('file saved!')
+
     # Handle Converting PDF to Text
     preprocessor = Preprocessor(file_path)
     phrases = []
@@ -115,6 +117,7 @@ def uploadPDF():
         "uuid" : cur_uuid,
         "topics": keywords,
     }
+    
 
 
 @app.route("/api/upload/text", methods=['POST'])
@@ -135,20 +138,20 @@ def uploadText():
     phrases = []
     text = ""
     for phrase in text_payload.split('\n\n'):
-        print(phrase)
-        print(text_payload.split('\n\n'))
+        #print(phrase)
+        #print(text_payload.split('\n\n'))
         phrase = preprocess(phrase)
         text += " " + phrase
 
-    print(7)
-    # Process the text    
-    keywords = process(text, phrases, directory_path + '/')
-    print(8)
+    # print(7)
+    # # Process the text    
+    keywords = process(text, phrases, directory_path)
+    # print(8)
     
-    return {
-        "uuid" : cur_uuid,
-        "topics": keywords,
-    }
+    # return {
+    #     "uuid" : cur_uuid,
+    #     "topics": keywords,
+    # }
     
 
 @app.route("/api/examSpecifications", methods=['POST'])
