@@ -3,8 +3,7 @@ from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_
 
 class TopicExtractor:
 
-    def __init__(self, loader):
-        pass
+    # def __init__(self, loader):
         # self.nlp = loader.nlp
         # self.s2v = loader.s2v
         # self.fdist = loader.fdist
