@@ -125,13 +125,14 @@ def filter_phrases(phrase_keys,max,normalized_levenshtein ):
     return filtered_phrases
 
 
-def get_nouns_multipartite(text):
+def get_nouns_multipartite(text, max_topics=15):
     out = []
 
     extractor = pke.unsupervised.MultipartiteRank()
     extractor.load_document(input=text, language='en')
     pos = {'PROPN', 'NOUN'}
     stoplist = list(string.punctuation)
+    stoplist += ['-lrb-', '-rrb-', '-lcb-', '-rcb-', '-lsb-', '-rsb-']
     stoplist += stopwords.words('english')
     extractor.candidate_selection(pos=pos, stoplist=stoplist)
     # 4. build the Multipartite graph and rank candidates using random walk,
@@ -139,12 +140,12 @@ def get_nouns_multipartite(text):
     #    threshold/method parameters.
     try:
         extractor.candidate_weighting(alpha=1.1,
-                                      threshold=0.75,
+                                      threshold=0.74,
                                       method='average')
     except:
         return out
 
-    keyphrases = extractor.get_n_best(n=10)
+    keyphrases = extractor.get_n_best(n=max_topics)
 
     for key in keyphrases:
         out.append(key[0])
