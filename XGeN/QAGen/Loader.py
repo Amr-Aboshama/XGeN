@@ -10,10 +10,10 @@ from similarity.normalized_levenshtein import NormalizedLevenshtein
 
 class Loader:
     def __init__(self
-    , s2v_model_path = 's2v_old'
-    , qg_model_path = 'Parth/result'
-    , bq_model_path = 'ramsrigouthamg/t5_boolean_questions'
-    , ap_model_path = 'Parth/boolean'
+    , s2v_model_path = os.getcwd()+"/QAGen/models/s2v_old"
+    , qg_model_path = os.getcwd()+"/QAGen/models/question_generator"
+    , bq_model_path = os.getcwd()+"/QAGen/models/t5_boolean_questions"
+    , ap_model_path = os.getcwd()+"/QAGen/models/answer_predictor"
     , t5_tokenizer_path = 't5-base'):
         
         self.tokenizer = T5Tokenizer.from_pretrained(t5_tokenizer_path)
@@ -24,8 +24,8 @@ class Loader:
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.qg_model = T5ForConditionalGeneration.from_pretrained(qg_model_path).to(self.device)
-        self.bq_model = T5ForConditionalGeneration.from_pretrained(bq_model_path).to(self.device)
-        self.ap_model = T5ForConditionalGeneration.from_pretrained(ap_model_path).to(self.device) 
+        #self.bq_model = T5ForConditionalGeneration.from_pretrained(bq_model_path).to(self.device)
+        #self.ap_model = T5ForConditionalGeneration.from_pretrained(ap_model_path).to(self.device) 
         
         #self.tokenizer = None
         self.nlp = None
@@ -35,5 +35,5 @@ class Loader:
         
         #self.device = None
         #self.qg_model = None
-        # self.bq_model = None
-        # self.ap_model = None   
+        self.bq_model = None
+        self.ap_model = None   
