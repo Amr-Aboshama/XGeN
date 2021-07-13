@@ -1,5 +1,6 @@
 import re
 import random
+from typing import Set
 import torch
 from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, get_options
 
@@ -39,27 +40,31 @@ class BoolGen(QGen):
                                         no_repeat_ngram_size=2,
                                         early_stopping=True
                                         )
-        output_array ={}
-        output_array["questions"] =[]
+        #output_array = []
+        #output_array["questions"] =[]
         
         for index, val in enumerate(answers):
             out = outs[index, :]
             print(0)
             dec = self.tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             print(1)
-            answer = "Yes, "
+            s = set()
+            answer = "Yes"
             correction = ""
             # Make a false question
             if(bool(random.getrandbits(1)) and dec.find(val) != -1):
                 options = get_options(val, self.s2v)
-                answer = "No, "
-                correction = options[0][0] + " -> " + val
-                dec = re.sub(re.escape(val), options[0][0], dec, flags=re.IGNORECASE)
-            answer += keyword_sentence_mapping[val]
-            output_array["questions"].append({"question": dec, "answer": answer, "correction": correction})
+                if len(options[0]):
+                    answer = "No"
+                    correction = options[0][0] + " -> " + val
+                    dec = re.sub(re.escape(val), options[0][0], dec, flags=re.IGNORECASE)
+            #answer += ", " + keyword_sentence_mapping[val]
+            #output_array["questions"].append({"question": dec, "answer": answer, "correction": correction})
+            s.add((dec, answer, correction))
+            #output_array.append((dec, answer, correction))
         
         if torch.device=='cuda':
             torch.cuda.empty_cache()
         
-        return output_array
-    
+        #return output_array
+        return list(s)

@@ -145,13 +145,13 @@ def uploadText():
 
     # print(7)
     # # Process the text    
-    keywords = process(text, phrases, directory_path)
+    keywords = process(text, phrases, directory_path + '/')
     # print(8)
     
-    # return {
-    #     "uuid" : cur_uuid,
-    #     "topics": keywords,
-    # }
+    return {
+        "uuid" : cur_uuid,
+        "topics": keywords,
+    }
     
 
 @app.route("/api/examSpecifications", methods=['POST'])
@@ -170,7 +170,9 @@ def examSpecifications():
     tf_questions = []
     mcq_questions = []
     # Convert it from string to list
+    #print(selected_topics)
     selected_topics = ast.literal_eval(selected_topics)
+    #print(selected_topics)
     
     # Load the user paragraphs & topics
     phrases = {}
@@ -189,44 +191,37 @@ def examSpecifications():
     i = 0
     count = mcq_count
     while(i < len(filtered_phrases) and i < count):
-        mcq_questions.append(mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0]))
+        mcq_questions += mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
     # TODO : Filter Questions
-    
+    print("Done MCQ")
     
     # Generate TF Questions
     count += tfq_count
     while(i < len(filtered_phrases) and i < count):
-        tf_questions.append(tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0]))
+        tf_questions += tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
     # TODO : Filter Questions
-    #print(tf_questions)
-    return {
-        "wh_questions" : wh_questions,
-        "bool_questions" : bool_questions,
-        "tf_questions" : tf_questions,
-        "mcq_questions" : mcq_questions, 
-    }
-    # Generate Boolean Questions
+    print("Done TF")
+    
+    # Generate WH Questions
     count += whq_count
     while(i < len(filtered_phrases) and i < count):
-        print(0)
-        wh_questions.append(shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0]))
+        wh_questions += shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
-        print(1)
-        if i < len(filtered_phrases):
-            wh_questions.append(longGen.paraphrase(filtered_phrases[i][0]))
-            i += 1
+        #if(i < len(filtered_phrases) and i < count):
+        #    wh_questions += longGen.paraphrase(filtered_phrases[i][0])
+        #    i += 1
     # TODO : Filter Questions
-    print(7)
+    print("Done WH")
+    
     # Generate Boolean Questions
     count += boolq_count
     while(i < len(filtered_phrases) and i < count):
-        bool_questions.append(boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0]))
+        bool_questions += boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
     # TODO : Filter Questions
-    print(8)
-    
+    print("Done Boolean")    
     
     return {
         "wh_questions" : wh_questions,
