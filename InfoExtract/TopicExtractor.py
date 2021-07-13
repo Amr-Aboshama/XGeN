@@ -1,14 +1,13 @@
-from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
+from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, get_nouns_multipartite
 
 
 class TopicExtractor:
 
-    def __init__(self, loader):
-        
-        self.nlp = loader.nlp
-        self.s2v = loader.s2v
-        self.fdist = loader.fdist
-        self.normalized_levenshtein = loader.normalized_levenshtein
+    # def __init__(self, loader):
+        # self.nlp = loader.nlp
+        # self.s2v = loader.s2v
+        # self.fdist = loader.fdist
+        # self.normalized_levenshtein = loader.normalized_levenshtein
 
     # payload: {"paragraph1":["topic1","topic2"], "paragraph2":["topic1","topic3"]}
     def write_paragraphs_topics(self, payload, output_directory):
@@ -29,8 +28,9 @@ class TopicExtractor:
         joiner = " "
         modified_text = joiner.join(sentences)
         
-        keywords = get_keywords(self.nlp,modified_text,topics_num,self.s2v,self.fdist,self.normalized_levenshtein,len(sentences) )
+        keywords = get_nouns_multipartite(modified_text, topics_num)
 
+        # keywords = get_keywords(self.nlp,modified_text,topics_num,self.s2v,self.fdist,self.normalized_levenshtein,len(sentences) )
         # keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
 
         # for k in keyword_sentence_mapping.keys():
