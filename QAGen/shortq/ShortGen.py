@@ -22,7 +22,7 @@ class ShortGen(QGen):
 
         if len(keyword_sentence_mapping.keys()) == 0:
             print('ZERO')
-            return final_output
+            return []
         else:
             
             generated_questions = self.__generate_normal_questions(keyword_sentence_mapping,self.device,self.tokenizer,self.qg_model)
@@ -59,7 +59,7 @@ class ShortGen(QGen):
         #output_array["questions"] =[]
         
         for index, val in enumerate(answers):
-            individual_quest= {}
+            #individual_quest= {}
             out = outs[index, :]
             dec = tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             
