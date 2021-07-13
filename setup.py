@@ -5,7 +5,20 @@ setup(name='XGeN',
       description='Exam Generator from PDF or text',
       author='XGeN Team - CUFE',
       author_email='am.aboshama98@gmail.com',
-      packages=['XGeN', 'XGeN.InfoExtract', 'XGeN.Preprocessor', 'XGeN.QAGen', 'XGeN.Ranker'],
+      packages=[
+        'XGeN',
+        'XGeN.InfoExtract',
+        'XGeN.Preprocessor',
+        'XGeN.QAGen',
+        'XGeN.Ranker',
+        'XGeN.QAGen.anspred',
+        'XGeN.QAGen.boolean',
+        'XGeN.QAGen.longq',
+        'XGeN.QAGen.mcq',
+        'XGeN.QAGen.shortq',
+        'XGeN.QAGen.tf',
+        'XGeN.QAGen.encoding'
+        ],
       url="https://github.com/Amr-Aboshama/XGeN",
       install_requires=[
          
@@ -35,5 +48,4 @@ setup(name='XGeN',
         'Flask==2.0.1',
         'Flask-Cors==3.0.10',
         'flask-ngrok==0.0.25'
-      ]
-      )
+      ])
