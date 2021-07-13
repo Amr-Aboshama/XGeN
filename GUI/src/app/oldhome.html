@@ -1,0 +1,88 @@
+<!---->
+
+<!-- Page Wrapper style="background: url(assets/paper3.jpg)"-->
+<div style="background: url(assets/orange.jpg)"    class="page-holder bg-cover">
+
+  <div class="container">
+    <header class="text-center text-white py-2">
+      <h1 style="color: black" class="display-4 font-weight-bold mb-4">Welcome to XGeN</h1>
+
+      <!-- <p style="color: black" class="lead mb-0">Create a full exam from plaintext or PDF using our site</p> -->
+    </header>
+    <div id="demo" class="carousel slide" data-ride="carousel">
+
+      <!-- Indicators -->
+      <ul class="carousel-indicators">
+        <li data-target="#demo" data-slide-to="0" class="active"></li>
+        <li data-target="#demo" data-slide-to="1"></li>
+        <li data-target="#demo" data-slide-to="2"></li>
+      </ul>
+
+      <!-- The slideshow -->
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="assets/img1.jpg" alt="Los Angeles" width="1100" height="500">
+        </div>
+        <div class="carousel-item">
+          <img src="assets/wel.jpg" alt="Chicago" width="1100" height="500">
+        </div>
+        <div class="carousel-item">
+          <img src="assets/wel.jpg" alt="New York" width="1100" height="500">
+        </div>
+      </div>
+
+      <!-- Left and right controls -->
+      <a class="carousel-control-prev" href="#demo" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </a>
+      <a class="carousel-control-next" href="#demo" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </a>
+    </div>
+
+    <div class="jumbotron">
+
+      <div class="mb-2">
+        <form [formGroup]="this.TextForm">
+          <div class="form-group">
+        <label id = "normal" for="exampleFormControlTextarea1" class="form-label">Please enter text to generate exam</label>
+        <textarea formControlName="Text" class="form-control"  id="exampleFormControlTextarea1" rows="10"></textarea>
+        <p class="lead" style="padding: 10px;">
+          <!--<a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
+          <button type="button"
+          style="color: black;"
+          [disabled]="TextForm.invalid"
+          [ngStyle]="{'background-color': TextForm.invalid? '#ec1f1f' : '#fc9003'}"
+          (click)="SendText()"
+          class="btn btn-outline-warning">Generate</button>
+        </div>
+        </form>
+      </div>
+
+
+      <div class="mb-3">
+        <form [formGroup]="this.PDFForm">
+          <div class="form-group">
+            <label id="normal" for="formFile" class="form-label">OR upload PDF</label>
+            <br>
+            <input ng2FileSelect type="file" accept=".pdf" [uploader]="uploader"/>
+        <p class="lead" style="padding: 10px;">
+          <!--<a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
+          <button type="button"
+          style="color: black;"
+          [disabled]="PDFForm.invalid"
+          [ngStyle]="{'background-color': PDFForm.invalid? '#ec1f1f' : '#fc9003'}"
+          (click)="SendPDF()"
+          class="btn btn-outline-warning">Generate</button>
+        </div>
+
+        </form>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+

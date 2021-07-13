@@ -1,0 +1,172 @@
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+        <h2>Welcome</h2>
+        <ol>
+          <li><p>create a full exam from plaintext or PDF </p></li>
+
+        </ol>
+
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Team Section ======= -->
+    <section id="team" class="team">
+      <div class="container">
+
+        <div class="row">
+          <!-- add d-flex if u want to-->
+          <div class="col-lg-12 col-md-6 align-items-stretch">
+            <div class="member">
+
+              <h4>Topics</h4>
+              <span>Please choose which topics you want to include in the exam</span>
+                <hr>
+              <div class="hor">
+                <div class="mb-3" *ngFor="let topic of Topics; let i = index">
+                  <button type="button"
+                  (click)="SelorUnsel(topic,i)"
+                  [ngStyle]="{'background-color': topic.selected? '#fc9003' : '#e0ded7'}"
+                  class="btn btn-outline-dark" > + {{ topic.topic }}
+                </button>
+                </div>
+              </div>
+              <!--
+                <button type="button" class="btn btn-primary btn-block"
+                (click)="SubmitTopics()"
+                >submit</button>-->
+
+
+              <p style="color:white">
+                Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut autc;nxn lnlxcnklknkln
+              </p>
+
+            </div>
+          </div>
+
+
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+
+    <!-- ======= Enter topic section ======= -->
+    <section id="team" class="team">
+      <div class="container">
+
+        <div class="row">
+          <!-- add d-flex if u want to-->
+          <div class="col-lg-12 col-md-6 align-items-stretch">
+            <div class="member">
+
+              <h4>Topics</h4>
+              <span>OR Enter a specific topic you want to include</span>
+                <hr>
+                <form [formGroup]="this.UserTopics">
+                <p class="lead" style="padding: 10px;"></p>
+                <label id = "normal" class="form-label">Please enter the topic you want :</label>
+                <input formControlName="UserT"  style="margin: 100px;" type="text" style="text-align: center;" class="form-control" >
+                <br>
+                <button type="button"
+                (click)="AddTopic()"
+                style="color: black;"
+                class="btn btn-outline-warning">Add</button>
+              </form>
+                <br>
+              <div class="hor" *ngIf="this.UserAddedTopics">
+                <div class="mb-3" *ngFor="let topic of UserAddedTopics">
+                  <button type="button"
+                  (click)="delUserTopic(topic)"
+                  [ngStyle]="{'background-color': '#fc9003'}"
+                  class="btn btn-outline-dark" > + {{ topic }}
+                </button>
+                </div>
+              </div>
+
+
+
+
+              <!-- <div class="hor">
+                <div class="mb-3" *ngFor="let topic of Topics; let i = index">
+                  <button type="button"
+                  (click)="SelorUnsel(topic,i)"
+                  [ngStyle]="{'background-color': topic.selected? '#fc9003' : '#e0ded7'}"
+                  class="btn btn-outline-dark" > + {{ topic.topic }}
+                </button>
+                </div>
+              </div> -->
+              <!--
+                <button type="button" class="btn btn-primary btn-block"
+                (click)="SubmitTopics()"
+                >submit</button>-->
+
+
+              <p style="color:white">
+                Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut autc;nxn lnlxcnklknkln
+              </p>
+
+            </div>
+          </div>
+
+
+
+        </div>
+
+      </div>
+    </section><!-- End enter topic Section -->
+
+    <section id="team" class="team">
+      <div class="container">
+
+        <div class="row">
+          <div class="col-lg-12 col-md-6 align-items-stretch">
+            <div class="member">
+
+              <h4>Questions</h4>
+              <span>Please choose how many questions you want of each type</span>
+                <hr>
+
+                <form [formGroup]="this.QForm">
+                  <div class="form-group">
+                <label id = "normal" for="exampleFormControlTextarea1" class="form-label">Please enter number of WH-questions</label>
+                <input type="number" style="text-align: center;"  min="0" formControlName="WH" class="form-control">
+                <p class="lead" style="padding: 10px;"></p>
+                <label id = "normal"  for="exampleFormControlTextarea1" class="form-label">Please enter number of True/False questions</label>
+                <input type="number" style="text-align: center;" min="0"  formControlName="TF" class="form-control">
+                <p class="lead" style="padding: 10px;"></p>
+                <label id = "normal"  for="exampleFormControlTextarea1" class="form-label">Please enter number of Boolean questions</label>
+                <input type="number" style="text-align: center;"  min="0"  formControlName="Booln" class="form-control">
+                <p class="lead" style="padding: 10px;"></p>
+                <label id = "normal"  for="exampleFormControlTextarea1" class="form-label">Please enter number of MCQ's questions</label>
+                <input type="number"  style="text-align: center;"min="0"  formControlName="MCQ" class="form-control">
+                <br>
+                  <!-- <a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
+                  <button type="button"
+                  (click)="submit()"
+                  style="color: black;"
+                [disabled]="QForm.invalid"
+                  class="btn btn-outline-warning">Generate</button>
+
+                </div>
+                </form>
+
+
+              <p style="color:white">
+                Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut autc;nxn lnlxcnklknkln
+              </p>
+
+            </div>
+          </div>
+
+
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+
+

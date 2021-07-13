@@ -1,0 +1,109 @@
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+        <h2>Welcome</h2>
+        <ol>
+          <li><p>create a full exam from plaintext or PDF </p></li>
+
+        </ol>
+
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Team Section ======= -->
+    <section id="team" class="team">
+      <div class="container">
+
+        <div class="row">
+          <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+            <div class="member">
+              <img src="assets/plain.png" alt="">
+
+              <form [formGroup]="this.TextForm">
+                <div class="form-group">
+              <label id = "normal" for="exampleFormControlTextarea1" class="form-label">Please enter text to generate exam</label>
+              <textarea formControlName="Text" class="form-control"  id="exampleFormControlTextarea1" rows="10"></textarea>
+              <p class="lead" style="padding: 10px;">
+                 <!--LOADER-->
+                 <div class="d-flex justify-content-center" *ngIf="isLoadingText" >
+                  <div class="spinner-border" role="status" >
+                    <span class="sr-only" id="loading"></span>
+                  </div>
+                </div>
+                <!--END LOADER-->
+                <!--<a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
+                <button type="button"
+                style="color: black;"
+                [disabled]="TextForm.invalid"
+
+                (click)="SendText()"
+                class="btn btn-outline-warning">Generate</button>
+
+              </div>
+              </form>
+              <p style="color:white">
+                Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut autc;nxn lnlxcnklknkln
+              </p>
+
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+            <div class="member">
+              <img src="assets/pdf0.png" alt="">
+
+
+                <div class="form-group">
+                  <label id="normal" for="formFile" class="form-label">OR upload PDF</label>
+                  <br>
+                 <!--  --> <div  class="in">
+           <!--       <input ng2FileSelect type="file" accept=".pdf" [uploader]="uploader"/>-->
+
+           <div class="form-group">
+            <label for="file">Choose File</label>
+            <input type="file"
+                   id="file"
+                   (change)="handleFileInput($event)">
+        </div>
+                </div>
+              <p class="lead" style="padding: 10px;">
+                <div  class="rapper">
+                  <!--LOADER-->
+                  <div class="d-flex justify-content-center" *ngIf="isLoadingPDF" >
+                    <div class="spinner-border" role="status" >
+                      <span class="sr-only" id="loading"></span>
+                    </div>
+                  </div>
+                  <!--END LOADER-->
+                <!--<a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
+                <button type="button"
+                style="color: black;"
+                [disabled]="!Allow"
+                (click)="uploadFileToActivity()"
+                class="btn btn-outline-warning">Generate</button>
+              </div>
+              </div>
+
+
+<!--
+              <button type="button"
+              style="color: black;"
+              (click)="getTopics()"
+              class="btn btn-outline-dark">Generate</button> -->
+
+
+              <div class="social">
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+
+

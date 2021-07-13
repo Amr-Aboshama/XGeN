@@ -1,0 +1,32 @@
+div {
+  padding-left: 30px;
+}
+.page-holder {
+  min-height: 100vh;
+}
+
+.hor{
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap:wrap;
+
+}
+.bg-cover {
+  background-size: cover !important;
+}
+
+#normal {
+  font-style: oblique;
+
+}
+
+.white {
+  background-color: white;
+}
+
+.orange {
+  background-color: rgb(255, 153, 0);
+}
+.selected-color{
+  background-color: red;
+}
