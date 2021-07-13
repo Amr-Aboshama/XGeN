@@ -3,7 +3,6 @@ from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
 
 
 MAX_PAGES = 1500
