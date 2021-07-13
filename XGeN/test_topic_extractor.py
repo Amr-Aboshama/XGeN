@@ -1,4 +1,4 @@
-from InfoExtract.TopicExtractor import TopicExtractor
+from XGeN.InfoExtract.TopicExtractor import TopicExtractor
 from XGeN.QAGen.Loader import Loader
 
 payload = {

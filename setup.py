@@ -36,5 +36,4 @@ setup(name='XGeN',
         'Flask-Cors==3.0.10',
         'flask-ngrok==0.0.25'
       ]
-    #   ,package_data={'XGeN': ['questgen.py', 'mcq.py', 'train_gpu.py', 'encoding.py']}
       )
