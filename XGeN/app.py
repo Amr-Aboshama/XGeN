@@ -237,5 +237,5 @@ def examSpecifications():
         "mcq_questions" : mcq_questions, 
     }
 
-if __name__ == "__main__":
+def run():
     app.run()
