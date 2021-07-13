@@ -125,7 +125,7 @@ def filter_phrases(phrase_keys,max,normalized_levenshtein ):
     return filtered_phrases
 
 
-def get_nouns_multipartite(text, max_topics=15):
+def get_nouns_multipartite(text, max_topics=40):
     out = []
 
     extractor = pke.unsupervised.MultipartiteRank()
