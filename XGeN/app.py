@@ -22,10 +22,15 @@ from XGeN.QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 from XGeN.Ranker.Ranker import filter_phrases, rank_phrases
 
+
+
+
+
 # loader = Loader(os.getcwd()+"/XGeN/QAGen/models/s2v_old",
 #                 os.getcwd()+"/XGeN/QAGen/models/question_generator",
 #                 os.getcwd()+"/XGeN/QAGen/models/t5_boolean_questions".
 #                 os.getcwd()+"/XGeN/QAGen/models/answer_predictor")
+
 
 loader = Loader()
 
@@ -50,10 +55,23 @@ topicExtract = TopicExtractor()
 print("Done TopicExtractor")
 
 
+if not os.path.exists('data'):
+    os.mkdir('data')
+
 app = Flask(__name__)
 CORS(app)
 run_with_ngrok(app)   
 
+
+def download():
+    import nltk
+    nltk.download('punkt')
+    nltk.download('brown')
+    nltk.download('stopwords')
+    nltk.download('popular')
+
+def run():
+    app.run()
 
 def preprocess(phrase):
     phrase = clean_text(phrase)
@@ -236,6 +254,3 @@ def examSpecifications():
         "tf_questions" : tf_questions,
         "mcq_questions" : mcq_questions, 
     }
-
-def run():
-    app.run()
