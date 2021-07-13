@@ -40,7 +40,7 @@ print("Done LongGen")
 ansPredict = AnswerPredictor(loader)
 print("Done AnswerPredictor")
 
-topicExtract = TopicExtractor(loader)
+topicExtract = TopicExtractor()
 print("Done TopicExtractor")
 
 

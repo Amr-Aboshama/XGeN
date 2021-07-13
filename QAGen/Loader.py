@@ -11,13 +11,10 @@ from similarity.normalized_levenshtein import NormalizedLevenshtein
 class Loader:
     def __init__(self):
         
-        # self.nlp = spacy.load('en_core_web_sm')
-        self.nlp = None
-        print("#################################################################################")
+        self.tokenizer = T5Tokenizer.from_pretrained('t5-base')
+        self.nlp = spacy.load('en_core_web_sm')
         self.s2v = Sense2Vec().from_disk(os.getcwd()+"/QAGen/models/s2v_old")
-        # self.fdist = FreqDist(brown.words())
-        self.fdist = None
-        # self.fdist = FreqDist()
+        self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -27,9 +24,9 @@ class Loader:
         
         #self.tokenizer = None
         #self.nlp = None
-        # self.s2v = None
-        # self.fdist = None
-        # self.normalized_levenshtein = None
+        #self.s2v = None
+        #self.fdist = None
+        #self.normalized_levenshtein = None
         
         #self.device = None
         #self.qg_model = None
