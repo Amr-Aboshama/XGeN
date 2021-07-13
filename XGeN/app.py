@@ -1,6 +1,5 @@
 from flask import Flask, request
 from flask_ngrok import run_with_ngrok
-import ast
 from flask_cors import CORS
 import os
 import sys
@@ -196,8 +195,6 @@ def examSpecifications():
     tf_questions = []
     mcq_questions = []
     # Convert it from string to list
-    #print(selected_topics)
-    selected_topics = ast.literal_eval(selected_topics)
     #print(selected_topics)
     
     # Load the user paragraphs & topics
