@@ -209,7 +209,13 @@ def examSpecifications():
                 break
             topics = file.readline().split(';')
             phrases[phrase] = topics
-    
+            
+            # Add the new topics to the phrases
+            for keyword in selected_topics:
+                keyword = keyword.lower()
+                if keyword not in topics and phrase.lower().find(keyword) != -1:
+                    phrases[phrase].insert(0,keyword)
+            
     # Filter The paragraphs based on the selected topics
     filtered_phrases = rank_phrases(selected_topics, phrases)
     
