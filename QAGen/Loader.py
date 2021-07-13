@@ -34,5 +34,5 @@ class Loader:
         
         #self.device = None
         #self.qg_model = None
-        self.bq_model = None
-        self.ap_model = None   
+        # self.bq_model = None
+        # self.ap_model = None   

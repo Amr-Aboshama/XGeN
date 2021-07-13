@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_ngrok import run_with_ngrok
 import ast
 from flask_cors import CORS
 import os
@@ -50,6 +51,7 @@ print("Done TopicExtractor")
 
 app = Flask(__name__)
 CORS(app)
+run_with_ngrok(app)   
 
 
 def preprocess(phrase):
@@ -85,21 +87,21 @@ def process(text, phrases, path):
 def uploadPDF():
     file = request.files.get('file')
 
-    # if file is None:
-    #     return {
-    #         "error": "No file uploaded!"
-    #     }, 422
+    if file is None:
+        return {
+            "error": "No file uploaded!"
+        }, 422
 
-    # cur_uuid = uuid.uuid1()
-    cur_uuid = uuid.UUID('9001a540-e1f0-11eb-92bf-0be814cdc50d')
+    cur_uuid = uuid.uuid1()
+    # cur_uuid = uuid.UUID('9001a540-e1f0-11eb-92bf-0be814cdc50d')
         
     directory_path = 'data/' + str(cur_uuid)
-    # os.mkdir(directory_path)
+    os.mkdir(directory_path)
     sys.setrecursionlimit(1500)
     
     file_path = directory_path + '/PDF.pdf'
 
-    # file.save(file_path)
+    file.save(file_path)
     print('file saved!')
 
     # Handle Converting PDF to Text
@@ -233,3 +235,6 @@ def examSpecifications():
         "tf_questions" : tf_questions,
         "mcq_questions" : mcq_questions, 
     }
+
+if __name__ == "__main__":
+    app.run()
