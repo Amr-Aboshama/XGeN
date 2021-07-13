@@ -9,18 +9,22 @@ from similarity.normalized_levenshtein import NormalizedLevenshtein
 
 
 class Loader:
-    def __init__(self):
+    def __init__(self
+    , qg_model_path = 'Parth/result'
+    , bq_model_path = 'ramsrigouthamg/t5_boolean_questions'
+    , ap_model_path = 'Parth/boolean'
+    , t5_tokenizer_path = 't5-base'):
         
-        self.tokenizer = T5Tokenizer.from_pretrained('t5-base')
+        self.tokenizer = T5Tokenizer.from_pretrained(t5_tokenizer_path)
         # self.nlp = spacy.load('en_core_web_sm')
         self.s2v = Sense2Vec().from_disk(os.getcwd()+"/QAGen/models/s2v_old")
         # self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.qg_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/question_generator").to(self.device)
-        #self.bq_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/t5_boolean_questions").to(self.device)
-        #self.ap_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/answer_predictor").to(self.device) 
+        self.qg_model = T5ForConditionalGeneration.from_pretrained(qg_model_path).to(self.device)
+        self.bq_model = T5ForConditionalGeneration.from_pretrained(bq_model_path).to(self.device)
+        self.ap_model = T5ForConditionalGeneration.from_pretrained(ap_model_path).to(self.device) 
         
         #self.tokenizer = None
         self.nlp = None

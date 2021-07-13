@@ -21,8 +21,12 @@ from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 from Ranker.Ranker import filter_phrases, rank_phrases
 
+# loader = Loader(os.getcwd()+"/QAGen/models/question_generator",
+#                 os.getcwd()+"/QAGen/models/t5_boolean_questions".
+#                 os.getcwd()+"/QAGen/models/answer_predictor")
 
 loader = Loader()
+
 print("Done Loader")
 qgen = QGen(loader)
 print("Done QGen")
