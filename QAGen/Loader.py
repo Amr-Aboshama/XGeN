@@ -12,9 +12,9 @@ class Loader:
     def __init__(self):
         
         self.tokenizer = T5Tokenizer.from_pretrained('t5-base')
-        self.nlp = spacy.load('en_core_web_sm')
+        # self.nlp = spacy.load('en_core_web_sm')
         self.s2v = Sense2Vec().from_disk(os.getcwd()+"/QAGen/models/s2v_old")
-        self.fdist = FreqDist()
+        # self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -23,9 +23,9 @@ class Loader:
         #self.ap_model = T5ForConditionalGeneration.from_pretrained(os.getcwd()+"/QAGen/models/answer_predictor").to(self.device) 
         
         #self.tokenizer = None
-        #self.nlp = None
+        self.nlp = None
         #self.s2v = None
-        #self.fdist = None
+        self.fdist = None
         #self.normalized_levenshtein = None
         
         #self.device = None
