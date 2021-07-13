@@ -8,24 +8,30 @@ import re as regex
 from nltk.tokenize import sent_tokenize, word_tokenize
 from wordsegment import load, segment
 
-nlp = spacy.load('en')
+nlp = spacy.load('en_core_web_sm')
 neuralcoref.add_to_pipe(nlp)
 load()      # related to the wordsegment
 
 
 def solve_coreference(paragraph):
     doc = nlp(paragraph)
+    doc = doc._.coref_resolved
+    #print(doc)
     return doc
 
 def clean_text(text):
     sentences = sent_tokenize(text)
     clean_text = ""
     for sentence in sentences:
-        garbage = regex.search("~|,,", sentence)
-        if garbage:
-            print("garbage: ", sentence)
-        else:
-            clean_text += sentence + " "
+        # sentence.replace("•", " ")
+        # sentence.replace("~", " ")
+        # sentence.replace(",,", " ")
+        sentence = regex.sub("~|•|,,|◆", " ", sentence)
+        #garbage = regex.search("~|,,", sentence)
+        #if garbage:
+        #    print("garbage: ", sentence)
+        #else:
+        clean_text += sentence + " "
     return clean_text
 
 def word_segmentation(paragraph):
@@ -43,5 +49,8 @@ def need_segmentation(paragraph):
     sum = 0
     for word in words:
         sum += len(word)
-    average = sum / len(words)
+    
+    average = 0
+    if len(words):
+        average = sum / len(words)
     return average > 10
