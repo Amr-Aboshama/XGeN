@@ -167,6 +167,7 @@ def uploadText():
         #print(text_payload.split('\n\n'))
         phrase = preprocess(phrase)
         text += " " + phrase
+        phrases.append(phrase)
 
     # print(7)
     # # Process the text    
