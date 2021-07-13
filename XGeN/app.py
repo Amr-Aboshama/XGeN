@@ -6,10 +6,10 @@ import os
 import sys
 import uuid
 
-from Preprocessor.preprocessor import Preprocessor
-from Preprocessor.utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
+from XGeN.Preprocessor.preprocessor import Preprocessor
+from XGeN.Preprocessor.utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
 
-from InfoExtract.TopicExtractor import TopicExtractor
+from XGeN.InfoExtract.TopicExtractor import TopicExtractor
 
 from XGeN.QAGen.Loader import Loader
 from XGeN.QAGen.QGen import QGen
@@ -20,7 +20,7 @@ from XGeN.QAGen.shortq.ShortGen import ShortGen
 from XGeN.QAGen.longq.LongGen import LongGen
 from XGeN.QAGen.anspred.AnswerPredictor import AnswerPredictor
 
-from Ranker.Ranker import filter_phrases, rank_phrases
+from XGeN.Ranker.Ranker import filter_phrases, rank_phrases
 
 # loader = Loader(os.getcwd()+"/XGeN/QAGen/models/s2v_old",
 #                 os.getcwd()+"/XGeN/QAGen/models/question_generator",
