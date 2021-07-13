@@ -214,7 +214,7 @@ def examSpecifications():
             for keyword in selected_topics:
                 if keyword not in topics and phrase.lower().find(keyword) != -1:
                     phrases[phrase].append(keyword)
-            print(phrases[phrase])
+            
     # Filter The paragraphs based on the selected topics
     filtered_phrases = rank_phrases(selected_topics, phrases)
     
