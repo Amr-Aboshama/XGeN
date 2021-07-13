@@ -11,21 +11,21 @@ from Preprocessor.utilities import solve_coreference, clean_text, word_segmentat
 
 from InfoExtract.TopicExtractor import TopicExtractor
 
-from QAGen.Loader import Loader
-from QAGen.QGen import QGen
-from QAGen.mcq.MCQGen import MCQGen
-from QAGen.boolean.BooleanGen import BoolGen
-from QAGen.tf.TFGen import TFGen
-from QAGen.shortq.ShortGen import ShortGen
-from QAGen.longq.LongGen import LongGen
-from QAGen.anspred.AnswerPredictor import AnswerPredictor
+from XGeN.QAGen.Loader import Loader
+from XGeN.QAGen.QGen import QGen
+from XGeN.QAGen.mcq.MCQGen import MCQGen
+from XGeN.QAGen.boolean.BooleanGen import BoolGen
+from XGeN.QAGen.tf.TFGen import TFGen
+from XGeN.QAGen.shortq.ShortGen import ShortGen
+from XGeN.QAGen.longq.LongGen import LongGen
+from XGeN.QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 from Ranker.Ranker import filter_phrases, rank_phrases
 
-# loader = Loader(os.getcwd()+"/QAGen/models/s2v_old",
-#                 os.getcwd()+"/QAGen/models/question_generator",
-#                 os.getcwd()+"/QAGen/models/t5_boolean_questions".
-#                 os.getcwd()+"/QAGen/models/answer_predictor")
+# loader = Loader(os.getcwd()+"/XGeN/QAGen/models/s2v_old",
+#                 os.getcwd()+"/XGeN/QAGen/models/question_generator",
+#                 os.getcwd()+"/XGeN/QAGen/models/t5_boolean_questions".
+#                 os.getcwd()+"/XGeN/QAGen/models/answer_predictor")
 
 loader = Loader()
 
