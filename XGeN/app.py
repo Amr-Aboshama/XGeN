@@ -213,7 +213,7 @@ def examSpecifications():
             # Add the new topics to the phrases
             for keyword in selected_topics:
                 if keyword not in topics and phrase.lower().find(keyword) != -1:
-                    phrases[phrase].append(keyword)
+                    phrases[phrase].insert(0,keyword)
             
     # Filter The paragraphs based on the selected topics
     filtered_phrases = rank_phrases(selected_topics, phrases)
