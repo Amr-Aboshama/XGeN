@@ -10,6 +10,7 @@ from similarity.normalized_levenshtein import NormalizedLevenshtein
 
 class Loader:
     def __init__(self
+    , s2v_model_path = 's2v_old'
     , qg_model_path = 'Parth/result'
     , bq_model_path = 'ramsrigouthamg/t5_boolean_questions'
     , ap_model_path = 'Parth/boolean'
@@ -17,7 +18,7 @@ class Loader:
         
         self.tokenizer = T5Tokenizer.from_pretrained(t5_tokenizer_path)
         # self.nlp = spacy.load('en_core_web_sm')
-        self.s2v = Sense2Vec().from_disk(os.getcwd()+"/QAGen/models/s2v_old")
+        self.s2v = Sense2Vec().from_disk(s2v_model_path)
         # self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
         
