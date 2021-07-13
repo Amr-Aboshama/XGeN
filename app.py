@@ -157,12 +157,12 @@ def uploadText():
 @app.route("/api/examSpecifications", methods=['POST'])
 def examSpecifications():
     cur_uuid = request.form.get('uuid')
-    selected_topics = request.form.get('topics')
-    whq_count = int(request.form.get('whq_count'))
-    boolq_count = int(request.form.get('boolq_count'))
-    tfq_count = int(request.form.get('tfq_count'))
-    mcq_count = int(request.form.get('mcq_count'))
-    
+    selected_topics = request.form.getlist('topics')
+    whq_count = int(request.form.get('whq_count', 0))
+    boolq_count = int(request.form.get('boolq_count', 0))
+    tfq_count = int(request.form.get('tfq_count', 0))
+    mcq_count = int(request.form.get('mcq_count', 0))
+
     directory_path = 'data/' + str(cur_uuid)
 
     wh_questions = []
