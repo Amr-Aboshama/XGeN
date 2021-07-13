@@ -3,8 +3,8 @@ import random
 from difflib import SequenceMatcher
 #from nltk.stem import PorterStemmer
 
-from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword, get_options
-from QAGen.QGen import QGen
+from XGeN.QAGen.utilities import tokenize_sentences, get_sentences_for_keyword, get_options
+from XGeN.QAGen.QGen import QGen
 
 
 class TFGen(QGen):

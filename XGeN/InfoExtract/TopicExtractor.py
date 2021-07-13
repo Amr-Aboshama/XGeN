@@ -1,4 +1,4 @@
-from QAGen.utilities import tokenize_sentences, get_nouns_multipartite
+from XGeN.QAGen.utilities import tokenize_sentences, get_nouns_multipartite
 
 
 class TopicExtractor:
