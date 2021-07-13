@@ -22,7 +22,8 @@ from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 from Ranker.Ranker import filter_phrases, rank_phrases
 
-# loader = Loader(os.getcwd()+"/QAGen/models/question_generator",
+# loader = Loader(os.getcwd()+"/QAGen/models/s2v_old",
+#                 os.getcwd()+"/QAGen/models/question_generator",
 #                 os.getcwd()+"/QAGen/models/t5_boolean_questions".
 #                 os.getcwd()+"/QAGen/models/answer_predictor")
 
