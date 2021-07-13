@@ -183,7 +183,7 @@ def uploadText():
 @app.route("/api/examSpecifications", methods=['POST'])
 def examSpecifications():
     cur_uuid = request.form.get('uuid')
-    selected_topics = request.form.getlist('topics')
+    selected_topics = request.form.get('topics')
     whq_count = int(request.form.get('whq_count', 0))
     boolq_count = int(request.form.get('boolq_count', 0))
     tfq_count = int(request.form.get('tfq_count', 0))
@@ -209,7 +209,12 @@ def examSpecifications():
                 break
             topics = file.readline().split(';')
             phrases[phrase] = topics
-    
+
+            # Add the new topics to the phrases
+            for keyword in selected_topics:
+                if keyword not in topics and phrase.lower().find(keyword) != -1:
+                    phrases[phrase].append(keyword)
+            print(phrases[phrase])
     # Filter The paragraphs based on the selected topics
     filtered_phrases = rank_phrases(selected_topics, phrases)
     
