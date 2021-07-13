@@ -1,14 +1,13 @@
-from QAGen.utilities import tokenize_sentences, words_freq_dist, get_keywords, get_sentences_for_keyword
-from nltk import FreqDist
+from QAGen.utilities import tokenize_sentences, get_nouns_multipartite
+
 
 class TopicExtractor:
 
-    def __init__(self, loader):
-        
-        self.nlp = loader.nlp
-        self.s2v = loader.s2v
-        self.fdist = loader.fdist
-        self.normalized_levenshtein = loader.normalized_levenshtein
+    # def __init__(self, loader):
+        # self.nlp = loader.nlp
+        # self.s2v = loader.s2v
+        # self.fdist = loader.fdist
+        # self.normalized_levenshtein = loader.normalized_levenshtein
 
     # payload: {"phrase1":["topic1","topic2"], "phrase2":["topic1","topic3"]}
     def write_paragraphs_topics(self, payload, output_directory):
@@ -24,12 +23,13 @@ class TopicExtractor:
     def extract_keywords(self, text, topics_num = 40):
         
         sentences = tokenize_sentences(text)
-        self.fdist = FreqDist(words_freq_dist(text))
+        # self.fdist = FreqDist(words_freq_dist(text))
         joiner = " "
         modified_text = joiner.join(sentences)
         
-        keywords = get_keywords(self.nlp,modified_text,topics_num,self.s2v,self.fdist,self.normalized_levenshtein,len(sentences) )
+        keywords = get_nouns_multipartite(modified_text, topics_num)
 
+        # keywords = get_keywords(self.nlp,modified_text,topics_num,self.s2v,self.fdist,self.normalized_levenshtein,len(sentences) )
         # keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
 
         # for k in keyword_sentence_mapping.keys():
