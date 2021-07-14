@@ -247,14 +247,9 @@ def examSpecifications():
     # Generate Boolean Questions
     count += boolq_count
     while(i < len(filtered_phrases) and i < count):
-        try:
-            bool_questions += boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
-        except:
-            print('Error:')
-            print('Phrase: ', filtered_phrases[i][0])
-            print('Topic: ', filtered_phrases[i][1])
-        
+        bool_questions += boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
+        
     # TODO : Filter Questions
     print("Done Boolean")    
     
