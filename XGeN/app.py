@@ -202,7 +202,7 @@ def examSpecifications():
     with open(directory_path + "/paragraph_topics.txt", 'r') as file:
         while True:
             phrase = file.readline()
-            if not phrase:
+            if len(phrase) == 0:
                 break
             topics = file.readline().split(';')
             phrases[phrase] = topics
