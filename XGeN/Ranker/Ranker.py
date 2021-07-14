@@ -27,6 +27,8 @@ def rank_phrases(selected_keywords, phrases):
                 topics.append(key)
         ranked_phrases.append((phrase, topics))
     
+    random.shuffle(ranked_phrases)
+
     return ranked_phrases
 
 def random_questions(questions, number):
