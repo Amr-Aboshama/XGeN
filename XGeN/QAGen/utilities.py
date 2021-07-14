@@ -1,4 +1,4 @@
-import random
+# import random
 from collections import OrderedDict
 import string
 import pke
@@ -217,17 +217,17 @@ def get_keywords(nlp,text,max_keywords,s2v,fdist,normalized_levenshtein,no_of_se
     return keywords
 
 
-def random_choice():
-    a = random.choice([0,1])
+def random_choice(rand):
+    a = rand.choice([0,1])
     return bool(a)
     
 
-def find_alternative(key, s2v, normalized_levenshtein):
+def find_alternative(key, s2v, normalized_levenshtein, rand):
     options, _ = get_options(key, s2v)
     options =  filter_phrases(options, 10, normalized_levenshtein)
 
     while(len(options) > 0):
-        option = random.choice(options)
+        option = rand.choice(options)
         if SequenceMatcher(None, option.lower(), key.lower()).ratio() < 0.7:
             return option
         options.remove(option)
@@ -236,7 +236,7 @@ def find_alternative(key, s2v, normalized_levenshtein):
         # Note: The next line may cause an infinite loop
         #while SequenceMatcher(None, option.lower(), key.lower()).ratio() > 0.7:
         #    print(option, key, SequenceMatcher(None, option, key).ratio())
-        #    option = random.choice(options[0])
+        #    option = rand.choice(options[0])
     #for option in options[0]:
     #    if SequenceMatcher(None, option.lower(), key.lower()).ratio() < 0.7:
     #        #print(option, key, SequenceMatcher(None, option, key).ratio())

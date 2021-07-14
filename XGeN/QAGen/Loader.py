@@ -2,6 +2,8 @@ import torch
 from transformers import T5ForConditionalGeneration,T5Tokenizer
 import spacy
 import os
+import random
+from datetime import datetime
 from sense2vec import Sense2Vec
 from nltk import FreqDist
 from nltk.corpus import brown
@@ -21,6 +23,7 @@ class Loader:
         self.s2v = Sense2Vec().from_disk(s2v_model_path)
         # self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
+        self.rand = random(datetime.now())
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.qg_model = T5ForConditionalGeneration.from_pretrained(qg_model_path).to(self.device)

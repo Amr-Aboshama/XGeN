@@ -1,5 +1,5 @@
 import re
-import random
+# import random
 #from nltk.stem import PorterStemmer
 
 from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword, find_alternative
@@ -21,7 +21,7 @@ class TFGen(QGen):
         #output_array["questions"] =[]
 
         used_sentences = []
-        #key = random.choice(list(keyword_sentence_mapping.keys()))
+        #key = self.rand.choice(list(keyword_sentence_mapping.keys()))
         for key in keyword_sentence_mapping.keys():
             # choosing a sentence not used before
             sentence = keyword_sentence_mapping[key][0]
@@ -37,7 +37,7 @@ class TFGen(QGen):
             
             answer = "T"
             # Make a false question
-            if(bool(random.getrandbits(1)) and sentence.find(key) != -1):
+            if(bool(self.rand.getrandbits(1)) and sentence.find(key) != -1):
                 option = find_alternative(key, self.s2v, self.normalized_levenshtein)
                 if option != key:
                     correction = option + " -> " + key

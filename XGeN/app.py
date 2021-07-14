@@ -19,7 +19,7 @@ from QAGen.shortq.ShortGen import ShortGen
 from QAGen.longq.LongGen import LongGen
 from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
-from Ranker.Ranker import filter_phrases, rank_phrases, random_questions
+from Ranker.Ranker import Ranker
 
 
 
@@ -32,10 +32,16 @@ from Ranker.Ranker import filter_phrases, rank_phrases, random_questions
 
 
 loader = Loader()
-
 print("Done Loader")
+
 qgen = QGen(loader)
 print("Done QGen")
+
+topicExtract = TopicExtractor()
+print("Done TopicExtractor")
+
+ranker = Ranker(loader.rand)
+print("Done Ranker")
 
 tfGen = TFGen(qgen)
 print("Done TFGen")
@@ -50,8 +56,7 @@ print("Done LongGen")
 ansPredict = AnswerPredictor(loader)
 print("Done AnswerPredictor")
 
-topicExtract = TopicExtractor()
-print("Done TopicExtractor")
+
 
 
 if not os.path.exists('data'):
@@ -93,7 +98,7 @@ def process(text, phrases, path):
     keywords = topicExtract.extract_keywords(text)
     
     # TODO : Handle Async Ranker here
-    phrase_topics = filter_phrases(keywords, phrases)
+    phrase_topics = ranker.filter_phrases(keywords, phrases)
 
     # Save Paragraphs & Topics
     topicExtract.write_paragraphs_topics(phrase_topics, path)
@@ -214,7 +219,7 @@ def examSpecifications():
                     phrases[phrase].insert(0,keyword)
             
     # Filter The paragraphs based on the selected topics
-    filtered_phrases = rank_phrases(selected_topics, phrases)
+    filtered_phrases = ranker.rank_phrases(selected_topics, phrases)
     
     # Generate MCQ Questions
     i = 0
@@ -223,7 +228,7 @@ def examSpecifications():
         mcq_questions += mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
     # TODO : Filter Questions
-    mcq_questions = random_questions(mcq_questions, mcq_count)
+    mcq_questions = ranker.random_questions(mcq_questions, mcq_count)
     print("Done MCQ")
     
     # Generate TF Questions
@@ -232,7 +237,7 @@ def examSpecifications():
         tf_questions += tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
     # TODO : Filter Questions
-    tf_questions = random_questions(tf_questions, tfq_count)
+    tf_questions = ranker.random_questions(tf_questions, tfq_count)
     print("Done TF")
     
     # Generate WH Questions
@@ -244,7 +249,7 @@ def examSpecifications():
         #    wh_questions += longGen.paraphrase(filtered_phrases[i][0])
         #    i += 1
     # TODO : Filter Questions
-    wh_questions = random_questions(wh_questions, whq_count)
+    wh_questions = ranker.random_questions(wh_questions, whq_count)
     print("Done WH")
     
     # Generate Boolean Questions
@@ -254,7 +259,7 @@ def examSpecifications():
         i += 1
 
     # TODO : Filter Questions
-    bool_questions = random_questions(bool_questions, boolq_count)
+    bool_questions = ranker.random_questions(bool_questions, boolq_count)
     print("Done Boolean")    
     
     return {
