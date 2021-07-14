@@ -1,4 +1,5 @@
 
+import random
 
 # phrases: ["phrase1", "phrase2", ...]}
 def filter_phrases(keywords, phrases):
@@ -27,3 +28,12 @@ def rank_phrases(selected_keywords, phrases):
         ranked_phrases.append((phrase, topics))
     
     return ranked_phrases
+
+def random_questions(questions, number):
+    final_questions = []
+    while( len(questions) > 0 and len(final_questions) < number):
+        q = random.choice(questions)
+        final_questions.append(q)
+        questions.remove(q)
+    
+    return final_questions
