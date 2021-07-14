@@ -19,7 +19,7 @@ from QAGen.shortq.ShortGen import ShortGen
 from QAGen.longq.LongGen import LongGen
 from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
-from Ranker.Ranker import filter_phrases, rank_phrases
+from Ranker.Ranker import filter_phrases, rank_phrases, random_questions
 
 
 
@@ -202,7 +202,7 @@ def examSpecifications():
     with open(directory_path + "/paragraph_topics.txt", 'r') as file:
         while True:
             phrase = file.readline()
-            if not phrase:
+            if len(phrase) == 0:
                 break
             topics = file.readline().split(';')
             phrases[phrase] = topics
@@ -223,6 +223,7 @@ def examSpecifications():
         mcq_questions += mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
     # TODO : Filter Questions
+    mcq_questions = random_questions(mcq_questions, mcq_count)
     print("Done MCQ")
     
     # Generate TF Questions
@@ -231,6 +232,7 @@ def examSpecifications():
         tf_questions += tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
     # TODO : Filter Questions
+    tf_questions = random_questions(tf_questions, tfq_count)
     print("Done TF")
     
     # Generate WH Questions
@@ -242,6 +244,7 @@ def examSpecifications():
         #    wh_questions += longGen.paraphrase(filtered_phrases[i][0])
         #    i += 1
     # TODO : Filter Questions
+    wh_questions = random_questions(wh_questions, whq_count)
     print("Done WH")
     
     # Generate Boolean Questions
@@ -249,8 +252,9 @@ def examSpecifications():
     while(i < len(filtered_phrases) and i < count):
         bool_questions += boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
-        
+
     # TODO : Filter Questions
+    bool_questions = random_questions(bool_questions, boolq_count)
     print("Done Boolean")    
     
     return {
