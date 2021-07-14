@@ -56,7 +56,7 @@ class BoolGen(QGen):
                 option = find_alternative(val, self.s2v, self.normalized_levenshtein, self.rand)
                 if option != val:
                     answer = "No"
-                    option = find_alternative(val, self.s2v, self.normalized_levenshtein)
+                    option = find_alternative(val, self.s2v, self.normalized_levenshtein, self.rand)
                     correction = option + " -> " + val
                     dec = re.sub(re.escape(val), option, dec, flags=re.IGNORECASE)
             #answer += ", " + keyword_sentence_mapping[val]
