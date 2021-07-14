@@ -1,6 +1,6 @@
 import re
 import time
-import random
+# import random
 from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, \
                              filter_phrases, get_options
 
@@ -59,7 +59,7 @@ class MCQGen(QGen):
 
             random_options = []
             while(len(options) > 0 and len(random_options) < 3):
-                option = random.choice(options)
+                option = self.rand.choice(options)
                 random_options.append(option)
                 options.remove(option)
             
@@ -74,7 +74,7 @@ class MCQGen(QGen):
             #individual_question["options"] = individual_question["options"][:index]
             
             if len(random_options)>0:
-                random_options.insert(random.randint(0,len(options)),val)
+                random_options.insert(self.rand.randint(0,len(options)),val)
                 if(len(random_options) < 4):
                     random_options.append("All of the above")
                 if(len(random_options) < 4):

@@ -1,5 +1,5 @@
 import re
-import random
+# import random
 from typing import Set
 import torch
 from QAGen.utilities import tokenize_sentences, find_alternative, get_sentences_for_keyword
@@ -52,8 +52,8 @@ class BoolGen(QGen):
             answer = "Yes"
             correction = ""
             # Make a false question
-            if(bool(random.getrandbits(1)) and dec.find(val) != -1):
-                option = find_alternative(val, self.s2v, self.normalized_levenshtein)
+            if(bool(self.rand.getrandbits(1)) and dec.find(val) != -1):
+                option = find_alternative(val, self.s2v, self.normalized_levenshtein, self.rand)
                 if option != val:
                     answer = "No"
                     option = find_alternative(val, self.s2v, self.normalized_levenshtein)

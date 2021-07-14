@@ -7,7 +7,8 @@ class QGen:
         self.s2v = loader.s2v
         self.fdist = loader.fdist
         self.normalized_levenshtein = loader.normalized_levenshtein
- 
+        self.rand = loader.rand
+        
         self.tokenizer = loader.tokenizer
         self.device = loader.device
 
