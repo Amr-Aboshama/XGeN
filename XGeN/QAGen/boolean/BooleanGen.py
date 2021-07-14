@@ -53,10 +53,10 @@ class BoolGen(QGen):
             correction = ""
             # Make a false question
             if(bool(self.rand.getrandbits(1)) and dec.find(val) != -1):
-                option = find_alternative(val, self.s2v, self.normalized_levenshtein)
+                option = find_alternative(val, self.s2v, self.normalized_levenshtein, self.rand)
                 if option != val:
                     answer = "No"
-                    option = find_alternative(val, self.s2v, self.normalized_levenshtein)
+                    option = find_alternative(val, self.s2v, self.normalized_levenshtein, self.rand)
                     correction = option + " -> " + val
                     dec = re.sub(re.escape(val), option, dec, flags=re.IGNORECASE)
             #answer += ", " + keyword_sentence_mapping[val]

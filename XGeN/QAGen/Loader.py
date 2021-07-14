@@ -23,7 +23,7 @@ class Loader:
         self.s2v = Sense2Vec().from_disk(s2v_model_path)
         # self.fdist = FreqDist()
         self.normalized_levenshtein = NormalizedLevenshtein()
-        self.rand = random(datetime.now())
+        self.rand = random.Random(datetime.now())
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.qg_model = T5ForConditionalGeneration.from_pretrained(qg_model_path).to(self.device)

@@ -38,7 +38,7 @@ class TFGen(QGen):
             answer = "T"
             # Make a false question
             if(bool(self.rand.getrandbits(1)) and sentence.find(key) != -1):
-                option = find_alternative(key, self.s2v, self.normalized_levenshtein)
+                option = find_alternative(key, self.s2v, self.normalized_levenshtein, self.rand)
                 if option != key:
                     correction = option + " -> " + key
                     answer = "F,        " + correction
