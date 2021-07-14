@@ -1,5 +1,5 @@
-from XGeN.InfoExtract.TopicExtractor import TopicExtractor
-from XGeN.QAGen.Loader import Loader
+from InfoExtract.TopicExtractor import TopicExtractor
+from QAGen.Loader import Loader
 
 payload = {
     "input_text": """research work is precisely focusing on filling this gap by building patient-based simulators [21, 9, 12].

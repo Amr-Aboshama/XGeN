@@ -5,21 +5,21 @@ import os
 import sys
 import uuid
 
-from XGeN.Preprocessor.preprocessor import Preprocessor
-from XGeN.Preprocessor.utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
+from Preprocessor.preprocessor import Preprocessor
+from Preprocessor.utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
 
-from XGeN.InfoExtract.TopicExtractor import TopicExtractor
+from InfoExtract.TopicExtractor import TopicExtractor
 
-from XGeN.QAGen.Loader import Loader
-from XGeN.QAGen.QGen import QGen
-from XGeN.QAGen.mcq.MCQGen import MCQGen
-from XGeN.QAGen.boolean.BooleanGen import BoolGen
-from XGeN.QAGen.tf.TFGen import TFGen
-from XGeN.QAGen.shortq.ShortGen import ShortGen
-from XGeN.QAGen.longq.LongGen import LongGen
-from XGeN.QAGen.anspred.AnswerPredictor import AnswerPredictor
+from QAGen.Loader import Loader
+from QAGen.QGen import QGen
+from QAGen.mcq.MCQGen import MCQGen
+from QAGen.boolean.BooleanGen import BoolGen
+from QAGen.tf.TFGen import TFGen
+from QAGen.shortq.ShortGen import ShortGen
+from QAGen.longq.LongGen import LongGen
+from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
-from XGeN.Ranker.Ranker import filter_phrases, rank_phrases
+from Ranker.Ranker import filter_phrases, rank_phrases
 
 
 
@@ -249,6 +249,7 @@ def examSpecifications():
     while(i < len(filtered_phrases) and i < count):
         bool_questions += boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
         i += 1
+        
     # TODO : Filter Questions
     print("Done Boolean")    
     
@@ -258,3 +259,6 @@ def examSpecifications():
         "tf_questions" : tf_questions,
         "mcq_questions" : mcq_questions, 
     }
+
+if __name__ == '__main__':
+    app.run()

@@ -1,6 +1,6 @@
 import torch
-from XGeN.QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
-from XGeN.QAGen.QGen import QGen
+from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
+from QAGen.QGen import QGen
 
 
 class ShortGen(QGen):

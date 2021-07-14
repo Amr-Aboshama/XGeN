@@ -1,6 +1,6 @@
 import torch
-from XGeN.QAGen.QGen import QGen
-from XGeN.QAGen.anspred.AnswerPredictor import AnswerPredictor
+from QAGen.QGen import QGen
+from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 
 class LongGen(QGen):

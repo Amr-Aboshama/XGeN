@@ -2,9 +2,9 @@ import re
 import random
 from typing import Set
 import torch
-from XGeN.QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, get_options
+from QAGen.utilities import tokenize_sentences, find_alternative, get_sentences_for_keyword
 
-from XGeN.QAGen.QGen import QGen
+from QAGen.QGen import QGen
 
 
 class BoolGen(QGen):
@@ -53,11 +53,12 @@ class BoolGen(QGen):
             correction = ""
             # Make a false question
             if(bool(random.getrandbits(1)) and dec.find(val) != -1):
-                options = get_options(val, self.s2v)
-                if len(options[0]):
+                option = find_alternative(val, self.s2v, self.normalized_levenshtein)
+                if option != val:
                     answer = "No"
-                    correction = options[0][0] + " -> " + val
-                    dec = re.sub(re.escape(val), options[0][0], dec, flags=re.IGNORECASE)
+                    option = find_alternative(val, self.s2v, self.normalized_levenshtein)
+                    correction = option + " -> " + val
+                    dec = re.sub(re.escape(val), option, dec, flags=re.IGNORECASE)
             #answer += ", " + keyword_sentence_mapping[val]
             #output_array["questions"].append({"question": dec, "answer": answer, "correction": correction})
             s.add((dec, answer, correction))
