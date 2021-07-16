@@ -5,8 +5,7 @@ import os
 import sys
 import uuid
 
-from Preprocessor.preprocessor import Preprocessor
-from Preprocessor.utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
+from Preprocessor.Preprocessor import TextPreprocessor, PDFPreprocessor
 
 from InfoExtract.TopicExtractor import TopicExtractor
 
@@ -77,24 +76,11 @@ def download():
 def run():
     app.run()
 
-def preprocess(phrase):
-    phrase = clean_text(phrase)
-    print('cleaned')
-    if need_segmentation(phrase):
-        print('need segmentation')
-        phrase = word_segmentation(phrase)
-        print('segmented')
-    
-    phrase = solve_coreference(phrase)
-    print('coreferenced')
-    
-    return phrase
 
-def process(text, phrases, path):
+def analyze_text(phrases, path):
 
-    # TODO : Call the function to preprocess the text
-    
-    # TODO : Call Topic Extractor
+    text = " ".join(phrases)
+
     keywords = topicExtract.extract_keywords(text)
     
     # TODO : Handle Async Ranker here
@@ -109,6 +95,8 @@ def process(text, phrases, path):
 @app.route("/api/upload/pdf", methods=['POST'])
 def uploadPDF():
     file = request.files.get('file')
+    start = request.form.get('start', 1)
+    end = request.form.get('end', -1)
 
     if file is None:
         return {
@@ -128,19 +116,11 @@ def uploadPDF():
     print('file saved!')
 
     # Handle Converting PDF to Text
-    preprocessor = Preprocessor(file_path)
-    phrases = []
-    text = ""
-    i = 1
-    for page in preprocessor.page_by_page():
-        page = preprocess(page)
-        phrases.append(page)
-        text += page + " "
-        print(i)
-        i += 1
+    preprocessor = PDFPreprocessor(directory_path, file_path, start, end)
+    phrases = preprocessor.start_pipeline()
     
     # Process the text    
-    keywords = process(text, phrases, directory_path + '/')
+    keywords = analyze_text(phrases, directory_path + '/')
     
     return {
         "uuid" : cur_uuid,
@@ -164,19 +144,11 @@ def uploadText():
     os.mkdir(directory_path)
     
     # Preprocess the text
-    phrases = []
-    text = ""
-    for phrase in text_payload.split('\n\n'):
-        #print(phrase)
-        #print(text_payload.split('\n\n'))
-        phrase = preprocess(phrase)
-        text += " " + phrase
-        phrases.append(phrase)
-
-    # print(7)
-    # # Process the text    
-    keywords = process(text, phrases, directory_path + '/')
-    # print(8)
+    preprocessor = TextPreprocessor()
+    phrases = preprocessor.start_pipeline(text_payload)
+    
+    # Process the text    
+    keywords = analyze_text(phrases, directory_path + '/')
     
     return {
         "uuid" : cur_uuid,
@@ -200,7 +172,6 @@ def examSpecifications():
     tf_questions = []
     mcq_questions = []
     # Convert it from string to list
-    #print(selected_topics)
     
     # Load the user paragraphs & topics
     phrases = {}

@@ -1,108 +1,257 @@
-from io import StringIO
-from pdfminer.converter import TextConverter
-from pdfminer.pdfinterp import PDFPageInterpreter
-from pdfminer.pdfinterp import PDFResourceManager
-from pdfminer.pdfpage import PDFPage
+import cv2 as cv
+import numpy as np
+from pdf2image import convert_from_path
+import os
+from pytesseract import pytesseract
+from PIL import Image
+import spacy
+import neuralcoref
+import multiprocessing as mp
+import time
+
+class TextPreprocessor:
+
+    def __init__(self):
+
+        self.nlp = spacy.load('en_core_web_sm')
+        neuralcoref.add_to_pipe(self.nlp)
 
 
-MAX_PAGES = 1500
+    def __resolve_coreference(self, paragraphs):
+        
+        coref_paragraphs = []
+
+        for p in paragraphs:
+            doc = self.nlp(p)
+            coref_paragraphs.append(doc._.coref_resolved)
+        
+        return coref_paragraphs
 
 
-class Preprocessor:
-    def __init__(self, path):
-        self.path = path
-        self.pages = None
-        self.start = 1
-        self.end = MAX_PAGES
-        self.paragraphs = None
+    def __pipeline_text(self, text):
 
-    def __read_pdf(self):
-        try:
-            file = open(self.path, 'rb')
-        except OSError:
-            raise Exception("Can't open file: ", self.path)
-        self.pages = PDFPage.get_pages(file, caching=True, check_extractable=True)
+        '''
+        Pipeline:
+            - Paragraph Segmentation + Clean Paragraphs
+            - Resolve Coreference Resolution
+        '''
 
-    def read_text(self):
-        try:
-            file = open(self.path, 'r')
-        except OSError:
-            raise Exception("Can't open file: ", self.path)
-        text = file.read()
-        self.paragraphs = text.split('\n\n')
+        paragraphs = [p for p in text.split('\n\n') if len(p) >= 100]
 
-    def set_start_page(self, start):
-        self.start = start
+        coref_paragraphs = self.__resolve_coreference(paragraphs)
 
-    def set_end_page(self, end):
-        self.end = end
-
-    def page_by_page(self):
-        self.__read_pdf()
-
-        counter = 0
-        for Page in self.pages:
-            # check the page limits
-            counter += 1
-            if counter < self.start or counter > self.end:
-                continue
-            # if counter > self.end:
-            #     return None
-
-            # create the needed objects to read the page
-            resource_manager = PDFResourceManager()
-            file_handler = StringIO()
-            converter = TextConverter(resource_manager, file_handler)
-            page_interpreter = PDFPageInterpreter(resource_manager, converter)
-
-            # read the page and convert it to text
-            page_interpreter.process_page(Page)
-            text = file_handler.getvalue()
-
-            # return the text and start from here in the next call
-            yield text
-
-            # close the opened handlers
-            converter.close()
-            file_handler.close()
-
-    def get_page(self, page_number):
-        self.set_start_page(page_number)
-        self.set_end_page(page_number + 1)
-
-        for Page in self.page_by_page():
-            return Page
+        return coref_paragraphs
 
 
-# if __name__ == '__main__':
-#     preprocessor = Preprocessor()
+    def start_pipeline(self, text):
+        
+        text_paragraphs = self.__pipeline_text(text)
 
-    # preprocessor.set_start_page(9)
-    # preprocessor.set_end_page(81)
-    # for page in preprocessor.page_by_page('inputs/modeling.pdf'):
-    #     print(page)
-    #     print()
-    # print("Finished")
+        return text_paragraphs
 
-    # page = preprocessor.get_page('inputs/modeling.pdf', 23)
-    # print(clean_text(page))
 
-#     preprocessor.read_text('inputs/coreference.txt')
-#     print("Coreference____________________________________________\n")
-#     for paragraph in preprocessor.paragraphs:
-#         print("Original: \n", paragraph)
-#         print()
-#         if need_segmentation(paragraph):
-#             paragraph = word_segmentation(paragraph)
-#             print("After Segmentation: \n", paragraph)
-#             print()
-#         paragraph = solve_coreference(paragraph)
-#         print("After Coreference: \n", paragraph)
-#         print()
 
-#     preprocessor.read_text('inputs/wordsegment.txt')
-#     print("Word Segmentation____________________________________________\n")
-#     print("Original: \n", preprocessor.paragraphs[0])
-#     print()
-#     print("After Segmentation: \n", word_segmentation(preprocessor.paragraphs[0]))
-#     print()
+
+class PDFPreprocessor(TextPreprocessor):
+   
+    def __init__(self, working_path, pdf_path, start=1, end=-1):
+        TextPreprocessor.__init__()
+
+        self.pdf_path = pdf_path
+        self.working_path = working_path
+        self.start = start - 1
+        
+        if end != -1:
+            if end <= start:
+                self.end = self.start + 1
+            else:
+                self.end = end
+        else:
+            self.end = 1000000000
+
+        self.tesseract_config = '''-c tessedit_char_whitelist=\\'\\"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-()[];:,.!?/\\ '''
+        
+        self.path_to_tesseract = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+        pytesseract.tesseract_cmd = self.path_to_tesseract
+        
+
+    def __save_img(self, page, i):
+        print('Image: ', i)
+        page.save(path + '/'+str(i)+'.jpg', 'JPEG')
+
+
+    def __convert_pdf_to_pages(self, path):
+
+        pages = convert_from_path(self.pdf_path)
+
+        os.mkdir(path)
+
+        end = min(len(pages), self.end)
+
+
+        for i in range(self.start, end):
+            # self.__save_img(pages[i], i)
+            pages[i].save(path + '/'+str(i)+'.jpg', 'JPEG')
+
+
+    def __remove_tables(self, gray):
+
+        ret, bin_img = cv.threshold(gray,40,255,cv.THRESH_BINARY)
+        major = cv.__version__.split('.')[0]
+        if major == '3': img2, contours, hierarchy= cv.findContours(bin_img, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        else: contours, hierarchy= cv.findContours(bin_img, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+
+        width_threshold = 0.1 * gray.shape[1]
+        for contour in contours:    
+            [x,y, w, h] = cv.boundingRect(contour)
+            if(w > width_threshold):
+                gray[y:y+h, :] = 0
+        
+        return gray
+
+
+    def __image_hist(self, binary):
+        
+        out = np.ones(binary.shape)
+        out = out.astype(np.uint8)
+        
+        vec = []
+        for y in range(binary.shape[0]):
+            vec.append(np.sum(binary[y,:]))
+        
+        mn = 0.6 * np.max(vec)
+        rng = 40
+        lst = 0
+
+        for y in range(len(vec)):
+            if vec[y] >= mn:
+                lst = y
+            
+            if np.abs(y-lst) <= rng:
+                out[y] = np.copy(binary[y])
+
+        lst = binary.shape[0]-1
+        for y in range(len(vec)-1, -1, -1):
+            if vec[y] >= mn:
+                lst = y
+            
+            if np.abs(y-lst) <= rng:
+                out[y] = np.copy(binary[y])
+        
+        return out
+
+
+    def __image_crop(self, gray):
+
+        left = 0
+        right = 0
+
+        vec = []
+        for x in range(gray.shape[1]):
+            vec.append(np.sum(gray[:,x]))
+        
+
+        mn = 0.5 * np.max(vec)
+        margin = 20
+
+        for x in range(gray.shape[1]):
+            if vec[x] >= mn:
+                left = x
+                break
+
+        for x in range(gray.shape[1]-1, -1, -1):
+            if vec[x] >= mn:
+                right = x
+                break
+
+        gray = gray[:,max(left-20, 0):min(right+20+1, gray.shape[1])]
+
+        return 255 - gray 
+
+    # Depricated
+    def __extract_paragraph(self, gray):
+
+        vec = []
+        for y in range(gray.shape[0]):
+            vec.append(np.sum(gray[y,:]))
+
+        upper = 0.5 * max(vec)
+        lower = 0.05 * max(vec)
+        st = None
+        ed = None
+
+        upper_margin = 10
+        margin = 15
+
+        paragraphs = []
+
+        for i in range(len(vec)):
+            if vec[i] >= upper:
+                if st is None:
+                    st = i
+
+            if st is not None and vec[i] > lower:
+                ed = i
+
+            if ed is not None and i-ed == 50:
+                paragraphs.append(255-gray[max(st-margin, 0):min(ed+margin+1, len(vec)), :])
+                st = None
+                ed = None
+        
+        return paragraphs
+        
+
+    def __image_to_text(self, img):
+
+        text = pytesseract.image_to_string(img, config=self.tesseract_config)
+        return text
+
+
+    def __pipeline_PDF(self, img_path):
+
+        '''
+        Pipeline:
+            - Read Image
+            - Convert to Binary
+            - Remove Tables and borders
+            - Improve by Histogram
+            - Crop Interest zone
+            - Convert Image to text
+            - Paragraph Segmentation + Clean Paragraphs
+            - Resolve Coreference Resolution
+        '''
+
+        img = cv.imread(img_path, cv.IMREAD_GRAYSCALE)
+
+        # convert img to binary        
+        bin_img = cv.threshold(img, 130, 255, cv.THRESH_BINARY_INV)[1]
+
+
+        tableless_img = self.__remove_tables(bin_img)
+
+        hist_img = self.__image_hist(tableless_img)
+
+        crop_img = self.__image_crop(hist_img)
+
+        text = self.__image_to_text(crop_img)[:-1]
+
+        return self.__pipeline_text(text)        
+    
+
+    def start_pipeline(self):
+        
+        path = self.working_path + '/images'
+
+        self.__convert_pdf_to_pages(path)
+        
+        imgs_names = os.listdir(path)
+
+        pages_paragraphs = []
+
+        for img_name in imgs_names:
+            print('Started: ', img_name)
+            pages_paragraphs += self.__pipeline_PDF(path + '/' + img_name)
+            print('Finished: ', img_name)
+
+        return pages_paragraphs
