@@ -55,7 +55,7 @@ class TextPreprocessor:
 class PDFPreprocessor(TextPreprocessor):
    
     def __init__(self, working_path, pdf_path, start=1, end=-1):
-        TextPreprocessor.__init__()
+        TextPreprocessor.__init__(self)
 
         self.pdf_path = pdf_path
         self.working_path = working_path
