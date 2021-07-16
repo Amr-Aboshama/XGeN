@@ -14,8 +14,9 @@ class TopicExtractor:
         
         with open(output_directory + 'paragraph_topics.txt', 'w+') as f:
             for para, topic_list in payload.items():
-                f.write(para)
-                f.write('\n')
+                f.write('#\n')
+                f.write(para + '\n')
+                f.write(';\n')
                 for topic in topic_list:
                     f.write(topic + ';')
                 f.write('\n')
