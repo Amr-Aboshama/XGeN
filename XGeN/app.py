@@ -95,8 +95,8 @@ def analyze_text(phrases, path):
 @app.route("/api/upload/pdf", methods=['POST'])
 def uploadPDF():
     file = request.files.get('file')
-    start = request.form.get('start', 1)
-    end = request.form.get('end', -1)
+    start = int(request.form.get('start', 1))
+    end = int(request.form.get('end', -1))
 
     if file is None:
         return {
