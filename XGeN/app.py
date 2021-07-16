@@ -5,7 +5,7 @@ import os
 import sys
 import uuid
 
-from Preprocessor.preprocessor import Preprocessor
+from Preprocessor.Preprocessor import Preprocessor
 from Preprocessor.utilities import solve_coreference, clean_text, word_segmentation, need_segmentation
 
 from InfoExtract.TopicExtractor import TopicExtractor
