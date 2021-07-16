@@ -71,7 +71,10 @@ class PDFPreprocessor(TextPreprocessor):
 
         self.tesseract_config = '''-c tessedit_char_whitelist=\\'\\"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-()[];:,.!?/\\ '''
         
-        self.path_to_tesseract = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+        # for windows
+        #self.path_to_tesseract = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+        # for linux
+        self.path_to_tesseract = r"/usr/bin/tesseract"
         pytesseract.tesseract_cmd = self.path_to_tesseract
         
 
@@ -234,9 +237,9 @@ class PDFPreprocessor(TextPreprocessor):
 
         crop_img = self.__image_crop(hist_img)
 
-        text = self.__image_to_text(crop_img)[:-1]
+        text = self.__image_to_text(crop_img)[:-2]
 
-        return self.__pipeline_text(text)        
+        return self._TextPreprocessor__pipeline_text(text)        
     
 
     def start_pipeline(self):
