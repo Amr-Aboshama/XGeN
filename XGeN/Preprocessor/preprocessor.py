@@ -9,12 +9,56 @@ import neuralcoref
 import multiprocessing as mp
 import time
 
+class TextPreprocessor:
 
-class Preprocessor:
+    def __init__(self):
+
+        self.nlp = spacy.load('en_core_web_sm')
+        neuralcoref.add_to_pipe(self.nlp)
+
+
+    def __resolve_coreference(self, paragraphs):
+        
+        coref_paragraphs = []
+
+        for p in paragraphs:
+            doc = self.nlp(p)
+            coref_paragraphs.append(doc._.coref_resolved)
+        
+        return coref_paragraphs
+
+
+    def __pipeline_text(self, text):
+
+        '''
+        Pipeline:
+            - Paragraph Segmentation + Clean Paragraphs
+            - Resolve Coreference Resolution
+        '''
+
+        paragraphs = [p for p in text.split('\n\n') if len(p) >= 100]
+
+        coref_paragraphs = self.__resolve_coreference(paragraphs)
+
+        return coref_paragraphs
+
+
+    def start_pipeline(self, text):
+        
+        text_paragraphs = self.__pipeline_text(text)
+
+        return text_paragraphs
+
+
+
+
+class PDFPreprocessor(TextPreprocessor):
    
-    def __init__(self, path, pdf_path, start=1, end=-1):
+    def __init__(self, working_path, pdf_path, start=1, end=-1):
+        TextPreprocessor.__init__()
+
         self.pdf_path = pdf_path
-        self.path = path
+        self.working_path = working_path
         self.start = start - 1
         
         if end != -1:
@@ -25,20 +69,15 @@ class Preprocessor:
         else:
             self.end = 1000000000
 
-        self.nlp = spacy.load('en_core_web_sm')
-        neuralcoref.add_to_pipe(self.nlp)
-        
-
         self.tesseract_config = '''-c tessedit_char_whitelist=\\'\\"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-()[];:,.!?/\\ '''
         
         self.path_to_tesseract = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
         pytesseract.tesseract_cmd = self.path_to_tesseract
-
+        
 
     def __save_img(self, page, i):
         print('Image: ', i)
         page.save(path + '/'+str(i)+'.jpg', 'JPEG')
-
 
 
     def __convert_pdf_to_pages(self, path):
@@ -53,7 +92,6 @@ class Preprocessor:
         for i in range(self.start, end):
             # self.__save_img(pages[i], i)
             pages[i].save(path + '/'+str(i)+'.jpg', 'JPEG')
-
 
 
     def __remove_tables(self, gray):
@@ -71,7 +109,6 @@ class Preprocessor:
                 gray[y:y+h, :] = 0
         
         return gray
-
 
 
     def __image_hist(self, binary):
@@ -105,7 +142,6 @@ class Preprocessor:
         return out
 
 
-
     def __image_crop(self, gray):
 
         left = 0
@@ -132,7 +168,6 @@ class Preprocessor:
         gray = gray[:,max(left-20, 0):min(right+20+1, gray.shape[1])]
 
         return 255 - gray 
-
 
     # Depricated
     def __extract_paragraph(self, gray):
@@ -167,27 +202,13 @@ class Preprocessor:
         return paragraphs
         
 
-
     def __image_to_text(self, img):
 
         text = pytesseract.image_to_string(img, config=self.tesseract_config)
         return text
 
 
-
-    def __resolve_coreference(self, paragraphs):
-        
-        coref_paragraphs = []
-
-        for p in paragraphs:
-            doc = self.nlp(p)
-            coref_paragraphs.append(doc._.coref_resolved)
-        
-        return coref_paragraphs
-
-
-
-    def __pipeline(self, img_path):
+    def __pipeline_PDF(self, img_path):
 
         '''
         Pipeline:
@@ -197,7 +218,7 @@ class Preprocessor:
             - Improve by Histogram
             - Crop Interest zone
             - Convert Image to text
-            - Convert Text to Paragraphs + Clean Paragraphs
+            - Paragraph Segmentation + Clean Paragraphs
             - Resolve Coreference Resolution
         '''
 
@@ -215,16 +236,12 @@ class Preprocessor:
 
         text = self.__image_to_text(crop_img)[:-1]
 
-        paragraphs = [p for p in text.split('\n\n') if len(p) >= 100]
-
-        coref_paragraphs = self.__resolve_coreference(paragraphs)
-
-        return coref_paragraphs
-        
+        return self.__pipeline_text(text)        
+    
 
     def start_pipeline(self):
         
-        path = self.path + '/images'
+        path = self.working_path + '/images'
 
         self.__convert_pdf_to_pages(path)
         
@@ -234,8 +251,7 @@ class Preprocessor:
 
         for img_name in imgs_names:
             print('Started: ', img_name)
-            pages_paragraphs.append(self.__pipeline(path + '/' + img_name))
+            pages_paragraphs += self.__pipeline_PDF(path + '/' + img_name)
             print('Finished: ', img_name)
 
         return pages_paragraphs
-
