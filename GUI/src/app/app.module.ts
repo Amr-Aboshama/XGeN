@@ -10,6 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { TopicsComponent } from './topics/topics.component';
 import { ExamComponent } from './exam/exam.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import  jspdf from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @NgModule({
   declarations: [

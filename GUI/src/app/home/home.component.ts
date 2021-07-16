@@ -49,8 +49,10 @@ this.TextForm = this.fb.group({
 })
 }
 
-SendText() {
+SendText(element, text) {
   this.isLoadingText=true;
+  element.textContent = text;
+  element.disabled = true;
   this.HttpService.sendText(this.TextForm.getRawValue())
     .subscribe(data => {
       data => {
@@ -82,8 +84,10 @@ console.log("eveeent");
     this.Allow = true;
   }
 }
-uploadFileToActivity() {
+uploadFileToActivity(element, text) {
   this.isLoadingPDF=true;
+  element.textContent = text;
+    element.disabled = true;
   this.HttpService.postFile(this.fileToUpload).subscribe(data => {
     if (data) { this.isLoadingPDF=false;}
 

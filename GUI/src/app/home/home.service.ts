@@ -13,7 +13,7 @@ public uuid: string;
 
   baseURL: string = "http://localhost:3000/";
   serverURL: string="http://localhost:5000/";
-  ngRokURL: string ="http://86f262070604.ngrok.io/"
+  ngRokURL: string ="http://a695583c09a4.ngrok.io/"
 
   constructor(private http: HttpClient) { }
 

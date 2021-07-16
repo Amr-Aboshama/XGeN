@@ -1,16 +1,4 @@
 
-    <!-- ======= Breadcrumbs ======= -->
-    <section id="breadcrumbs" class="breadcrumbs">
-      <div class="container">
-        <h2>Welcome</h2>
-        <ol>
-          <li><p>create a full exam from plaintext or PDF </p></li>
-
-        </ol>
-
-
-      </div>
-    </section><!-- End Breadcrumbs -->
 
     <!-- ======= Team Section ======= -->
     <section id="team" class="team">
@@ -35,11 +23,11 @@
                 <!--END LOADER-->
                 <!--<a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
                 <button type="button"
-                style="color: black;"
+                style="color: black; background-color: #ddae8f; "
                 [disabled]="TextForm.invalid"
 
-                (click)="SendText()"
-                class="btn btn-outline-warning">Generate</button>
+                (click)="SendText($event.target, 'Loading')"
+                class="btn btn-default">Generate</button>
 
               </div>
               </form>
@@ -79,10 +67,10 @@
                   <!--END LOADER-->
                 <!--<a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
                 <button type="button"
-                style="color: black;"
+                style="color: black; background-color: #ddae8f; "
                 [disabled]="!Allow"
-                (click)="uploadFileToActivity()"
-                class="btn btn-outline-warning">Generate</button>
+                (click)="uploadFileToActivity($event.target, 'Loading')"
+                class="btn btn-default">Generate</button>
               </div>
               </div>
 

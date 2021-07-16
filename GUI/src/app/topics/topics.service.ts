@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Qcount } from './../Qcount';
+import { timeout} from 'rxjs/operators';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import { Qcount } from './../Qcount';
 export class TopicsService {
   baseURL: string = "http://localhost:3000/";
   serverURL: string="http://localhost:5000/";
-  ngRokURL: string ="http://86f262070604.ngrok.io/"
+  ngRokURL: string ="http://a695583c09a4.ngrok.io/"
 
   constructor(private http: HttpClient) { }
 
@@ -31,7 +32,18 @@ SubmitSpecs(uuid: string , topics: string[], Qcount: Qcount): Observable<any> {
       formdata.append('mcq_count',JSON.stringify(Qcount.MCQ))
       console.log('The body in service ',formdata)
 
-      return this.http.post(this.ngRokURL + 'api/examSpecifications',formdata )
+      return this.http.post(this.ngRokURL + 'api/examSpecifications',formdata );
     }
+
+  //just for testing
+
+  //only for test
+getExam():Observable<any>{
+  const headers = { 'content-type': 'application/json'}
+
+  return this.http.get<any>(this.baseURL+'exam',{'headers':headers}).pipe(
+    timeout(36000)
+);
+}
 
 }

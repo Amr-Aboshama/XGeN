@@ -1,15 +1,3 @@
-    <!-- ======= Breadcrumbs ======= -->
-    <section id="breadcrumbs" class="breadcrumbs">
-      <div class="container">
-        <h2>Welcome</h2>
-        <ol>
-          <li><p>create a full exam from plaintext or PDF </p></li>
-
-        </ol>
-
-
-      </div>
-    </section><!-- End Breadcrumbs -->
 
     <!-- ======= Team Section ======= -->
     <section id="team" class="team">
@@ -72,16 +60,16 @@
                 <br>
                 <button type="button"
                 (click)="AddTopic()"
-                style="color: black;"
-                class="btn btn-outline-warning">Add</button>
+                style="color: black; background-color: #ddae8f; "
+                class="btn btn-default">Add</button>
               </form>
                 <br>
               <div class="hor" *ngIf="this.UserAddedTopics">
                 <div class="mb-3" *ngFor="let topic of UserAddedTopics">
                   <button type="button"
                   (click)="delUserTopic(topic)"
-                  [ngStyle]="{'background-color': '#fc9003'}"
-                  class="btn btn-outline-dark" > + {{ topic }}
+                  style="color: black; background-color: #ddae8f; "
+                  class="btn btn-default" > + {{ topic }}
                 </button>
                 </div>
               </div>
@@ -144,11 +132,22 @@
                 <input type="number"  style="text-align: center;"min="0"  formControlName="MCQ" class="form-control">
                 <br>
                   <!-- <a class="btn btn-primary btn-lg" href="#" (click)="SendText()" role="button">Generate</a></p>-->
+                  <p class="lead" style="padding: 10px;">
+                  <div  class="rapper">
+                     <!--LOADER-->
+                     <div style="padding-bottom: 20px; padding-right: 20px;" class="d-flex justify-content-center" *ngIf="isLoadingExam" >
+                      <div class="loader"></div>
+                    </div>
+                    <!--END LOADER-->
                   <button type="button"
-                  (click)="submit()"
-                  style="color: black;"
+                  (click)="submit($event.target, 'Loading')"
+                  style="color: black; background-color: #ddae8f; "
                 [disabled]="QForm.invalid"
-                  class="btn btn-outline-warning">Generate</button>
+                  class="btn btn-default">Generate</button>
+                 </div>
+                    <br>
+
+
 
                 </div>
                 </form>
@@ -158,8 +157,20 @@
                 Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut autc;nxn lnlxcnklknkln
               </p>
 
+
+
+
+
             </div>
+
+
+
+
+
+
+                    <!--END LOADER-->
           </div>
+
 
 
 
