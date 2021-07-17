@@ -1,13 +1,14 @@
 import torch
 from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
 from QAGen.QGen import QGen
+from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 
 class ShortGen(QGen):
 
     def __init__(self, loader):
         QGen.__init__(self, loader)
-            
+        self.answerPredictor = AnswerPredictor(loader)
 
     def predict_shortq(self, keywords, modified_text):
         
@@ -67,7 +68,17 @@ class ShortGen(QGen):
             Question= dec.replace('question:', '')
             Question= Question.strip()
             
-            if any(wh in Question for wh in wh_words):
-                output_array.append((Question, val))
+            if any(Question.find(wh) == 0 for wh in wh_words):
+                payload = {
+                    "input_text": keyword_sent_mapping[val],
+                    "input_question" : Question
+                }
+                print("predict answer")
+                answer = self.answerPredictor.predict_answer(payload)
+                print("Done prediction")
+                if Question.find(answer[:-1].lower()) == -1:
+                    output_array.append((Question, answer))
+                else:
+                    print("the answer in the question, we ignored that question")
             
         return output_array

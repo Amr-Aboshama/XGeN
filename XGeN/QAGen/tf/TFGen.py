@@ -40,7 +40,7 @@ class TFGen(QGen):
             
             answer = "T"
             # Make a false question
-            if(bool(self.rand.getrandbits(1)) and sentence.find(key) != -1):
+            if(bool(self.rand.getrandbits(1)) and self._QGen__regex_search(sentence, key)):
                 option = self._QGen__find_alternative(key, full_keywords)
                 correction = option + " -> " + key
                 answer = "F,        " + correction
