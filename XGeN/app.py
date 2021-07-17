@@ -176,36 +176,25 @@ def examSpecifications():
     # Load the user paragraphs & topics
     phrases = {}
     with open(directory_path + "/paragraph_topics.txt", 'r') as file:
-        flag = 0
-        phrase = ""
         while True:
-            line = file.readline()
-            if len(line) == 0:
+            phrase = file.readline()
+            if len(phrase) == 0:
                 break
             
-            if line == '#':
-                flag = 0
+            phrase = phrase[:-1]
+
+            topics = file.readline()[:-1]
             
-            elif line == ';':
-                flag = 1
-            
-            else:
-                if flag == 0:
-                    phrase += line
+            topics = list(filter(None, topics.split(';')))
 
-                else:
-                    topics = list(filter(None, line.split(';')))
-
-                    phrases[phrase] = topics
+            phrases[phrase] = topics
                     
-                    # Add the new topics to the phrases
-                    for keyword in selected_topics:
-                        keyword = keyword.lower()
-                        if keyword not in topics and phrase.lower().find(keyword) != -1:
-                            phrases[phrase].insert(0,keyword)
+            # Add the new topics to the phrases
+            for keyword in selected_topics:
+                keyword = keyword.lower()
+                if keyword not in topics and phrase.lower().find(keyword) != -1:
+                    phrases[phrase].insert(0,keyword)
                     
-                    phrase = ""
-
             
     # Filter The paragraphs based on the selected topics
     filtered_phrases = ranker.rank_phrases(selected_topics, phrases)

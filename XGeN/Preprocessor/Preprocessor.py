@@ -36,7 +36,7 @@ class TextPreprocessor:
             - Resolve Coreference Resolution
         '''
 
-        paragraphs = [p for p in text.split('\n\n') if len(p) >= 100]
+        paragraphs = [p.replace('-\n', '').replace('\n', ' ') for p in text.split('\n\n') if len(p) >= 100]
 
         coref_paragraphs = self.__resolve_coreference(paragraphs)
 
@@ -221,6 +221,7 @@ class PDFPreprocessor(TextPreprocessor):
             - Improve by Histogram
             - Crop Interest zone
             - Convert Image to text
+            - Remove Image
             - Paragraph Segmentation + Clean Paragraphs
             - Resolve Coreference Resolution
         '''
@@ -239,6 +240,8 @@ class PDFPreprocessor(TextPreprocessor):
 
         text = self.__image_to_text(crop_img)[:-2]
 
+        os.remove(img_path)
+
         return self._TextPreprocessor__pipeline_text(text)        
     
 
@@ -256,5 +259,7 @@ class PDFPreprocessor(TextPreprocessor):
             print('Started: ', img_name)
             pages_paragraphs += self.__pipeline_PDF(path + '/' + img_name)
             print('Finished: ', img_name)
+
+        os.rmdir(path)
 
         return pages_paragraphs
