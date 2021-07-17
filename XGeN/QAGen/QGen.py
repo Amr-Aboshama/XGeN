@@ -90,7 +90,16 @@ class QGen:
         esc_val = re.escape(val)
         sentence = re.sub(rf'([\s\'\"]){esc_val}([\s\'\"])', rf'\1{to_val}\2', sentence, flags=re.IGNORECASE)
         sentence = re.sub(rf'(\s){esc_val}([.,!?])', rf' {to_val}\2', sentence, flags=re.IGNORECASE)
-        sentence = re.sub(rf'(^)Hello(\s)', rf'{to_val} ', sentence, flags=re.IGNORECASE)
-        sentence = re.sub(rf'(\s)Hello($)', rf' {to_val}', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(^){esc_val}(\s)', rf'{to_val} ', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(\s){esc_val}($)', rf' {to_val}', sentence, flags=re.IGNORECASE)
 
         return sentence
+
+    def __regex_search(self, sentence, word):
+        esc_val = re.escape(word)
+        flag = re.search(rf'([\s\'\"]){esc_val}([\s\'\"])', sentence, flags=re.IGNORECASE)
+        flag |= re.search(rf'(\s){esc_val}([.,!?])', sentence, flags=re.IGNORECASE)
+        flag |= re.search(rf'(^){esc_val}(\s)', sentence, flags=re.IGNORECASE)
+        flag |= re.search(rf'(\s){esc_val}($)', sentence, flags=re.IGNORECASE)
+
+        return flag

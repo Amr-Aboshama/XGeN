@@ -56,7 +56,7 @@ class BoolGen(QGen):
             correction = ""
             
             # Make a false question
-            if(bool(self.rand.getrandbits(1)) and dec.find(val) != -1):
+            if(bool(self.rand.getrandbits(1)) and self._QGen__regex_search(dec, val)):
                 option = self._QGen__find_alternative(val, full_keywords)
                 answer = "No"
                 correction = option + " -> " + val
