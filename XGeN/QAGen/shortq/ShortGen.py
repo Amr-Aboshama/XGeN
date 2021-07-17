@@ -67,7 +67,9 @@ class ShortGen(QGen):
             Question= dec.replace('question:', '')
             Question= Question.strip()
             
-            if any(wh in Question for wh in wh_words):
-                output_array.append((Question, val))
+            if Question.find(answer[:-1].lower()) == -1:
+                output_array.append((Question, answer))
+            else:
+                print("the answer in the question, we ignored that question")
             
         return output_array
