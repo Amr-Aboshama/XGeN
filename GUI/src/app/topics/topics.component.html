@@ -1,7 +1,18 @@
+ <!-- ======= Breadcrumbs ======= -->
+ <section id="breadcrumbs" class="breadcrumbs">
+  <div class="container" style="text-align: center;">
 
+    <ol>
+      <li><a style="color: black;" [routerLink]="['/home']"  >Home</a></li>
+      <li>Topics</li>
+    </ol>
+    <h2>Choose Topics & Questions count</h2>
+
+  </div>
+</section><!-- End Breadcrumbs -->
     <!-- ======= Team Section ======= -->
     <section id="team" class="team">
-      <div class="container">
+      <div class="container" id="first">
 
         <div class="row">
           <!-- add d-flex if u want to-->
@@ -68,8 +79,8 @@
                 <div class="mb-3" *ngFor="let topic of UserAddedTopics">
                   <button type="button"
                   (click)="delUserTopic(topic)"
-                  style="color: black; background-color: #ddae8f; "
-                  class="btn btn-default" > + {{ topic }}
+                  style="color: black; background-color: #E47225; "
+                  class="btn btn-default" > {{ topic }}
                 </button>
                 </div>
               </div>

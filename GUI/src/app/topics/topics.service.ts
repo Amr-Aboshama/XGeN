@@ -12,7 +12,7 @@ import { timeout} from 'rxjs/operators';
 export class TopicsService {
   baseURL: string = "http://localhost:3000/";
   serverURL: string="http://localhost:5000/";
-  ngRokURL: string ="http://a695583c09a4.ngrok.io/"
+  ngRokURL: string ="http://17b6672e8461.ngrok.io/";
 
   constructor(private http: HttpClient) { }
 
@@ -42,7 +42,7 @@ getExam():Observable<any>{
   const headers = { 'content-type': 'application/json'}
 
   return this.http.get<any>(this.baseURL+'exam',{'headers':headers}).pipe(
-    timeout(36000)
+    timeout(2147483647)
 );
 }
 

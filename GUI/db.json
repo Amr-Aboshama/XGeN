@@ -205,6 +205,29 @@
     }
   ],
   "Selected": [
-  ]
+  ],
+
+  "exam":{
+    "bool_questions":[
+      ["is there food","No", ""],
+      ["is there food","yes", "insect -> worm"]
+    ],
+    "mcq_questions":[
+      ["chapeter____mlfvmklfmklvklvkvkknkln","virus",["viruse ","mai","mai1","mai2"]],
+      ["chapeter____hello cknknncnnkvnjdnvjnvn","virus",["viruse ","mai","mai1","mai2"]]
+
+    ],
+    "tf_questions":[
+
+      ["a very important questions","T"],
+      ["why am i doing this in my life " , "F"],
+      ["i am many many long worjnjknjkdvn","T"]
+    ],
+    "wh_questions":[
+      ["what is the speed of a worm","worm"],
+      ["what am i ","nothing"],
+      ["why am i doing this","i have no other choice"]
+    ]
+  }
 
 }

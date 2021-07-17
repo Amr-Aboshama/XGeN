@@ -75,3 +75,15 @@ div {
   }
 
 
+#breadcrumbs{
+  padding-top: 100px;
+}
+
+section{
+  background-color: #E9ebee;
+}
+
+#team{
+  padding-top: 0px !important;
+  margin-top: 0px !important;
+}
