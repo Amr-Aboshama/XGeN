@@ -63,7 +63,8 @@ def get_options(answer,s2v):
     distractors =[]
 
     try:
-        distractors = sense2vec_get_words(answer,s2v)
+        # distractors = sense2vec_get_words(answer,s2v)
+        
         if len(distractors) > 0:
             #print(" Sense2vec_distractors successful for word : ", answer)
             return distractors,"sense2vec"
@@ -72,6 +73,7 @@ def get_options(answer,s2v):
 
 
     return distractors,"None"
+
 
 def tokenize_sentences(text):
     sentences = sent_tokenize(text)
@@ -160,7 +162,7 @@ def get_nouns_multipartite(text, max_topics=40):
     keyphrases = extractor.get_n_best(n=max_topics)
 
     for key in keyphrases:
-        out.append(key[0])
+        out.append(key[0].lower())
     
     return out
 
@@ -188,33 +190,26 @@ def get_keywords(nlp,text,max_keywords,s2v,fdist,normalized_levenshtein,no_of_se
     max_keywords = int(max_keywords)
 
     keywords = get_nouns_multipartite(text)
-    print(1)
-    print(keywords)
+    
     keywords = sorted(keywords, key=lambda x: fdist[x])
-    for k in keywords:
-        print(k, fdist[k])
-    print(2)
-    print(keywords)
-    # keywords = filter_phrases(keywords, max_keywords,normalized_levenshtein )
-    # print(3)
-    # print(keywords)
+    
+    keywords = filter_phrases(keywords, max_keywords,normalized_levenshtein )
 
-    # phrase_keys = get_phrases(doc)
-    # filtered_phrases = filter_phrases(phrase_keys, max_keywords,normalized_levenshtein )
+    phrase_keys = get_phrases(doc)
+    filtered_phrases = filter_phrases(phrase_keys, max_keywords,normalized_levenshtein )
 
-    # total_phrases = keywords + filtered_phrases
+    total_phrases = keywords + filtered_phrases
 
-    # total_phrases_filtered = filter_phrases(total_phrases, min(max_keywords, 2*no_of_sentences),normalized_levenshtein )
+    total_phrases_filtered = filter_phrases(total_phrases, min(max_keywords, 2*no_of_sentences),normalized_levenshtein )
 
 
-    # answers = []
-    # for answer in total_phrases_filtered:
-    #     if answer not in answers and MCQs_available(answer,s2v):
-    #         answers.append(answer)
+    answers = []
+    for answer in total_phrases_filtered:
+        if answer not in answers and MCQs_available(answer,s2v):
+            answers.append(answer)
 
-    # answers = answers[:max_keywords]
-    # return answers
-    return keywords
+    answers = answers[:max_keywords]
+    return answers
 
 
 def random_choice(rand):
@@ -224,7 +219,7 @@ def random_choice(rand):
 
 def find_alternative(key, s2v, normalized_levenshtein, rand):
     options, _ = get_options(key, s2v)
-    options =  filter_phrases(options, 10, normalized_levenshtein)
+    # options =  filter_phrases(options, 10, normalized_levenshtein)
 
     while(len(options) > 0):
         option = rand.choice(options)

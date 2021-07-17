@@ -2,7 +2,7 @@ import re
 # import random
 #from nltk.stem import PorterStemmer
 
-from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword, find_alternative
+from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
 from QAGen.QGen import QGen
 
 
@@ -12,7 +12,7 @@ class TFGen(QGen):
         QGen.__init__(self, loader)
             
 
-    def predict_tf(self, keywords, modified_text):
+    def predict_tf(self, keywords, modified_text, full_keywords):
 
         sentences = tokenize_sentences(modified_text.replace(".",". "))
         keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
@@ -38,11 +38,10 @@ class TFGen(QGen):
             answer = "T"
             # Make a false question
             if(bool(self.rand.getrandbits(1)) and sentence.find(key) != -1):
-                option = find_alternative(key, self.s2v, self.normalized_levenshtein, self.rand)
-                if option != key:
-                    correction = option + " -> " + key
-                    answer = "F,        " + correction
-                    sentence = re.sub(re.escape(key), option, sentence, flags=re.IGNORECASE)
+                option = self._QGen__find_alternative(key, full_keywords)
+                correction = option + " -> " + key
+                answer = "F,        " + correction
+                sentence = re.sub(re.escape(key), option, sentence, flags=re.IGNORECASE)
             #question = {"question": sentence, "answer": answer}
         #if(question not in output_array["questions"]):    
             output_array.append((sentence, answer))

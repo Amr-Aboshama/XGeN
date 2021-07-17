@@ -1,8 +1,7 @@
 import re
 import time
 # import random
-from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword, \
-                             filter_phrases, get_options
+from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
 
 from QAGen.QGen import QGen
 
@@ -13,7 +12,7 @@ class MCQGen(QGen):
         QGen.__init__(self, loader)
 
         
-    def predict_mcq(self, keywords, modified_text):
+    def predict_mcq(self, keywords, modified_text, full_keywords):
         sentences = tokenize_sentences(modified_text)
         
         keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
@@ -27,17 +26,17 @@ class MCQGen(QGen):
             return []
         else:
             try:
-                generated_questions = self.__generate_questions_mcq(keyword_sentence_mapping,self.s2v)
+                generated_questions = self.__generate_questions_mcq(keyword_sentence_mapping, full_keywords)
 
             except:
                 #return final_output
                 return []
 
-            #final_output["statement"] = modified_text
-            #final_output["questions"] = generated_questions["questions"]
             
             #return final_output
             return generated_questions
+
+
     def __replace_choice(self, sentence, val):
         
         # The next line to replace with case insensitive
@@ -49,8 +48,7 @@ class MCQGen(QGen):
 
         return sentence
 
-
-    def __generate_questions_mcq(self, keyword_sentence_mapping,sense2vec):
+    def __generate_questions_mcq(self, keyword_sentence_mapping, full_keywords):
         answers = keyword_sentence_mapping.keys()
         output_array = []
         #output_array["questions"] = []
@@ -65,36 +63,14 @@ class MCQGen(QGen):
             
             context = self.__replace_choice(sentence, val)
             
-            options, _ = get_options(val, sense2vec)
-            options =  filter_phrases(options, 10, self.normalized_levenshtein)
+            options, answer = self._QGen__get_options(val, full_keywords)
+            # options =  filter_phrases(options, 10, self.normalized_levenshtein)
 
-            random_options = []
-            while(len(options) > 0 and len(random_options) < 3):
-                option = self.rand.choice(options)
-                random_options.append(option)
-                options.remove(option)
-            
-            #individual_question["context"] = context
-            #individual_question["question_type"] = "MCQ"
-            #individual_question["answer"] = val
-            #individual_question["id"] = index+1
-            #individual_question["options"], individual_question["options_algorithm"] = get_options(val, sense2vec)
-            #individual_question["options"] =  filter_phrases(individual_question["options"], 10,normalized_levenshtein)
-            #index = 3
-            #individual_question["extra_options"]= individual_question["options"][index:]
-            #individual_question["options"] = individual_question["options"][:index]
-            
-            if len(random_options)>0:
-                random_options.insert(self.rand.randint(0,len(options)),val)
-                if(len(random_options) < 4):
-                    random_options.append("All of the above")
-                if(len(random_options) < 4):
-                    random_options.append("None of the above")
 
-                #output_array["questions"].append(individual_question)
-                output_array.append((context,val, random_options))
+            #output_array["questions"].append(individual_question)
+            output_array.append((context,answer, options))
 
-                used_sentences.append(sentence)
+            used_sentences.append(sentence)
             
 
         return output_array

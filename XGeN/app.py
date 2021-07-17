@@ -81,13 +81,17 @@ def analyze_text(phrases, path):
 
     text = " ".join(phrases)
 
-    keywords = topicExtract.extract_keywords(text)
+    keywords_count = 40
+    full_keywords = topicExtract.extract_keywords(text)
+    full_count = len(full_keywords)
     
+    keywords = full_keywords[:min(keywords_count, full_count)]
+
     # TODO : Handle Async Ranker here
     phrase_topics = ranker.filter_phrases(keywords, phrases)
 
     # Save Paragraphs & Topics
-    topicExtract.write_paragraphs_topics(phrase_topics, path)
+    topicExtract.write_paragraphs_topics(phrase_topics, full_keywords, path)
 
     return keywords
 
@@ -175,25 +179,34 @@ def examSpecifications():
     
     # Load the user paragraphs & topics
     phrases = {}
+    full_keywords = []
+
     with open(directory_path + "/paragraph_topics.txt", 'r') as file:
-        while True:
-            phrase = file.readline()
-            if len(phrase) == 0:
-                break
+        
+        line = file.readline()[:-1]
+        
+        if len(line):
             
-            phrase = phrase[:-1]
+            full_keywords = list(filter(None, line.split(';')))
 
-            topics = file.readline()[:-1]
-            
-            topics = list(filter(None, topics.split(';')))
+            while True:
+                phrase = file.readline()
+                if len(phrase) == 0:
+                    break
+                
+                phrase = phrase[:-1]
 
-            phrases[phrase] = topics
-                    
-            # Add the new topics to the phrases
-            for keyword in selected_topics:
-                keyword = keyword.lower()
-                if keyword not in topics and phrase.lower().find(keyword) != -1:
-                    phrases[phrase].insert(0,keyword)
+                topics = file.readline()[:-1]
+                
+                topics = list(filter(None, topics.split(';')))
+
+                phrases[phrase] = topics
+                        
+                # Add the new topics to the phrases
+                for keyword in selected_topics:
+                    keyword = keyword.lower()
+                    if keyword not in topics and phrase.lower().find(keyword) != -1:
+                        phrases[phrase].insert(0,keyword)
                     
             
     # Filter The paragraphs based on the selected topics
@@ -203,7 +216,7 @@ def examSpecifications():
     i = 0
     count = mcq_count
     while(i < len(filtered_phrases) and i < count):
-        questions = mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0])
+        questions = mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0], full_keywords)
         if not len(questions):
             continue
         mcq_questions += questions
@@ -215,7 +228,7 @@ def examSpecifications():
     # Generate TF Questions
     count += tfq_count
     while(i < len(filtered_phrases) and i < count):
-        questions = tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0])
+        questions = tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0], full_keywords)
         if not len(questions):
             continue
         tf_questions += questions
@@ -245,7 +258,7 @@ def examSpecifications():
     # Generate Boolean Questions
     count += boolq_count
     while(i < len(filtered_phrases) and i < count):
-        questions = boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
+        questions = boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0], full_keywords)
         if not len(questions):
             continue
         bool_questions += questions
