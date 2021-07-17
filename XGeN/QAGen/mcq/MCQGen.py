@@ -22,6 +22,7 @@ class MCQGen(QGen):
         #final_output = {}
 
         if len(keyword_sentence_mapping.keys()) == 0:
+            print('No keywords in this sentence')
             return []
         else:
             try:

@@ -16,6 +16,10 @@ class TFGen(QGen):
         sentences = tokenize_sentences(modified_text.replace(".",". "))
         keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
         
+        if len(keyword_sentence_mapping.keys()) == 0:
+            print('No keywords in this sentence')
+            return []
+            
         output_array = []
         #output_array["questions"] =[]
 
