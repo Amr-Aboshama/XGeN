@@ -73,7 +73,7 @@ class QGen:
 
         for k in full_keywords:
             score = self.normalized_levenshtein.similarity(k, key)
-            if score >= mx_score and score <= 0.75 and key != k:
+            if score >= mx_score and score <= 0.55 and key != k:
                 answer = k
                 mx_score = score
 
