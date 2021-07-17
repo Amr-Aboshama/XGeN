@@ -1,4 +1,3 @@
-import re
 import time
 # import random
 from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
@@ -37,17 +36,6 @@ class MCQGen(QGen):
             return generated_questions
 
 
-    def __replace_choice(self, sentence, val):
-        
-        # The next line to replace with case insensitive
-        esc_val = re.escape(val)
-        sentence = re.sub(rf'(\s){esc_val}(\s)', r' ____ ', sentence, flags=re.IGNORECASE)
-        sentence = re.sub(rf'(\s){esc_val}([.,!?])', r' ____\2', sentence, flags=re.IGNORECASE)
-        sentence = re.sub(rf'(^)Hello(\s)', r'____ ', sentence, flags=re.IGNORECASE)
-        sentence = re.sub(rf'(\s)Hello($)', r' ____', sentence, flags=re.IGNORECASE)
-
-        return sentence
-
     def __generate_questions_mcq(self, keyword_sentence_mapping, full_keywords):
         answers = keyword_sentence_mapping.keys()
         output_array = []
@@ -61,7 +49,7 @@ class MCQGen(QGen):
             
             #individual_question ={}
             
-            context = self.__replace_choice(sentence, val)
+            context = self._QGen__replace_choice(sentence, val)
             
             options, answer = self._QGen__get_options(val, full_keywords)
             # options =  filter_phrases(options, 10, self.normalized_levenshtein)

@@ -1,3 +1,4 @@
+import re
 
 class QGen:
     
@@ -82,3 +83,14 @@ class QGen:
                 mx_score = score
 
         return answer
+    
+
+    def __replace_choice(self, sentence, val, to_val = "____"):
+        sentence
+        esc_val = re.escape(val)
+        sentence = re.sub(rf'(\s){esc_val}(\s)', rf' {to_val} ', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(\s){esc_val}([.,!?])', rf' {to_val}\2', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(^)Hello(\s)', rf'{to_val} ', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(\s)Hello($)', rf' {to_val}', sentence, flags=re.IGNORECASE)
+
+        return sentence

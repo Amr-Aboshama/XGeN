@@ -1,4 +1,3 @@
-import re
 # import random
 from typing import Set
 import torch
@@ -59,7 +58,7 @@ class BoolGen(QGen):
                 option = self._QGen__find_alternative(val, full_keywords)
                 answer = "No"
                 correction = option + " -> " + val
-                dec = re.sub(re.escape(val), option, dec, flags=re.IGNORECASE)
+                dec = self._QGen__replace_choice(dec, val, option)
             
             s.add((dec, answer, correction))
         
