@@ -21,7 +21,7 @@ class ShortGen(QGen):
         #final_output = {}
 
         if len(keyword_sentence_mapping.keys()) == 0:
-            print('ZERO')
+            print('No keywords in this sentence')
             return []
         else:
             
@@ -57,7 +57,8 @@ class ShortGen(QGen):
             
         output_array = []
         #output_array["questions"] =[]
-        
+        wh_words = ['What', 'Where', 'When', 'How', 'Who', 'Why', 'How many', 'How much']
+
         for index, val in enumerate(answers):
             #individual_quest= {}
             out = outs[index, :]
@@ -65,13 +66,8 @@ class ShortGen(QGen):
             
             Question= dec.replace('question:', '')
             Question= Question.strip()
-
-            #individual_quest['Question']= Question
-            #individual_quest['Answer']= val
-            #individual_quest["id"] = index+1
-            #individual_quest["context"] = keyword_sent_mapping[val]
             
-            #output_array["questions"].append(individual_quest)
-            output_array.append((Question, val))
+            if any(wh in Question for wh in wh_words):
+                output_array.append((Question, val))
             
         return output_array

@@ -1,4 +1,3 @@
-import re
 # import random
 #from nltk.stem import PorterStemmer
 
@@ -17,6 +16,10 @@ class TFGen(QGen):
         sentences = tokenize_sentences(modified_text.replace(".",". "))
         keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
         
+        if len(keyword_sentence_mapping.keys()) == 0:
+            print('No keywords in this sentence')
+            return []
+            
         output_array = []
         #output_array["questions"] =[]
 
@@ -41,7 +44,8 @@ class TFGen(QGen):
                 option = self._QGen__find_alternative(key, full_keywords)
                 correction = option + " -> " + key
                 answer = "F,        " + correction
-                sentence = re.sub(re.escape(key), option, sentence, flags=re.IGNORECASE)
+
+                sentence = self._QGen__replace_choice(sentence, key, option)
             #question = {"question": sentence, "answer": answer}
         #if(question not in output_array["questions"]):    
             output_array.append((sentence, answer))

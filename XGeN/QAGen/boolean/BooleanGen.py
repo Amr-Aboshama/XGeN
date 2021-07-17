@@ -1,4 +1,3 @@
-import re
 # import random
 from typing import Set
 import torch
@@ -21,6 +20,10 @@ class BoolGen(QGen):
             text_snippet = " ".join(keyword_sentence_mapping[k][:3])
             keyword_sentence_mapping[k] = text_snippet
 
+        if len(keyword_sentence_mapping.keys()) == 0:
+            print('No keywords in this sentence')
+            return []
+
         batch_text = []
         answers = keyword_sentence_mapping.keys()
         for answer in answers:
@@ -28,8 +31,6 @@ class BoolGen(QGen):
             text = "truefalse: %s passage: %s </s>" % (txt, True)
             batch_text.append(text)
         
-        if len(batch_text) == 0:
-            return []
         encoding = self.tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt", max_length=512, truncation=True)
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
         
@@ -59,7 +60,7 @@ class BoolGen(QGen):
                 option = self._QGen__find_alternative(val, full_keywords)
                 answer = "No"
                 correction = option + " -> " + val
-                dec = re.sub(re.escape(val), option, dec, flags=re.IGNORECASE)
+                dec = self._QGen__replace_choice(dec, val, option)
             
             s.add((dec, answer, correction))
         
