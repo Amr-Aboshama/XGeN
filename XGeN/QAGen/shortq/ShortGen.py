@@ -68,7 +68,7 @@ class ShortGen(QGen):
             Question= dec.replace('question:', '')
             Question= Question.strip()
             
-            if any(wh in Question for wh in wh_words):
+            if any(Question.find(wh) == 0 for wh in wh_words):
                 payload = {
                     "input_text": keyword_sent_mapping[val],
                     "input_question" : Question
