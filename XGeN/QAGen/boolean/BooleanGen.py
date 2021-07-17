@@ -2,7 +2,7 @@ import re
 # import random
 from typing import Set
 import torch
-from QAGen.utilities import tokenize_sentences, find_alternative, get_sentences_for_keyword
+from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
 
 from QAGen.QGen import QGen
 
@@ -13,7 +13,7 @@ class BoolGen(QGen):
         QGen.__init__(self, loader)
         
 
-    def predict_boolq(self, keywords, modified_text):
+    def predict_boolq(self, keywords, modified_text, full_keywords):
         sentences = tokenize_sentences(modified_text)
         
         keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)     
@@ -51,18 +51,15 @@ class BoolGen(QGen):
             s = set()
             answer = "Yes"
             correction = ""
+            
             # Make a false question
             if(bool(self.rand.getrandbits(1)) and dec.find(val) != -1):
-                option = find_alternative(val, self.s2v, self.normalized_levenshtein, self.rand)
-                if option != val:
-                    answer = "No"
-                    option = find_alternative(val, self.s2v, self.normalized_levenshtein, self.rand)
-                    correction = option + " -> " + val
-                    dec = re.sub(re.escape(val), option, dec, flags=re.IGNORECASE)
-            #answer += ", " + keyword_sentence_mapping[val]
-            #output_array["questions"].append({"question": dec, "answer": answer, "correction": correction})
+                option = self._QGen__find_alternative(val, full_keywords)
+                answer = "No"
+                correction = option + " -> " + val
+                dec = re.sub(re.escape(val), option, dec, flags=re.IGNORECASE)
+            
             s.add((dec, answer, correction))
-            #output_array.append((dec, answer, correction))
         
         if torch.device=='cuda':
             torch.cuda.empty_cache()
