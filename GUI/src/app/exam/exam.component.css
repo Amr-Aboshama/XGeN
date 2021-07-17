@@ -9,4 +9,37 @@
 
 }
 
+#ans{
+  display: flex-start;
+  color: black;
+  text-align: left;
+  padding-left: 30px;
 
+}
+
+#ansstart{
+  display: flex-start;
+  color: black;
+  text-align: left;
+  padding-left: 30px;
+
+}
+
+#choices{
+  font-size: xx-large;
+}
+
+/* Thick red border */
+hr.new4 {
+  border: 1px solid #000000;
+}
+.btn-default:hover{
+  background-color:#E47225 !important;
+}
+
+#breadcrumbs{
+  padding-top: 100px;
+}
+section{
+  background-color: #E9ebee;
+}

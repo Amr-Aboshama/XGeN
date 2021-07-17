@@ -26,8 +26,13 @@ export class TopicsComponent implements OnInit {
   UserTopics: FormGroup;
 
   uuid : string;
+  exam : any[];
+
+  isLoadingExam: boolean;
   constructor(private HttpHome: HomeService, private HttpService:TopicsService,private router: Router, private fb: FormBuilder) {
-   // this.getTopics();
+    //this.getExam();//just fro test
+
+    this.isLoadingExam = false;
     //this.Topics = home.Topics;
     this.SelectedTopics= [];
     this.ResponseTopics= [];
@@ -43,6 +48,9 @@ export class TopicsComponent implements OnInit {
     //localStorage.setItem("uuid", this.uuid );
     this.uuid=localStorage.getItem("uuid"); //returns "xxx"
     console.log("ia m uuid :" , this.uuid );
+
+    ////////////////////////////////////////////////
+    localStorage.removeItem('exam');
 
 
 
@@ -63,7 +71,7 @@ export class TopicsComponent implements OnInit {
     }
   }
 
-    console.log("i am the reformed topics", this.Topics);
+   // console.log("i am the reformed topics", this.Topics);
 
   }
 
@@ -72,7 +80,7 @@ SelorUnsel(topic,i){
   let data = this.SelectedTopics.find(ele => ele == topic.topic);
   //if found then remove
   //if not found (data == null) then add
-  console.log("i am data ",data)
+  //console.log("i am data ",data)
   if(data == null || data == undefined){
     topic.selected=true;
     this.SelectedTopics.push(topic.topic); // add if not found
@@ -86,7 +94,7 @@ SelorUnsel(topic,i){
     // let index = this.SelectedTopics.findIndex(ele => ele === topic.topic); //remove if found
     // this.SelectedTopics.splice(index, 1);//remove element from array
   }
-  console.log(this.SelectedTopics);
+ // console.log(this.SelectedTopics);
 }
 
 createQForm(){
@@ -107,31 +115,36 @@ createQForm(){
   AddTopic(){
     this.SelectedTopics.push(this.UserTopics.getRawValue().UserT);
     this.UserAddedTopics.push(this.UserTopics.getRawValue().UserT)
-    console.log(this.SelectedTopics);
-    console.log(this.UserAddedTopics);
+   // console.log(this.SelectedTopics);
+   // console.log(this.UserAddedTopics);
   }
 
 
   delUserTopic(topic){
-    console.log("i am topic in deleeeeeeeeeeeete" , topic);
-    console.log("i am the selected topics in deleeeeeeete", this.SelectedTopics);
     this.SelectedTopics.forEach((element,index)=>{
       if(element== topic) this.SelectedTopics.splice(index,1);
    });
    this.UserAddedTopics.forEach((element,index)=>{
     if(element== topic) this.UserAddedTopics.splice(index,1);
 
-    console.log(this.SelectedTopics);
-    console.log(this.UserAddedTopics);
+  //  console.log(this.SelectedTopics);
+   // console.log(this.UserAddedTopics);
  });
   }
 
-  submit(){
-
-   // console.log("IN SUBMIIIIT" , this.SelectedTopics);
-
+  submit(element, text){
+    this.isLoadingExam=true;
+    element.textContent = text;
+    element.disabled = true;
     this.HttpService.SubmitSpecs(this.uuid,this.SelectedTopics,this.QForm.getRawValue())
     .subscribe(data => {
+      if (data) { this.isLoadingExam=false;}
+
+
+
+      //save exam here
+      this.exam=data,
+      localStorage.setItem("exam", JSON.stringify(this.exam ) ),
 
       console.log('i am the data ',data)
 
@@ -142,6 +155,26 @@ createQForm(){
     }
     )
   }
+//just for test
+  getExam(){
 
+  this.HttpService.getExam()
+  .subscribe(
+    data => {
+      this.exam=data,
+      localStorage.setItem("exam", JSON.stringify(this.exam ) ),
+
+
+      (err: any) => console.log(err),
+      console.log(data);
+
+
+    });
+}
+
+Advance(){
+  this.router.navigate(['/exam'])
+
+}
 
 }

@@ -2,6 +2,7 @@ import { topics } from './../topics';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { timeout} from 'rxjs/operators';
 
 
 @Injectable({
@@ -13,6 +14,7 @@ public uuid: string;
 
   baseURL: string = "http://localhost:3000/";
   serverURL: string="http://localhost:5000/";
+  ngRokURL: string ="http://17b6672e8461.ngrok.io/"
 
   constructor(private http: HttpClient) { }
 
@@ -24,17 +26,26 @@ public uuid: string;
     formdata.append('text', text.Text);
     console.log('The body in service ',formdata)
 
-    return this.http.post(this.serverURL + 'api/upload/text',formdata )
+    return this.http.post(this.ngRokURL + 'api/upload/text',formdata )
   }
 
 
-postFile(fileToUpload: File): Observable<any> {
-  const endpoint = this.serverURL+'api/upload/pdf';
+postFile(fileToUpload: File , pdf : any): Observable<any> {
+  const endpoint = this.ngRokURL+'api/upload/pdf';
   const formData: FormData = new FormData();
   formData.append('file', fileToUpload, fileToUpload.name);
+  if(pdf.start == '')
+  formData.append('start','1');
+  else
+  formData.append('start', pdf.start);
+  if(pdf.end == '')
+  formData.append('end','-1');
+  else
+  formData.append('end',pdf.end);
+
   console.log("###########")
-  return this.http.post(endpoint, formData)
-    //.pipe(map(() => { return true; }));
+  return this.http.post(endpoint, formData);
+
 
 }
 //only for test

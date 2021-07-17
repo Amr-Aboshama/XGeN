@@ -18,6 +18,7 @@ serverURL: string = "http://localhost:5000/api/upload/pdf";
 
 
 public TextForm: FormGroup ;
+public PDFForm : FormGroup;
 public Topics: topics[];
 
 fileToUpload: File | null = null;
@@ -30,6 +31,7 @@ Allow: boolean; // enable pdf button
 //   { url: this.serverURL, removeAfterUpload: false, autoUpload: true });
   constructor(private fb: FormBuilder,private route: ActivatedRoute,private HttpService: HomeService, private router: Router) {
     this.createText();
+    this.createPDF();
     this.isLoadingText=false;
     this.isLoadingPDF= false;
     this.Allow = false;
@@ -48,9 +50,17 @@ this.TextForm = this.fb.group({
   Text:['', Validators.required]
 })
 }
+createPDF(){
+  this.PDFForm = this.fb.group({
+   start:[''],
+   end:['']
+  })
+}
 
-SendText() {
+SendText(element, text) {
   this.isLoadingText=true;
+  element.textContent = text;
+  element.disabled = true;
   this.HttpService.sendText(this.TextForm.getRawValue())
     .subscribe(data => {
       data => {
@@ -82,9 +92,11 @@ console.log("eveeent");
     this.Allow = true;
   }
 }
-uploadFileToActivity() {
+uploadFileToActivity(element, text) {
   this.isLoadingPDF=true;
-  this.HttpService.postFile(this.fileToUpload).subscribe(data => {
+  element.textContent = text;
+    element.disabled = true;
+  this.HttpService.postFile(this.fileToUpload , this.PDFForm.getRawValue()).subscribe(data => {
     if (data) { this.isLoadingPDF=false;}
 
     // do something, if upload success
