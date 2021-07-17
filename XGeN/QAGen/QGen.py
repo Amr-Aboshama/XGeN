@@ -89,7 +89,7 @@ class QGen:
         sentence
         esc_val = re.escape(val)
         sentence = re.sub(rf'(\s){esc_val}(\s)', rf' {to_val} ', sentence, flags=re.IGNORECASE)
-        sentence = re.sub(rf'(\s){esc_val}([.,!?])', rf' {to_val}\2', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'([\s\'\"]){esc_val}([.,!?\'\"])', rf'\1{to_val}\2', sentence, flags=re.IGNORECASE)
         sentence = re.sub(rf'(^)Hello(\s)', rf'{to_val} ', sentence, flags=re.IGNORECASE)
         sentence = re.sub(rf'(\s)Hello($)', rf' {to_val}', sentence, flags=re.IGNORECASE)
 
