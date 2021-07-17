@@ -33,10 +33,13 @@ class QGen:
             pool.add(answer)
         else:
             add_none = 1
+
+        threshold = 0.55
         
         while len(pool) + add_none < 4:
             choice = self.rand.choice(full_keywords)
-            if use_none and choice == answer:
+            score = self.normalized_levenshtein.similarity(choice, answer)
+            if choice == answer or score > threshold:
                 continue
 
             pool.add(choice)
@@ -70,10 +73,11 @@ class QGen:
 
         mx_score = 0
         answer = key
+        threshold = 0.55
 
         for k in full_keywords:
             score = self.normalized_levenshtein.similarity(k, key)
-            if score >= mx_score and score <= 0.55 and key != k:
+            if score >= mx_score and score <= threshold and key != k:
                 answer = k
                 mx_score = score
 
