@@ -38,6 +38,17 @@ class MCQGen(QGen):
             
             #return final_output
             return generated_questions
+    def __replace_choice(self, sentence, val):
+        
+        # The next line to replace with case insensitive
+        esc_val = re.escape(val)
+        sentence = re.sub(rf'(\s){esc_val}(\s)', r' ____ ', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(\s){esc_val}([.,!?])', r' ____\2', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(^)Hello(\s)', r'____ ', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(rf'(\s)Hello($)', r' ____', sentence, flags=re.IGNORECASE)
+
+        return sentence
+
 
     def __generate_questions_mcq(self, keyword_sentence_mapping,sense2vec):
         answers = keyword_sentence_mapping.keys()
@@ -52,8 +63,8 @@ class MCQGen(QGen):
             
             #individual_question ={}
             
-            # The next line to replace with case insensitive
-            context = re.sub(re.escape(val), "____", sentence, flags=re.IGNORECASE)
+            context = self.__replace_choice(sentence, val)
+            
             options, _ = get_options(val, sense2vec)
             options =  filter_phrases(options, 10, self.normalized_levenshtein)
 

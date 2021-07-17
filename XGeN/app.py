@@ -203,7 +203,10 @@ def examSpecifications():
     i = 0
     count = mcq_count
     while(i < len(filtered_phrases) and i < count):
-        mcq_questions += mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0])
+        questions = mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0])
+        if not len(questions):
+            continue
+        mcq_questions += questions
         i += 1
     # TODO : Filter Questions
     mcq_questions = ranker.random_questions(mcq_questions, mcq_count)
@@ -212,7 +215,10 @@ def examSpecifications():
     # Generate TF Questions
     count += tfq_count
     while(i < len(filtered_phrases) and i < count):
-        tf_questions += tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0])
+        questions = tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0])
+        if not len(questions):
+            continue
+        tf_questions += questions
         i += 1
     # TODO : Filter Questions
     tf_questions = ranker.random_questions(tf_questions, tfq_count)
@@ -221,11 +227,17 @@ def examSpecifications():
     # Generate WH Questions
     count += whq_count
     while(i < len(filtered_phrases) and i < count):
-        wh_questions += shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0])
+        questions = shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0])
+        if not len(questions):
+            continue
+        wh_questions += questions
         i += 1
-        #if(i < len(filtered_phrases) and i < count):
-        #    wh_questions += longGen.paraphrase(filtered_phrases[i][0])
-        #    i += 1
+        # if(i < len(filtered_phrases) and i < count):
+        #     questions = longGen.paraphrase(filtered_phrases[i][0])
+        #     if not len(questions):
+        #         continue
+        #     wh_questions += questions
+        #     i += 1
     # TODO : Filter Questions
     wh_questions = ranker.random_questions(wh_questions, whq_count)
     print("Done WH")
@@ -233,7 +245,10 @@ def examSpecifications():
     # Generate Boolean Questions
     count += boolq_count
     while(i < len(filtered_phrases) and i < count):
-        bool_questions += boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
+        questions = boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0])
+        if not len(questions):
+            continue
+        bool_questions += questions
         i += 1
 
     # TODO : Filter Questions
