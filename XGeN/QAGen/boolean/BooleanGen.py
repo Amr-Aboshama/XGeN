@@ -28,6 +28,8 @@ class BoolGen(QGen):
             text = "truefalse: %s passage: %s </s>" % (txt, True)
             batch_text.append(text)
         
+        if len(batch_text) == 0:
+            return []
         encoding = self.tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt", max_length=512, truncation=True)
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
         
