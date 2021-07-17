@@ -215,8 +215,10 @@ def examSpecifications():
     # Generate MCQ Questions
     i = 0
     count = mcq_count
-    while(i < len(filtered_phrases) and i < count):
-        questions = mcqGen.predict_mcq(filtered_phrases[i][1],filtered_phrases[i][0], full_keywords)
+    phrase_num = 0
+    while(phrase_num < len(filtered_phrases) and i < count):
+        questions = mcqGen.predict_mcq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
+        phrase_num += 1
         if not len(questions):
             continue
         mcq_questions += questions
@@ -227,8 +229,9 @@ def examSpecifications():
     
     # Generate TF Questions
     count += tfq_count
-    while(i < len(filtered_phrases) and i < count):
-        questions = tfGen.predict_tf(filtered_phrases[i][1],filtered_phrases[i][0], full_keywords)
+    while(phrase_num < len(filtered_phrases) and i < count):
+        questions = tfGen.predict_tf(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
+        phrase_num += 1
         if not len(questions):
             continue
         tf_questions += questions
@@ -239,8 +242,9 @@ def examSpecifications():
     
     # Generate WH Questions
     count += whq_count
-    while(i < len(filtered_phrases) and i < count):
-        questions = shortGen.predict_shortq(filtered_phrases[i][1],filtered_phrases[i][0])
+    while(phrase_num < len(filtered_phrases) and i < count):
+        questions = shortGen.predict_shortq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0])
+        phrase_num += 1
         if not len(questions):
             continue
         wh_questions += questions
@@ -257,8 +261,9 @@ def examSpecifications():
     
     # Generate Boolean Questions
     count += boolq_count
-    while(i < len(filtered_phrases) and i < count):
-        questions = boolGen.predict_boolq(filtered_phrases[i][1],filtered_phrases[i][0], full_keywords)
+    while(phrase_num < len(filtered_phrases) and i < count):
+        questions = boolGen.predict_boolq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
+        phrase_num += 1
         if not len(questions):
             continue
         bool_questions += questions
