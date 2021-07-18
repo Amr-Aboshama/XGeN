@@ -1,4 +1,4 @@
-# import random
+import re
 #from nltk.stem import PorterStemmer
 
 from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
@@ -31,7 +31,10 @@ class TFGen(QGen):
             # choosing a sentence not used before
             sentence = None
             for sent in keyword_sentence_mapping[key]:
-                if self._QGen__regex_search(sent[:25], key) and sent not in used_sentences:
+                if self._QGen__regex_search(sent, key) == 1 \
+                    and self._QGen__regex_search(sent[:25], key) \
+                    and sent not in used_sentences:
+                    
                     sentence = sent
                     used_sentences.append(sentence)
                     break

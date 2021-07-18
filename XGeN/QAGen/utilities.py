@@ -100,6 +100,7 @@ def get_sentences_for_keyword(keywords, sentences):
     for sentence in sentences:
         keywords_found = keyword_processor.extract_keywords(sentence)
         for key in keywords_found:
+            if 
             keyword_sentences[key].append(sentence)
 
     for key in keyword_sentences.keys():

@@ -97,21 +97,11 @@ class QGen:
 
     def __regex_search(self, sentence, word):
         esc_val = re.escape(word)
-        
-        flag = re.search(rf'([\s\'\"]){esc_val}([\s\'\"])', sentence, flags=re.IGNORECASE)
-        if flag:
-          return True
 
-        flag = re.search(rf'(\s){esc_val}([.,!?])', sentence, flags=re.IGNORECASE)
-        if flag:
-          return True
+        count = 0
+        count += len(re.findall(rf'([\s\'\"]){esc_val}([\s\'\"])', sentence, flags=re.IGNORECASE))
+        count += len(re.findall(rf'(\s){esc_val}([.,!?])', sentence, flags=re.IGNORECASE))
+        count += len(re.findall(rf'(^){esc_val}(\s)', sentence, flags=re.IGNORECASE))
+        count += len(re.findall(rf'(\s){esc_val}($)', sentence, flags=re.IGNORECASE))
 
-        flag = re.search(rf'(^){esc_val}(\s)', sentence, flags=re.IGNORECASE)
-        if flag:
-          return True
-
-        flag = re.search(rf'(\s){esc_val}($)', sentence, flags=re.IGNORECASE)
-        if flag:
-          return True
-
-        return False
+        return count

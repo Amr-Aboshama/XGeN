@@ -15,11 +15,6 @@ class MCQGen(QGen):
         sentences = tokenize_sentences(modified_text)
         
         keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
-        for k in keyword_sentence_mapping.keys():
-            text_snippet = " ".join(keyword_sentence_mapping[k][:1])
-            keyword_sentence_mapping[k] = text_snippet
-        
-        #final_output = {}
 
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')
@@ -43,16 +38,27 @@ class MCQGen(QGen):
         #output_array["questions"] = []
         used_sentences = []
 
-        for index, val in enumerate(answers):
-            sentence = keyword_sentence_mapping[val]
-            if sentence in used_sentences:
+        for index, key in enumerate(answers):
+            # choosing a sentence not used before
+            sentence = None
+            for sent in keyword_sentence_mapping[key]:
+                if self._QGen__regex_search(sent, key) == 1 \
+                    and self._QGen__regex_search(sent[:25], key) \
+                    and sent not in used_sentences:
+                    
+                    sentence = sent
+                    used_sentences.append(sentence)
+                    break
+
+            if sentence is None:
+                print('No sentence for key: ', key)
                 continue
             
             #individual_question ={}
             
-            context = self._QGen__replace_choice(sentence, val)
+            context = self._QGen__replace_choice(sentence, key)
             
-            options, answer = self._QGen__get_options(val, full_keywords)
+            options, answer = self._QGen__get_options(key, full_keywords)
             # options =  filter_phrases(options, 10, self.normalized_levenshtein)
 
 
