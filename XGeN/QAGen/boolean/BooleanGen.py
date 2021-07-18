@@ -44,6 +44,8 @@ class BoolGen(QGen):
                                         early_stopping=True
                                         )
         
+        s = set()
+        
         for index, val in enumerate(answers):
             out = outs[index, :]
             print(0)
@@ -52,7 +54,6 @@ class BoolGen(QGen):
                 continue
 
             print(1)
-            s = set()
             answer = "Yes"
             correction = ""
             
