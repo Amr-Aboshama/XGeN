@@ -1,7 +1,7 @@
 import re
 #from nltk.stem import PorterStemmer
 
-from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
+from QAGen.utilities import tokenize_sentences
 from QAGen.QGen import QGen
 
 
@@ -16,7 +16,7 @@ class TFGen(QGen):
         modified_text = modified_text.replace(".",". ")
         modified_text = modified_text.replace(".  ",". ")
         sentences = tokenize_sentences(modified_text)
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
+        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)
         
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')
@@ -32,9 +32,8 @@ class TFGen(QGen):
             sentence = None
             for sent in keyword_sentence_mapping[key]:
                 if self._QGen__regex_search(sent, key) == 1 \
-                    and self._QGen__regex_search(sent[:25], key) \
                     and sent not in used_sentences:
-                    
+
                     sentence = sent
                     used_sentences.append(sentence)
                     break

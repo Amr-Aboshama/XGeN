@@ -1,6 +1,6 @@
 import time
 # import random
-from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
+from QAGen.utilities import tokenize_sentences
 
 from QAGen.QGen import QGen
 
@@ -14,7 +14,7 @@ class MCQGen(QGen):
     def predict_mcq(self, keywords, modified_text, full_keywords):
         sentences = tokenize_sentences(modified_text)
         
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
+        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)
 
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')
@@ -42,9 +42,7 @@ class MCQGen(QGen):
             # choosing a sentence not used before
             sentence = None
             for sent in keyword_sentence_mapping[key]:
-                if self._QGen__regex_search(sent, key) == 1 \
-                    and self._QGen__regex_search(sent[:25], key) \
-                    and sent not in used_sentences:
+                if sent not in used_sentences:
                     
                     sentence = sent
                     used_sentences.append(sentence)

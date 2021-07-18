@@ -85,6 +85,30 @@ class QGen:
         return answer
     
 
+    def __get_sentences_for_keyword(self, keywords, sentences):
+        
+        keyword_sentences = {}
+
+        valid_sentences = []
+
+        for s in sentences:
+            if s[:25].find(',') != -1 or s[:25].find(':') != -1:
+                continue
+            
+            valid_sentences.append(s)
+                
+        for key in keywords:
+            keyword_sentences[key] = []
+            for sent in valid_sentences:
+                if self.__regex_search(sent[:25], key) \
+                    and self._QGen__regex_search(sent, key) == 1:
+                    keyword_sentences[key].append(sent)
+
+            if not len(keyword_sentences[key]):
+                del keyword_sentences[key]
+        return keyword_sentences
+
+
     def __replace_choice(self, sentence, val, to_val = "____"):
         sentence
         esc_val = re.escape(val)

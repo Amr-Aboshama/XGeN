@@ -90,34 +90,6 @@ def words_freq_dist(text):
     return words 
 
 
-def get_sentences_for_keyword(keywords, sentences):
-    keyword_processor = KeywordProcessor()
-    keyword_sentences = {}
-    for word in keywords:
-        word = word.strip()
-        keyword_sentences[word] = []
-        keyword_processor.add_keyword(word)
-    for sentence in sentences:
-        keywords_found = keyword_processor.extract_keywords(sentence)
-        for key in keywords_found:
-            if 
-            keyword_sentences[key].append(sentence)
-
-    for key in keyword_sentences.keys():
-        values = keyword_sentences[key]
-        values = sorted(values, key=len, reverse=True)
-        keyword_sentences[key] = values
-
-    delete_keys = []
-    for k in keyword_sentences.keys():
-        if len(keyword_sentences[k]) == 0:
-            delete_keys.append(k)
-    for del_key in delete_keys:
-        del keyword_sentences[del_key]
-
-    return keyword_sentences
-
-
 def is_far(words_list,currentword,thresh,normalized_levenshtein):
     threshold = thresh
     score_list =[]
