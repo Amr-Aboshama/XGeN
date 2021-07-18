@@ -4,6 +4,8 @@ from flask_cors import CORS
 import os
 import sys
 import uuid
+import json
+from threading import Thread
 
 from Preprocessor.Preprocessor import TextPreprocessor, PDFPreprocessor
 
@@ -63,8 +65,21 @@ if not os.path.exists('data'):
 
 app = Flask(__name__)
 CORS(app)
-run_with_ngrok(app)   
+run_with_ngrok(app)
 
+def writeJson(output_path, data):
+
+    with open(output_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+def readJson(input_path):
+
+    data = None
+
+    with open(input_path, 'w') as file:
+        data = json.load(file)
+    
+    return data
 
 def download():
     import nltk
@@ -77,7 +92,7 @@ def run():
     app.run()
 
 
-def analyze_text(phrases, path):
+def analyze_text(phrases, directory_path):
 
     text = " ".join(phrases)
 
@@ -91,83 +106,35 @@ def analyze_text(phrases, path):
     phrase_topics = ranker.filter_phrases(keywords, phrases)
 
     # Save Paragraphs & Topics
-    topicExtract.write_paragraphs_topics(phrase_topics, full_keywords, path)
+    topicExtract.write_paragraphs_topics(phrase_topics, full_keywords, directory_path + '/paragraph_topics.json')
 
     return keywords
 
 
-@app.route("/api/upload/pdf", methods=['POST'])
-def uploadPDF():
-    file = request.files.get('file')
-    start = int(request.form.get('start', 1))
-    end = int(request.form.get('end', -1))
+def processUpload(directory_path, preprocessor, output_filename, text=None):
 
-    if file is None:
-        return {
-            "error": "No file uploaded!"
-        }, 422
+    phrases = None
+    if text:
+        phrases = preprocessor.start_pipeline(text)
+    else:
+        phrases = preprocessor.start_pipeline()
 
-    cur_uuid = uuid.uuid1()
-    # cur_uuid = uuid.UUID('9001a540-e1f0-11eb-92bf-0be814cdc50d')
-        
-    directory_path = 'data/' + str(cur_uuid)
-    os.mkdir(directory_path)
-    sys.setrecursionlimit(1500)
-    
-    file_path = directory_path + '/PDF.pdf'
 
-    file.save(file_path)
-    print('file saved!')
-
-    # Handle Converting PDF to Text
-    preprocessor = PDFPreprocessor(directory_path, file_path, start, end)
-    phrases = preprocessor.start_pipeline()
-    
     # Process the text    
-    keywords = analyze_text(phrases, directory_path + '/')
-    
-    return {
-        "uuid" : cur_uuid,
-        "topics": keywords,
+    keywords = analyze_text(phrases, directory_path)
+
+
+    topics = {
+        'topics': keywords
     }
+
+    dummy_name = '/write.json'
+    writeJson(directory_path + dummy_name, topics)
+
+    os.rename(directory_path + dummy_name, directory_path + '/' + output_filename)
     
 
-
-@app.route("/api/upload/text", methods=['POST'])
-def uploadText():
-    text_payload = request.form.get('text')
-
-    if text_payload is None:
-        return {
-            "error": "No text uploaded!"
-        }, 422
-    
-    cur_uuid = uuid.uuid1()
-    directory_path = 'data/' + str(cur_uuid)
-    
-    os.mkdir(directory_path)
-    
-    # Preprocess the text
-    preprocessor = TextPreprocessor()
-    phrases = preprocessor.start_pipeline(text_payload)
-    
-    # Process the text    
-    keywords = analyze_text(phrases, directory_path + '/')
-    
-    return {
-        "uuid" : cur_uuid,
-        "topics": keywords,
-    }
-    
-
-@app.route("/api/examSpecifications", methods=['POST'])
-def examSpecifications():
-    cur_uuid = request.form.get('uuid')
-    selected_topics = request.form.getlist('topics')
-    whq_count = int(request.form.get('whq_count', 0))
-    boolq_count = int(request.form.get('boolq_count', 0))
-    tfq_count = int(request.form.get('tfq_count', 0))
-    mcq_count = int(request.form.get('mcq_count', 0))
+def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
 
     directory_path = 'data/' + str(cur_uuid)
 
@@ -178,37 +145,8 @@ def examSpecifications():
     # Convert it from string to list
     
     # Load the user paragraphs & topics
-    phrases = {}
-    full_keywords = []
-
-    with open(directory_path + "/paragraph_topics.txt", 'r') as file:
-        
-        line = file.readline()[:-1]
-        
-        if len(line):
-            
-            full_keywords = list(filter(None, line.split(';')))
-
-            while True:
-                phrase = file.readline()
-                if len(phrase) == 0:
-                    break
-                
-                phrase = phrase[:-1]
-
-                topics = file.readline()[:-1]
-                
-                topics = list(filter(None, topics.split(';')))
-
-                phrases[phrase] = topics
-                        
-                # Add the new topics to the phrases
-                for keyword in selected_topics:
-                    keyword = keyword.lower()
-                    if keyword not in topics and phrase.lower().find(keyword) != -1:
-                        phrases[phrase].insert(0,keyword)
-                    
-            
+    phrases, full_keywords = topicExtract.read_paragraphs_topics(directory_path + "/paragraph_topics.json", selected_topics)
+    
     # Filter The paragraphs based on the selected topics
     filtered_phrases = ranker.rank_phrases(selected_topics, phrases)
     
@@ -273,12 +211,121 @@ def examSpecifications():
     bool_questions = ranker.random_questions(bool_questions, boolq_count)
     print("Done Boolean")    
     
-    return {
+    quests = {
         "wh_questions" : wh_questions,
         "bool_questions" : bool_questions,
         "tf_questions" : tf_questions,
         "mcq_questions" : mcq_questions, 
     }
+
+    dummy_name = '/write2.json'
+    writeJson(directory_path + dummy_name, quests)
+
+    os.rename(directory_path + dummy_name, directory_path + '/' + output_filename)
+
+
+@app.route("/api/upload/pdf", methods=['POST'])
+def uploadPDF_API():
+    file = request.files.get('file')
+    start = int(request.form.get('start', 1))
+    end = int(request.form.get('end', -1))
+
+    if file is None:
+        return {
+            "error": "No file uploaded!"
+        }, 422
+
+    cur_uuid = uuid.uuid1()
+        
+    directory_path = 'data/' + str(cur_uuid)
+    os.mkdir(directory_path)
+    sys.setrecursionlimit(1500)
+    
+    file_path = directory_path + '/PDF.pdf'
+
+    file.save(file_path)
+    print('file saved!')
+
+    # Handle Converting PDF to Text
+    preprocessor = PDFPreprocessor(directory_path, file_path, start, end)
+
+    output_filename = 'keywords.json'
+    # Open back-thread for the preprocessor and information extraction
+    Thread(target=processUpload, args=(directory_path, preprocessor, output_filename)).start()
+
+    return {
+        "status": 'Started',
+        "filename": output_filename,
+        "uuid" : cur_uuid,
+    }
+
+
+@app.route("/api/upload/text", methods=['POST'])
+def uploadText_API():
+    text_payload = request.form.get('text')
+
+    if text_payload is None:
+        return {
+            "error": "No text uploaded!"
+        }, 422
+    
+    cur_uuid = uuid.uuid1()
+    directory_path = 'data/' + str(cur_uuid)
+    
+    os.mkdir(directory_path)
+    
+    # Preprocess the text
+    preprocessor = TextPreprocessor()
+
+    output_filename = 'keywords.json'
+    # Open back-thread for the preprocessor and information extraction
+    Thread(target=processUpload, args=(directory_path, preprocessor, output_filename, text_payload)).start()
+    
+
+    return {
+        "status": 'Started',
+        "filename": output_filename,
+        "uuid" : cur_uuid,
+    }
+    
+
+@app.route("/api/examSpecifications", methods=['POST'])
+def examSpecifications_API():
+    cur_uuid = request.form.get('uuid')
+    selected_topics = request.form.getlist('topics')
+    whq_count = int(request.form.get('whq_count', 0))
+    boolq_count = int(request.form.get('boolq_count', 0))
+    tfq_count = int(request.form.get('tfq_count', 0))
+    mcq_count = int(request.form.get('mcq_count', 0))
+
+    output_filename = 'questions.json'
+    # Open back-thread for questions generation
+    Thread(target=processGenerateExam, args=(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename)).start()
+
+    return {
+        "status": 'Started',
+        "filename": output_filename
+    }
+
+
+@app.route('/api/heartbeat', methods=['POST'])
+def heartbeat():
+    cur_uuid = request.form.get('uuid')
+    filename = request.form.get('filename')
+
+    file_path = cur_uuid + '/' + filename
+
+    response = {
+        'status': 'Processing'
+    }
+
+    if os.path.exists(file_path):
+        data = readJson(file_path)
+        response['status'] = 'Finished'
+        response['data'] = data
+
+    return response, 200
+
 
 if __name__ == '__main__':
     app.run()
