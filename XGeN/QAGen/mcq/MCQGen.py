@@ -55,9 +55,13 @@ class MCQGen(QGen):
             #individual_question ={}
             
             context = self._QGen__replace_choice(sentence, key)
-            
+            context = context.capitalize()
+
             options, answer = self._QGen__get_options(key, full_keywords)
-            # options =  filter_phrases(options, 10, self.normalized_levenshtein)
+
+            if context[0] == '_':
+                answer = answer.capitalize()
+                options = [o.capitalize() for o in options]
 
 
             #output_array["questions"].append(individual_question)

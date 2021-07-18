@@ -50,8 +50,8 @@ class TFGen(QGen):
                 answer = "F,        " + correction
 
                 sentence = self._QGen__replace_choice(sentence, key, option)
-            #question = {"question": sentence, "answer": answer}
-        #if(question not in output_array["questions"]):    
+
+            sentence = sentence.capitalize()            
             output_array.append((sentence, answer))
                 
         return output_array
