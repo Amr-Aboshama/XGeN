@@ -76,7 +76,7 @@ def readJson(input_path):
 
     data = None
 
-    with open(input_path, 'w') as file:
+    with open(input_path, 'r') as file:
         data = json.load(file)
     
     return data
@@ -313,7 +313,7 @@ def heartbeat():
     cur_uuid = request.form.get('uuid')
     filename = request.form.get('filename')
 
-    file_path = cur_uuid + '/' + filename
+    file_path = 'data/' + cur_uuid + '/' + filename
 
     response = {
         'status': 'Processing'
