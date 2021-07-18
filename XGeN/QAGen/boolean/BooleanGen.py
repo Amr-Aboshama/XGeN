@@ -1,4 +1,3 @@
-# import random
 from typing import Set
 import torch
 from QAGen.utilities import tokenize_sentences
@@ -44,8 +43,6 @@ class BoolGen(QGen):
                                         no_repeat_ngram_size=2,
                                         early_stopping=True
                                         )
-        #output_array = []
-        #output_array["questions"] = []
         
         for index, val in enumerate(answers):
             out = outs[index, :]

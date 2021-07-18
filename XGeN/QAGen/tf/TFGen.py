@@ -23,10 +23,8 @@ class TFGen(QGen):
             return []
             
         output_array = []
-        #output_array["questions"] =[]
 
         used_sentences = []
-        #key = self.rand.choice(list(keyword_sentence_mapping.keys()))
         for key in keyword_sentence_mapping.keys():
             # choosing a sentence not used before
             sentence = None
