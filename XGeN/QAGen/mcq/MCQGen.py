@@ -1,6 +1,6 @@
 import time
 # import random
-from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
+from QAGen.utilities import tokenize_sentences
 
 from QAGen.QGen import QGen
 
@@ -14,12 +14,7 @@ class MCQGen(QGen):
     def predict_mcq(self, keywords, modified_text, full_keywords):
         sentences = tokenize_sentences(modified_text)
         
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
-        for k in keyword_sentence_mapping.keys():
-            text_snippet = " ".join(keyword_sentence_mapping[k][:1])
-            keyword_sentence_mapping[k] = text_snippet
-        
-        #final_output = {}
+        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)
 
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')
@@ -43,16 +38,25 @@ class MCQGen(QGen):
         #output_array["questions"] = []
         used_sentences = []
 
-        for index, val in enumerate(answers):
-            sentence = keyword_sentence_mapping[val]
-            if sentence in used_sentences:
+        for index, key in enumerate(answers):
+            # choosing a sentence not used before
+            sentence = None
+            for sent in keyword_sentence_mapping[key]:
+                if sent not in used_sentences:
+                    
+                    sentence = sent
+                    used_sentences.append(sentence)
+                    break
+
+            if sentence is None:
+                print('No sentence for key: ', key)
                 continue
             
             #individual_question ={}
             
-            context = self._QGen__replace_choice(sentence, val)
+            context = self._QGen__replace_choice(sentence, key)
             
-            options, answer = self._QGen__get_options(val, full_keywords)
+            options, answer = self._QGen__get_options(key, full_keywords)
             # options =  filter_phrases(options, 10, self.normalized_levenshtein)
 
 

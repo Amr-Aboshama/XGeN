@@ -1,5 +1,5 @@
 import torch
-from QAGen.utilities import tokenize_sentences, get_keywords, get_sentences_for_keyword
+from QAGen.utilities import tokenize_sentences, get_keywords
 from QAGen.QGen import QGen
 from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
@@ -14,9 +14,10 @@ class ShortGen(QGen):
         
         sentences = tokenize_sentences(modified_text)
         
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
+        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)
         for k in keyword_sentence_mapping.keys():
-            text_snippet = " ".join(keyword_sentence_mapping[k][:3])
+            ks_len = len(keyword_sentence_mapping[k])
+            text_snippet = " ".join(keyword_sentence_mapping[k][:min(3, ks_len)])
             keyword_sentence_mapping[k] = text_snippet
 
         #final_output = {}
@@ -59,6 +60,8 @@ class ShortGen(QGen):
         output_array = []
         #output_array["questions"] =[]
         wh_words = ['What', 'Where', 'When', 'How', 'Who', 'Why', 'How many', 'How much']
+        
+        selected_questions = set()
 
         for index, val in enumerate(answers):
             #individual_quest= {}
@@ -76,7 +79,8 @@ class ShortGen(QGen):
                 print("predict answer")
                 answer = self.answerPredictor.predict_answer(payload)
                 print("Done prediction")
-                if Question.find(answer[:-1].lower()) == -1:
+                if Question.find(answer[:-1].lower()) == -1 and Question not in selected_questions:
+                    selected_questions.add(Question)
                     output_array.append((Question, answer))
                 else:
                     print("the answer in the question, we ignored that question")

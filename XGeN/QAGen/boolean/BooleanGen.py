@@ -1,7 +1,7 @@
 # import random
 from typing import Set
 import torch
-from QAGen.utilities import tokenize_sentences, get_sentences_for_keyword
+from QAGen.utilities import tokenize_sentences
 
 from QAGen.QGen import QGen
 
@@ -15,9 +15,10 @@ class BoolGen(QGen):
     def predict_boolq(self, keywords, modified_text, full_keywords):
         sentences = tokenize_sentences(modified_text)
         
-        keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)     
+        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)     
         for k in keyword_sentence_mapping.keys():
-            text_snippet = " ".join(keyword_sentence_mapping[k][:3])
+            ks_len = len(keyword_sentence_mapping[k])
+            text_snippet = " ".join(keyword_sentence_mapping[k][:min(3, ks_len)])
             keyword_sentence_mapping[k] = text_snippet
 
         if len(keyword_sentence_mapping.keys()) == 0:
