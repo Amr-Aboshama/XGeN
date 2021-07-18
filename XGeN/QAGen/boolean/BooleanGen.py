@@ -46,6 +46,7 @@ class BoolGen(QGen):
                                         )
         #output_array = []
         #output_array["questions"] = []
+        s = set()
         
         for index, val in enumerate(answers):
             out = outs[index, :]
@@ -55,7 +56,6 @@ class BoolGen(QGen):
                 continue
 
             print(1)
-            s = set()
             answer = "Yes"
             correction = ""
             
