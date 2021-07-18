@@ -45,12 +45,15 @@ class BoolGen(QGen):
                                         early_stopping=True
                                         )
         #output_array = []
-        #output_array["questions"] =[]
+        #output_array["questions"] = []
         
         for index, val in enumerate(answers):
             out = outs[index, :]
             print(0)
             dec = self.tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            if dec.find('Is there') == 0:
+                continue
+
             print(1)
             s = set()
             answer = "Yes"

@@ -12,9 +12,12 @@ class Ranker:
         
         for p in phrases:
             filtered_phrases[p] = []
+            
+            self.rand.shuffle(keywords)
             for k in keywords:
                 if p.lower().find(k) != -1:
                     filtered_phrases[p].append(k)
+                    
             if len(filtered_phrases[p]) == 0:
                 del filtered_phrases[p]
 
