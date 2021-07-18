@@ -62,26 +62,6 @@ class TopicExtractor:
         return phrases, full_keywords
 
 
-    def write_topics(self, keywords, output_path):
-
-        data = {
-            'topics': keywords
-        }
-
-        with open(output_path, 'w') as file:
-            json.dump(data, file, indent=4)
-
-
-    def read_topics(self, input_path):
-
-        data = None
-
-        with open(input_path, 'w') as file:
-            data = json.load(file)
-        
-        return data['topics']
-
-
     def extract_keywords(self, text, topics_num = 100):
         
         sentences = tokenize_sentences(text)
