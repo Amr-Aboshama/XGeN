@@ -12,8 +12,10 @@ class TFGen(QGen):
             
 
     def predict_tf(self, keywords, modified_text, full_keywords):
-
-        sentences = tokenize_sentences(modified_text.replace(".",". "))
+        
+        modified_text = modified_text.replace(".",". ")
+        modified_text = modified_text.replace(".  ",". ")
+        sentences = tokenize_sentences(modified_text)
         keyword_sentence_mapping = get_sentences_for_keyword(keywords, sentences)
         
         if len(keyword_sentence_mapping.keys()) == 0:
@@ -27,17 +29,17 @@ class TFGen(QGen):
         #key = self.rand.choice(list(keyword_sentence_mapping.keys()))
         for key in keyword_sentence_mapping.keys():
             # choosing a sentence not used before
-            sentence = keyword_sentence_mapping[key][0]
-            found_sentence = False
-            for sentence in keyword_sentence_mapping[key]:
-                if sentence not in used_sentences:
+            sentence = None
+            for sent in keyword_sentence_mapping[key]:
+                if self._QGen__regex_search(sent[:25], key) and sent not in used_sentences:
+                    sentence = sent
                     used_sentences.append(sentence)
-                    found_sentence = True
                     break
-            
-            if not found_sentence:
+
+            if sentence is None:
+                print('No sentence for key: ', key)
                 continue
-            
+
             answer = "T"
             # Make a false question
             if(bool(self.rand.getrandbits(1)) and self._QGen__regex_search(sentence, key)):

@@ -68,7 +68,7 @@ class QGen:
             while True:
 
                 answer = self.rand.choice(full_keywords)
-                if answer != key:
+                if answer.find(key) == -1 and key.find(answer) == -1:
                     return answer
 
 
@@ -78,7 +78,7 @@ class QGen:
 
         for k in full_keywords:
             score = self.normalized_levenshtein.similarity(k, key)
-            if score >= mx_score and score <= threshold and key != k:
+            if score >= mx_score and score <= threshold and k.find(key) == -1 and key.find(k) == -1:
                 answer = k
                 mx_score = score
 
@@ -97,9 +97,21 @@ class QGen:
 
     def __regex_search(self, sentence, word):
         esc_val = re.escape(word)
+        
         flag = re.search(rf'([\s\'\"]){esc_val}([\s\'\"])', sentence, flags=re.IGNORECASE)
-        flag |= re.search(rf'(\s){esc_val}([.,!?])', sentence, flags=re.IGNORECASE)
-        flag |= re.search(rf'(^){esc_val}(\s)', sentence, flags=re.IGNORECASE)
-        flag |= re.search(rf'(\s){esc_val}($)', sentence, flags=re.IGNORECASE)
+        if flag:
+          return True
 
-        return flag
+        flag = re.search(rf'(\s){esc_val}([.,!?])', sentence, flags=re.IGNORECASE)
+        if flag:
+          return True
+
+        flag = re.search(rf'(^){esc_val}(\s)', sentence, flags=re.IGNORECASE)
+        if flag:
+          return True
+
+        flag = re.search(rf'(\s){esc_val}($)', sentence, flags=re.IGNORECASE)
+        if flag:
+          return True
+
+        return False

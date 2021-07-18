@@ -59,6 +59,8 @@ class ShortGen(QGen):
         output_array = []
         #output_array["questions"] =[]
         wh_words = ['What', 'Where', 'When', 'How', 'Who', 'Why', 'How many', 'How much']
+        
+        selected_questions = set()
 
         for index, val in enumerate(answers):
             #individual_quest= {}
@@ -76,7 +78,8 @@ class ShortGen(QGen):
                 print("predict answer")
                 answer = self.answerPredictor.predict_answer(payload)
                 print("Done prediction")
-                if Question.find(answer[:-1].lower()) == -1:
+                if Question.find(answer[:-1].lower()) == -1 and Question not in selected_questions:
+                    selected_questions.add(Question)
                     output_array.append((Question, answer))
                 else:
                     print("the answer in the question, we ignored that question")
