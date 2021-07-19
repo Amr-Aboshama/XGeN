@@ -1,6 +1,4 @@
 
-# import random
-
 class Ranker:
 
     def __init__(self, rand):

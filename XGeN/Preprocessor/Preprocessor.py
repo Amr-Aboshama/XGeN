@@ -6,8 +6,6 @@ from pytesseract import pytesseract
 from PIL import Image
 import spacy
 import neuralcoref
-import multiprocessing as mp
-import time
 
 class TextPreprocessor:
 
@@ -219,7 +217,8 @@ class PDFPreprocessor(TextPreprocessor):
             - Paragraph Segmentation + Clean Paragraphs
             - Resolve Coreference Resolution
         '''
-
+        print('Started: ', img_path.split('/')[-1])
+        
         img = cv.imread(img_path, cv.IMREAD_GRAYSCALE)
 
         # convert img to binary        
@@ -236,8 +235,11 @@ class PDFPreprocessor(TextPreprocessor):
 
         os.remove(img_path)
 
-        return self._TextPreprocessor__pipeline_text(text)        
-    
+        text = self._TextPreprocessor__pipeline_text(text)        
+        
+        print('Finished: ', img_path.split('/')[-1])
+
+        return text
 
     def start_pipeline(self):
         
@@ -252,9 +254,7 @@ class PDFPreprocessor(TextPreprocessor):
         pages_paragraphs = []
 
         for img_name in imgs_names:
-            print('Started: ', img_name)
             pages_paragraphs += self.__pipeline_PDF(path + '/' + img_name)
-            print('Finished: ', img_name)
 
         os.rmdir(path)
 

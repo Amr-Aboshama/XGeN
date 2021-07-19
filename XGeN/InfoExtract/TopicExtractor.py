@@ -1,15 +1,13 @@
-from QAGen.utilities import tokenize_sentences, get_nouns_multipartite
-
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize
+import string
+import pke
 
 class TopicExtractor:
 
-    # def __init__(self, loader):
-        # self.nlp = loader.nlp
-        # self.s2v = loader.s2v
-        # self.fdist = loader.fdist
-        # self.normalized_levenshtein = loader.normalized_levenshtein
-
-    # payload: {"phrase1":["topic1","topic2"], "phrase2":["topic1","topic3"]}
+    def __init__(self):
+        self.stopwords_set = set(stopwords.words('english'))
+    
     def write_paragraphs_topics_json(self, payload, full_keywords):
         
         data = {
@@ -52,6 +50,37 @@ class TopicExtractor:
 
         return phrases
 
+    def get_nouns_multipartite(self, text, max_topics):
+        out = []
+
+        extractor = pke.unsupervised.MultipartiteRank()
+        extractor.load_document(input=text, language='en')
+        pos = {'PROPN', 'NOUN'}
+        stoplist = list(string.punctuation)
+        stoplist += ['-lrb-', '-rrb-', '-lcb-', '-rcb-', '-lsb-', '-rsb-']
+        stoplist += stopwords.words('english')
+        extractor.candidate_selection(pos=pos, stoplist=stoplist)
+        
+        try:
+            extractor.candidate_weighting(alpha=1.1,
+                                        threshold=0.74,
+                                        method='average')
+        except:
+            return out
+
+        keyphrases = extractor.get_n_best(n=max_topics)
+
+        for key in keyphrases:
+            out.append(key[0].lower())
+        
+        return 
+        
+    def tokenize_sentences(self, text):
+        sentences = sent_tokenize(text)
+        
+        # Remove any short sentences less than 20 letters.
+        sentences = [sentence.strip() for sentence in sentences if len(sentence) > 20]
+        return sentences
 
     def extract_keywords(self, text, topics_num = 100):
         

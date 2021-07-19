@@ -26,12 +26,6 @@ from Ranker.Ranker import Ranker
 
 
 
-# loader = Loader(os.getcwd()+"/XGeN/QAGen/models/s2v_old",
-#                 os.getcwd()+"/XGeN/QAGen/models/question_generator",
-#                 os.getcwd()+"/XGeN/QAGen/models/t5_boolean_questions".
-#                 os.getcwd()+"/XGeN/QAGen/models/answer_predictor")
-
-
 loader = Loader()
 print("Done Loader")
 
@@ -136,31 +130,6 @@ def processUpload(directory_path, preprocessor, output_filename, text=None):
     os.rename(directory_path + dummy_name, directory_path + '/' + output_filename)
     
 
-def generateQuestions(filtered_phrases, full_keywords, whq_count, boolq_count, mcq_count, tfq_count):
-
-    counts = [mcq_count, tfq_count, whq_count, boolq_count]
-    generators = [mcqGen, tfGen, shortGen, boolGen]
-    questions = []
-
-    for i in range(len(generators)):
-        questions.append([])
-        count = counts[i]
-        while len(filtered_phrases) and count:
-            q = generators[i].generate(filtered_phrases[0][1],filtered_phrases[0][0], full_keywords)
-            filtered_phrases.pop(0)
-
-            if not len(q):
-                continue
-            questions[-1] += q
-            count -= 1
-        
-        # TODO : Filter Questions
-        questions[-1] = ranker.random_questions(questions[-1], counts[i])
-        print('Done Generator: ', i)
-
-    return questions
-
-
 def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
 
     directory_path = 'data/' + str(cur_uuid)
@@ -179,7 +148,10 @@ def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_c
     filtered_phrases = ranker.rank_phrases(selected_topics, phrases)
     
     # Generate exam questions
-    questions = generateQuestions(filtered_phrases, full_keywords, whq_count, boolq_count, mcq_count, tfq_count)
+    counts = [mcq_count, tfq_count, whq_count, boolq_count]
+    generators = [mcqGen, tfGen, shortGen, boolGen]
+        
+    questions = qgen.generateQuestions(ranker, topicExtract, filtered_phrases, full_keywords, counts, generators)
     
     quests = {
         "wh_questions" : questions[0],

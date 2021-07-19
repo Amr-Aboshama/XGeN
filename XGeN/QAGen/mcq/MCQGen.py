@@ -1,7 +1,3 @@
-import time
-# import random
-from QAGen.utilities import tokenize_sentences
-
 from QAGen.QGen import QGen
 
 
@@ -11,10 +7,7 @@ class MCQGen(QGen):
         QGen.__init__(self, loader)
 
 
-    def generate(self, keywords, modified_text, full_keywords):
-        sentences = tokenize_sentences(modified_text)
-        
-        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)
+    def generate(self, keyword_sentence_mapping, full_keywords):
 
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')

@@ -1,7 +1,6 @@
 torch==1.8.1
 transformers==4.8.2
 pytorch_lightning==0.8.1
-sense2vec==1.0.3
 strsim==0.0.3
 six==1.13.0
 networkx==2.4.0
