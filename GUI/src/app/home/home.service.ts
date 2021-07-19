@@ -15,7 +15,8 @@ export class HomeService {
 
   baseURL: string = "http://localhost:3000/";
   serverURL: string="http://localhost:5000/";
-  ngRokURL: string ="http://9fce0df5024a.ngrok.io/"
+  ngRokURL: string ="http://da2e29ba31ac.ngrok.io/";
+
 
   constructor(private http: HttpClient) { }
 

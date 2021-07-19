@@ -148,7 +148,8 @@ createQForm(){
     element.disabled = true;
     this.HttpService.SubmitSpecs(this.uuid,this.SelectedTopics,this.QForm.getRawValue())
     .subscribe(data => {
-
+      localStorage.removeItem('filename');
+     localStorage.setItem('filename', data.filename);
       this.getHeartbeat();
 
     }, error => {
