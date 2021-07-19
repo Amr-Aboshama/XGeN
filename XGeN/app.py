@@ -106,7 +106,9 @@ def analyze_text(phrases, directory_path):
     phrase_topics = ranker.filter_phrases(keywords, phrases)
 
     # Save Paragraphs & Topics
-    topicExtract.write_paragraphs_topics(phrase_topics, full_keywords, directory_path + '/paragraph_topics.json')
+    para_topics = topicExtract.write_paragraphs_topics_json(phrase_topics, full_keywords)
+
+    writeJson(directory_path + '/paragraph_topics.json', para_topics)
 
     return keywords
 
@@ -134,17 +136,8 @@ def processUpload(directory_path, preprocessor, output_filename, text=None):
     os.rename(directory_path + dummy_name, directory_path + '/' + output_filename)
     
 
-def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
+def generateQuestions(filtered_phrases, full_keywords, whq_count, boolq_count, mcq_count, tfq_count):
 
-    directory_path = 'data/' + str(cur_uuid)
-
-    
-    # Load the user paragraphs & topics
-    phrases, full_keywords = topicExtract.read_paragraphs_topics(directory_path + "/paragraph_topics.json", selected_topics)
-    
-    # Filter The paragraphs based on the selected topics
-    filtered_phrases = ranker.rank_phrases(selected_topics, phrases)
-    
     counts = [mcq_count, tfq_count, whq_count, boolq_count]
     generators = [mcqGen, tfGen, shortGen, boolGen]
     questions = []
@@ -165,6 +158,28 @@ def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_c
         questions[-1] = ranker.random_questions(questions[-1], counts[i])
         print('Done Generator: ', i)
 
+    return questions
+
+
+def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
+
+    directory_path = 'data/' + str(cur_uuid)
+
+    
+    paragraphs_topics = readJson(directory_path + "/paragraph_topics.json")
+
+
+    # Load the user paragraphs & topics
+    full_keywords = paragraphs_topics['full_keywords']
+
+
+    phrases = topicExtract.read_paragraphs_topics_json(paragraphs_topics['pairs'], selected_topics)
+    
+    # Filter The paragraphs based on the selected topics
+    filtered_phrases = ranker.rank_phrases(selected_topics, phrases)
+    
+    # Generate exam questions
+    questions = generateQuestions(filtered_phrases, full_keywords, whq_count, boolq_count, mcq_count, tfq_count)
     
     quests = {
         "wh_questions" : questions[0],
