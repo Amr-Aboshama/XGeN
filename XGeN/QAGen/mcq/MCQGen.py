@@ -10,8 +10,8 @@ class MCQGen(QGen):
     def __init__(self, loader):
         QGen.__init__(self, loader)
 
-        
-    def predict_mcq(self, keywords, modified_text, full_keywords):
+
+    def generate(self, keywords, modified_text, full_keywords):
         sentences = tokenize_sentences(modified_text)
         
         keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)

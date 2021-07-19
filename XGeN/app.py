@@ -138,11 +138,6 @@ def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_c
 
     directory_path = 'data/' + str(cur_uuid)
 
-    wh_questions = []
-    bool_questions = []
-    tf_questions = []
-    mcq_questions = []
-    # Convert it from string to list
     
     # Load the user paragraphs & topics
     phrases, full_keywords = topicExtract.read_paragraphs_topics(directory_path + "/paragraph_topics.json", selected_topics)
@@ -150,72 +145,32 @@ def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_c
     # Filter The paragraphs based on the selected topics
     filtered_phrases = ranker.rank_phrases(selected_topics, phrases)
     
-    # Generate MCQ Questions
-    i = 0
-    count = mcq_count
-    phrase_num = 0
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = mcqGen.predict_mcq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
-        phrase_num += 1
-        if not len(questions):
-            continue
-        mcq_questions += questions
-        i += 1
-    # TODO : Filter Questions
-    mcq_questions = ranker.random_questions(mcq_questions, mcq_count)
-    print("Done MCQ")
-    
-    # Generate TF Questions
-    count += tfq_count
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = tfGen.predict_tf(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
-        phrase_num += 1
-        if not len(questions):
-            continue
-        tf_questions += questions
-        i += 1
-    # TODO : Filter Questions
-    tf_questions = ranker.random_questions(tf_questions, tfq_count)
-    print("Done TF")
-    
-    # Generate WH Questions
-    count += whq_count
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = shortGen.predict_shortq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0])
-        phrase_num += 1
-        if not len(questions):
-            continue
-        wh_questions += questions
-        i += 1
-        # if(i < len(filtered_phrases) and i < count):
-        #     questions = longGen.paraphrase(filtered_phrases[i][0])
-        #     if not len(questions):
-        #         continue
-        #     wh_questions += questions
-        #     i += 1
-    # TODO : Filter Questions
-    wh_questions = ranker.random_questions(wh_questions, whq_count)
-    print("Done WH")
-    
-    # Generate Boolean Questions
-    count += boolq_count
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = boolGen.predict_boolq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
-        phrase_num += 1
-        if not len(questions):
-            continue
-        bool_questions += questions
-        i += 1
+    counts = [mcq_count, tfq_count, whq_count, boolq_count]
+    generators = [mcqGen, tfGen, shortGen, boolGen]
+    questions = []
 
-    # TODO : Filter Questions
-    bool_questions = ranker.random_questions(bool_questions, boolq_count)
-    print("Done Boolean")    
+    for i in range(len(generators)):
+        questions.append([])
+        count = counts[i]
+        while len(filtered_phrases) and count:
+            q = generators[i].generate(filtered_phrases[0][1],filtered_phrases[0][0], full_keywords)
+            filtered_phrases.pop(0)
+
+            if not len(q):
+                continue
+            questions[-1] += q
+            count -= 1
+        
+        # TODO : Filter Questions
+        questions[-1] = ranker.random_questions(questions[-1], counts[i])
+        print('Done Generator: ', i)
+
     
     quests = {
-        "wh_questions" : wh_questions,
-        "bool_questions" : bool_questions,
-        "tf_questions" : tf_questions,
-        "mcq_questions" : mcq_questions, 
+        "wh_questions" : questions[0],
+        "bool_questions" : questions[1],
+        "tf_questions" : questions[2],
+        "mcq_questions" : questions[3], 
     }
 
     dummy_name = '/write2.json'

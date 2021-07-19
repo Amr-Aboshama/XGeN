@@ -10,7 +10,8 @@ class ShortGen(QGen):
         QGen.__init__(self, loader)
         self.answerPredictor = AnswerPredictor(loader)
 
-    def predict_shortq(self, keywords, modified_text):
+
+    def generate(self, keywords, modified_text, _):
         
         sentences = tokenize_sentences(modified_text)
         

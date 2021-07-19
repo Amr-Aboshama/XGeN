@@ -11,7 +11,7 @@ class TFGen(QGen):
         QGen.__init__(self, loader)
             
 
-    def predict_tf(self, keywords, modified_text, full_keywords):
+    def generate(self, keywords, modified_text, full_keywords):
         
         modified_text = modified_text.replace(".",". ")
         modified_text = modified_text.replace(".  ",". ")
