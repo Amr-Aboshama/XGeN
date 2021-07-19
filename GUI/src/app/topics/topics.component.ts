@@ -4,6 +4,9 @@ import { topics } from './../topics';
 import { Component, Input, OnInit } from '@angular/core';
 import { TopicsService } from './topics.service';
 import { Router } from '@angular/router';
+import { interval, Observable, of, Subscription, timer } from 'rxjs';
+import { catchError, filter, switchMap } from 'rxjs/operators';
+
 
 
 @Component({
@@ -18,7 +21,7 @@ export class TopicsComponent implements OnInit {
 
   UserAddedTopics: string[];
 
-
+  public heartbeatdata : any;
   SelectedTopics: string[];
   ResponseTopics: string[];
 
@@ -26,7 +29,11 @@ export class TopicsComponent implements OnInit {
   UserTopics: FormGroup;
 
   uuid : string;
+  filename : string;
   exam : any[];
+
+  subscription: Subscription;
+  minutes: number;
 
   isLoadingExam: boolean;
   constructor(private HttpHome: HomeService, private HttpService:TopicsService,private router: Router, private fb: FormBuilder) {
@@ -47,7 +54,9 @@ export class TopicsComponent implements OnInit {
     //this.uuid = this.HttpHome.uuid;
     //localStorage.setItem("uuid", this.uuid );
     this.uuid=localStorage.getItem("uuid"); //returns "xxx"
+    this.filename = localStorage.getItem("filename");
     console.log("ia m uuid :" , this.uuid );
+    console.log("file",this.filename);
 
     ////////////////////////////////////////////////
     localStorage.removeItem('exam');
@@ -57,6 +66,7 @@ export class TopicsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.minutes = 15 *1000;
   }
 
   reForm(){
@@ -140,15 +150,21 @@ createQForm(){
     .subscribe(data => {
       if (data) { this.isLoadingExam=false;}
 
+      this.getHeartbeat();
+    //  this.exam=data.data,
+     // localStorage.setItem("exam", JSON.stringify(this.exam ) );
+
+
+
 
 
       //save exam here
-      this.exam=data,
-      localStorage.setItem("exam", JSON.stringify(this.exam ) ),
+      // this.exam=data,
+      // localStorage.setItem("exam", JSON.stringify(this.exam ) ),
 
-      console.log('i am the data ',data)
+      // console.log('i am the data ',data)
 
-      this.router.navigate(['/exam'])
+      // this.router.navigate(['/exam'])
     }, error => {
       //alert("Error match couldn't be done please try another input")
 
@@ -174,6 +190,42 @@ createQForm(){
 
 Advance(){
   this.router.navigate(['/exam'])
+
+}
+
+getHeartbeat(){
+
+  console.log('heart beat not begun yet');
+
+    console.log('heart beat begun');
+  this.subscription = timer(0, this.minutes)
+      .pipe(
+        switchMap(() => {
+          return this.HttpHome.heartBeat( localStorage.getItem("uuid"),localStorage.getItem("filename"))
+            .pipe(catchError(err => {
+              // Handle errors
+              console.error(err);
+              return of(undefined);
+            }));
+        }),
+        filter(data => data !== undefined)
+      )
+      .subscribe(data => {
+        this.heartbeatdata = data;
+        if(data.status == 'Finished') // status?????????
+        {
+          this.exam=data.data,
+          localStorage.setItem("exam", JSON.stringify(this.exam ) ),
+
+          console.log('i am the data ',data);
+          this.subscription.unsubscribe();
+
+          this.router.navigate(['/exam'])
+        }
+        console.log(this.heartbeatdata);
+      });
+
+
 
 }
 
