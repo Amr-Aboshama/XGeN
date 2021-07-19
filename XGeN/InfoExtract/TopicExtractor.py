@@ -87,7 +87,7 @@ class TopicExtractor:
 
     def extract_keywords(self, text, topics_num = 100):
         
-        sentences = tokenize_sentences(text)
+        sentences = self.tokenize_sentences(text)
         joiner = " "
         modified_text = joiner.join(sentences)
         
