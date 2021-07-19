@@ -21,7 +21,7 @@ export class TopicsComponent implements OnInit {
 
   UserAddedTopics: string[];
 
-  public heartbeatdata : any;
+
   SelectedTopics: string[];
   ResponseTopics: string[];
 
@@ -46,15 +46,15 @@ export class TopicsComponent implements OnInit {
     this.UserAddedTopics= [];
     this.createQForm();
     this.createUserTopics();
-    //console.log(this.HttpHome.SharedTopics);
-    //this.ResponseTopics=this.HttpHome.SharedTopics;
+
+
     this.ResponseTopics = JSON.parse(localStorage.getItem('topics'));
     this.reForm() //reform in Topics: topics[] list
 
-    //this.uuid = this.HttpHome.uuid;
-    //localStorage.setItem("uuid", this.uuid );
-    this.uuid=localStorage.getItem("uuid"); //returns "xxx"
+
+    this.uuid=localStorage.getItem("uuid");
     this.filename = localStorage.getItem("filename");
+
     console.log("ia m uuid :" , this.uuid );
     console.log("file",this.filename);
 
@@ -148,56 +148,21 @@ createQForm(){
     element.disabled = true;
     this.HttpService.SubmitSpecs(this.uuid,this.SelectedTopics,this.QForm.getRawValue())
     .subscribe(data => {
-      if (data) { this.isLoadingExam=false;}
 
       this.getHeartbeat();
-    //  this.exam=data.data,
-     // localStorage.setItem("exam", JSON.stringify(this.exam ) );
 
-
-
-
-
-      //save exam here
-      // this.exam=data,
-      // localStorage.setItem("exam", JSON.stringify(this.exam ) ),
-
-      // console.log('i am the data ',data)
-
-      // this.router.navigate(['/exam'])
     }, error => {
       //alert("Error match couldn't be done please try another input")
+      console.log(error)
 
     }
     )
   }
-//just for test
-  getExam(){
 
-  this.HttpService.getExam()
-  .subscribe(
-    data => {
-      this.exam=data,
-      localStorage.setItem("exam", JSON.stringify(this.exam ) ),
-
-
-      (err: any) => console.log(err),
-      console.log(data);
-
-
-    });
-}
-
-Advance(){
-  this.router.navigate(['/exam'])
-
-}
 
 getHeartbeat(){
 
-  console.log('heart beat not begun yet');
-
-    console.log('heart beat begun');
+  console.log('heart beat begun');
   this.subscription = timer(0, this.minutes)
       .pipe(
         switchMap(() => {
@@ -211,22 +176,51 @@ getHeartbeat(){
         filter(data => data !== undefined)
       )
       .subscribe(data => {
-        this.heartbeatdata = data;
-        if(data.status == 'Finished') // status?????????
+
+        if(data.status == 'Finished')
         {
+          //save data in local storage
           this.exam=data.data,
           localStorage.setItem("exam", JSON.stringify(this.exam ) ),
 
+          //turnoff spinner
+          this.isLoadingExam = false;
+
+          //unsubscribe
           console.log('i am the data ',data);
           this.subscription.unsubscribe();
 
+          //navugate to exam
           this.router.navigate(['/exam'])
         }
-        console.log(this.heartbeatdata);
+        console.log(data);
       });
 
 
 
 }
+
+
+//just for test
+//   getExam(){
+
+//   this.HttpService.getExam()
+//   .subscribe(
+//     data => {
+//       this.exam=data,
+//       localStorage.setItem("exam", JSON.stringify(this.exam ) ),
+
+
+//       (err: any) => console.log(err),
+//       console.log(data);
+
+
+//     });
+// }
+
+// Advance(){
+//   this.router.navigate(['/exam'])
+
+// }
 
 }

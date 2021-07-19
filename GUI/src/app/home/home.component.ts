@@ -21,8 +21,8 @@ public alive: boolean;
 //for heartbeat
 subscription: Subscription;
 minutes: number;
-public heartbeatdata : any;
-public ReceiveHeartbeats : boolean;
+
+
 /////////////
 public TextForm: FormGroup ;
 public PDFForm : FormGroup;
@@ -30,19 +30,17 @@ public Topics: topics[];
 
 fileToUpload: File | null = null;
 
-showSpinner: boolean;
 isLoadingText: boolean;
 isLoadingPDF : boolean;
 Allow: boolean; // enable pdf button
-// uploader: FileUploader = new FileUploader(
-//   { url: this.serverURL, removeAfterUpload: false, autoUpload: true });
+
   constructor(private fb: FormBuilder,private route: ActivatedRoute,private HttpService: HomeService, private router: Router) {
     this.createText();
     this.createPDF();
     this.isLoadingText=false;
     this.isLoadingPDF= false;
     this.Allow = false;
-    this.ReceiveHeartbeats = false;
+
     localStorage.clear(); //clear before every run
 
 
@@ -50,9 +48,8 @@ Allow: boolean; // enable pdf button
    }
 
   ngOnInit(): void {
-    //this.minutes = 0.8 * 60 * 1000;
+    //Give a heartbeat every 15 seconds
     this.minutes = 15 *1000;
-   // this.getHeartbeat();
 
   }
 
@@ -75,39 +72,17 @@ SendText(element, text) {
   element.disabled = true;
   this.HttpService.sendText(this.TextForm.getRawValue())
     .subscribe(data => {
-      data => {
-        if (data) {
-          //this.hideloader();
-          this.isLoadingText=false;
-          this.ReceiveHeartbeats = true;
-      }
 
-
-       (err: any) => console.log(err);
-
-      }
-      //this.HttpService.SharedTopics = data.topics,
-      //this.HttpService.SharedTopics = data.topics,
-      //this.HttpService.uuid = data.uuid,
       localStorage.setItem("uuid", data.uuid ),
       /** adjustments for heartbeats */
       localStorage.setItem("filename", data.filename);
       this.getHeartbeat();
-
-
-
-      //  localStorage.setItem('topics', JSON.stringify(this.HttpService.SharedTopics)),
-      // console.log("i am the http service shaaaaaaared topics", this.HttpService.SharedTopics ),
-      // console.log("i am the  uuid ->>>>>>>", this.HttpService.uuid  )
-      // this.router.navigate(['/topics'])
     } )
 }
 
 handleFileInput(event: Event) {
 
-console.log("eveeent");
   this.fileToUpload = (event.target as HTMLInputElement).files[0];
-  console.log("fiiiiile");
   if(this.fileToUpload){
     this.Allow = true;
   }
@@ -117,14 +92,7 @@ uploadFileToActivity(element, text) {
   element.textContent = text;
     element.disabled = true;
   this.HttpService.postFile(this.fileToUpload , this.PDFForm.getRawValue()).subscribe(data => {
-    if (data) { this.isLoadingPDF=false;
-      this.ReceiveHeartbeats = true;
 
-    }
-
-    // do something, if upload success
-    //this.HttpService.SharedTopics = data.topics,
-    //this.HttpService.uuid = data.uuid,
     localStorage.setItem("uuid", data.uuid ),
     /** adjustments for heartbeats */
     localStorage.setItem("filename", data.filename);
@@ -138,13 +106,8 @@ uploadFileToActivity(element, text) {
 }
 
 getHeartbeat(){
-  // interval(9000).subscribe(
-  //   this.HttpService.heartBeat().subscribe();
-  // )
-  console.log(this.ReceiveHeartbeats);
-  console.log('heart beat not begun yet');
 
-    console.log('heart beat begun');
+  console.log('heart beat begun');
   this.subscription = timer(0, this.minutes)
       .pipe(
         switchMap(() => {
@@ -158,26 +121,30 @@ getHeartbeat(){
         filter(data => data !== undefined)
       )
       .subscribe(data => {
-        this.heartbeatdata = data;
-        if(data.status == 'Finished') // status?????????
+
+        if(data.status == 'Finished')
         {
-        //this.HttpService.SharedTopics = data.data.topics;
-        console.log("i am data.topics", data.data.topics);
-       localStorage.setItem('topics', JSON.stringify( data.data.topics));
-      console.log("i am the http service shaaaaaaared topics",  data.data.topics );
-      this.subscription.unsubscribe();
-      this.router.navigate(['/topics'])
+          //save topics in localstorage
+          console.log("i am data.topics", data.data.topics);
+          localStorage.setItem('topics', JSON.stringify( data.data.topics));
+
+          // turn off spinner
+          this.isLoadingPDF=false;
+          this.isLoadingText=false;
+
+          //unsubscribe
+          this.subscription.unsubscribe();
+
+          //navigate to next page
+          this.router.navigate(['/topics'])
         }
-        console.log(this.heartbeatdata);
+        console.log(data); //for testing
       });
 
 
 
 }
-ngOnDestroy() {
-
-}
-
+//just for testing
 // getTopics(){
 
 //   this.HttpService.getTopics()
@@ -200,12 +167,6 @@ ngOnDestroy() {
 //     });
 // }
 
-hideloader() {
 
-  // Setting display of spinner
-  // element to none
-  document.getElementById('loading')
-      .style.display = 'none';
-}
 
 }
