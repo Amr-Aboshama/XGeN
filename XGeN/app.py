@@ -130,10 +130,7 @@ def processUpload(directory_path, preprocessor, output_filename, text=None):
     os.rename(directory_path + dummy_name, directory_path + '/' + output_filename)
     
 
-def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
-
-    directory_path = 'data/' + str(cur_uuid)
-
+def processGenerateExam(directory_path, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
     
     paragraphs_topics = readJson(directory_path + "/paragraph_topics.json")
 
@@ -240,9 +237,14 @@ def examSpecifications_API():
     tfq_count = int(request.form.get('tfq_count', 0))
     mcq_count = int(request.form.get('mcq_count', 0))
 
+    directory_path = 'data/' + str(cur_uuid)
     output_filename = 'questions.json'
+
+    if os.path.exists(directory_path + '/' + output_filename):
+        os.remove(os.path.exists(directory_path + '/' + output_filename))
+
     # Open back-thread for questions generation
-    Thread(target=processGenerateExam, args=(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename)).start()
+    Thread(target=processGenerateExam, args=(directory_path, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename)).start()
 
     return {
         "status": 'Started',
