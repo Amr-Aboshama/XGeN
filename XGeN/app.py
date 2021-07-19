@@ -26,19 +26,13 @@ from Ranker.Ranker import Ranker
 
 
 
-# loader = Loader(os.getcwd()+"/XGeN/QAGen/models/s2v_old",
-#                 os.getcwd()+"/XGeN/QAGen/models/question_generator",
-#                 os.getcwd()+"/XGeN/QAGen/models/t5_boolean_questions".
-#                 os.getcwd()+"/XGeN/QAGen/models/answer_predictor")
-
-
 loader = Loader()
 print("Done Loader")
 
 qgen = QGen(loader)
 print("Done QGen")
 
-topicExtract = TopicExtractor()
+topicExtract = TopicExtractor(loader.rand)
 print("Done TopicExtractor")
 
 ranker = Ranker(loader.rand)
@@ -106,7 +100,9 @@ def analyze_text(phrases, directory_path):
     phrase_topics = ranker.filter_phrases(keywords, phrases)
 
     # Save Paragraphs & Topics
-    topicExtract.write_paragraphs_topics(phrase_topics, full_keywords, directory_path + '/paragraph_topics.json')
+    para_topics = topicExtract.write_paragraphs_topics_json(phrase_topics, full_keywords)
+
+    writeJson(directory_path + '/paragraph_topics.json', para_topics)
 
     return keywords
 
@@ -134,88 +130,31 @@ def processUpload(directory_path, preprocessor, output_filename, text=None):
     os.rename(directory_path + dummy_name, directory_path + '/' + output_filename)
     
 
-def processGenerateExam(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
-
-    directory_path = 'data/' + str(cur_uuid)
-
-    wh_questions = []
-    bool_questions = []
-    tf_questions = []
-    mcq_questions = []
-    # Convert it from string to list
+def processGenerateExam(directory_path, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
     
+    paragraphs_topics = readJson(directory_path + "/paragraph_topics.json")
+
+
     # Load the user paragraphs & topics
-    phrases, full_keywords = topicExtract.read_paragraphs_topics(directory_path + "/paragraph_topics.json", selected_topics)
+    full_keywords = paragraphs_topics['full_keywords']
+
+
+    phrases = topicExtract.read_paragraphs_topics_json(paragraphs_topics['pairs'], selected_topics)
     
     # Filter The paragraphs based on the selected topics
     filtered_phrases = ranker.rank_phrases(selected_topics, phrases)
     
-    # Generate MCQ Questions
-    i = 0
-    count = mcq_count
-    phrase_num = 0
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = mcqGen.predict_mcq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
-        phrase_num += 1
-        if not len(questions):
-            continue
-        mcq_questions += questions
-        i += 1
-    # TODO : Filter Questions
-    mcq_questions = ranker.random_questions(mcq_questions, mcq_count)
-    print("Done MCQ")
-    
-    # Generate TF Questions
-    count += tfq_count
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = tfGen.predict_tf(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
-        phrase_num += 1
-        if not len(questions):
-            continue
-        tf_questions += questions
-        i += 1
-    # TODO : Filter Questions
-    tf_questions = ranker.random_questions(tf_questions, tfq_count)
-    print("Done TF")
-    
-    # Generate WH Questions
-    count += whq_count
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = shortGen.predict_shortq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0])
-        phrase_num += 1
-        if not len(questions):
-            continue
-        wh_questions += questions
-        i += 1
-        # if(i < len(filtered_phrases) and i < count):
-        #     questions = longGen.paraphrase(filtered_phrases[i][0])
-        #     if not len(questions):
-        #         continue
-        #     wh_questions += questions
-        #     i += 1
-    # TODO : Filter Questions
-    wh_questions = ranker.random_questions(wh_questions, whq_count)
-    print("Done WH")
-    
-    # Generate Boolean Questions
-    count += boolq_count
-    while(phrase_num < len(filtered_phrases) and i < count):
-        questions = boolGen.predict_boolq(filtered_phrases[phrase_num][1],filtered_phrases[phrase_num][0], full_keywords)
-        phrase_num += 1
-        if not len(questions):
-            continue
-        bool_questions += questions
-        i += 1
-
-    # TODO : Filter Questions
-    bool_questions = ranker.random_questions(bool_questions, boolq_count)
-    print("Done Boolean")    
+    # Generate exam questions
+    counts = [mcq_count, tfq_count, whq_count, boolq_count]
+    generators = [mcqGen, tfGen, shortGen, boolGen]
+        
+    questions = qgen.generateQuestions(ranker, topicExtract, filtered_phrases, full_keywords, counts, generators)
     
     quests = {
-        "wh_questions" : wh_questions,
-        "bool_questions" : bool_questions,
-        "tf_questions" : tf_questions,
-        "mcq_questions" : mcq_questions, 
+        "wh_questions" : questions[0],
+        "bool_questions" : questions[1],
+        "tf_questions" : questions[2],
+        "mcq_questions" : questions[3], 
     }
 
     dummy_name = '/write2.json'
@@ -298,9 +237,14 @@ def examSpecifications_API():
     tfq_count = int(request.form.get('tfq_count', 0))
     mcq_count = int(request.form.get('mcq_count', 0))
 
+    directory_path = 'data/' + str(cur_uuid)
     output_filename = 'questions.json'
+
+    if os.path.exists(directory_path + '/' + output_filename):
+        os.remove(os.path.exists(directory_path + '/' + output_filename))
+
     # Open back-thread for questions generation
-    Thread(target=processGenerateExam, args=(cur_uuid, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename)).start()
+    Thread(target=processGenerateExam, args=(directory_path, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename)).start()
 
     return {
         "status": 'Started',

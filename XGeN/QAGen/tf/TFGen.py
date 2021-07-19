@@ -1,7 +1,3 @@
-import re
-#from nltk.stem import PorterStemmer
-
-from QAGen.utilities import tokenize_sentences
 from QAGen.QGen import QGen
 
 
@@ -11,12 +7,8 @@ class TFGen(QGen):
         QGen.__init__(self, loader)
             
 
-    def predict_tf(self, keywords, modified_text, full_keywords):
+    def generate(self, keyword_sentence_mapping, full_keywords):
         
-        modified_text = modified_text.replace(".",". ")
-        modified_text = modified_text.replace(".  ",". ")
-        sentences = tokenize_sentences(modified_text)
-        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)
         
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')

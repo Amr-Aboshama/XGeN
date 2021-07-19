@@ -18,6 +18,38 @@ class QGen:
         self.ap_model = loader.ap_model
 
     
+    def generateQuestions(self, ranker, topicExtract, filtered_phrases, full_keywords, counts, generators):
+
+        questions = []
+
+        for i in range(len(generators)):
+            questions.append([])
+            count = counts[i]
+            while len(filtered_phrases) and count:
+
+                keywords = filtered_phrases[0][1]
+                modified_text = filtered_phrases[0][0].replace(".",". ")
+                modified_text = modified_text.replace(".  ",". ")
+
+                sentences = topicExtract.tokenize_sentences(modified_text)
+                
+                keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)     
+                filtered_phrases.pop(0)
+        
+                q = generators[i].generate(keyword_sentence_mapping, full_keywords)
+
+                if not len(q):
+                    continue
+                questions[-1] += q
+                count -= 1
+            
+            # TODO : Filter Questions
+            questions[-1] = ranker.random_questions(questions[-1], counts[i])
+            print('Done Generator: ', i)
+
+        return questions
+
+
     def __get_options(self, answer, full_keywords, count = 4, none_exist = False):
     
         pool = set()

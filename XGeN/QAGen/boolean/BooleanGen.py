@@ -1,7 +1,4 @@
-from typing import Set
 import torch
-from QAGen.utilities import tokenize_sentences
-
 from QAGen.QGen import QGen
 
 
@@ -9,12 +6,10 @@ class BoolGen(QGen):
     
     def __init__(self, loader):
         QGen.__init__(self, loader)
-        
 
-    def predict_boolq(self, keywords, modified_text, full_keywords):
-        sentences = tokenize_sentences(modified_text)
+
+    def generate(self, keyword_sentence_mapping, full_keywords):
         
-        keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)     
         for k in keyword_sentence_mapping.keys():
             ks_len = len(keyword_sentence_mapping[k])
             text_snippet = " ".join(keyword_sentence_mapping[k][:min(3, ks_len)])
