@@ -5,7 +5,8 @@ import pke
 
 class TopicExtractor:
 
-    def __init__(self):
+    def __init__(self, rand):
+        self.rand = rand
         self.stopwords_set = set(stopwords.words('english'))
     
     def write_paragraphs_topics_json(self, payload, full_keywords):
@@ -46,7 +47,9 @@ class TopicExtractor:
             for keyword in selected_topics:
                 keyword = keyword.lower()
                 if keyword not in topics and phrase.lower().find(keyword) != -1:
-                    phrases[phrase].insert(0,keyword)
+                    phrases[phrase].insert(keyword)
+
+            self.rand.shuffle(phrases[phrase])
 
         return phrases
 

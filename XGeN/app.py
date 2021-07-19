@@ -32,7 +32,7 @@ print("Done Loader")
 qgen = QGen(loader)
 print("Done QGen")
 
-topicExtract = TopicExtractor()
+topicExtract = TopicExtractor(loader.rand)
 print("Done TopicExtractor")
 
 ranker = Ranker(loader.rand)
