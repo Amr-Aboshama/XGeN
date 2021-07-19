@@ -78,11 +78,6 @@ class PDFPreprocessor(TextPreprocessor):
         pytesseract.tesseract_cmd = self.path_to_tesseract
         
 
-    def __save_img(self, page, i):
-        print('Image: ', i)
-        page.save(path + '/'+str(i)+'.jpg', 'JPEG')
-
-
     def __convert_pdf_to_pages(self, path):
 
         pages = convert_from_path(self.pdf_path)
@@ -93,7 +88,6 @@ class PDFPreprocessor(TextPreprocessor):
 
 
         for i in range(self.start, end):
-            # self.__save_img(pages[i], i)
             pages[i].save(path + '/'+str(i)+'.jpg', 'JPEG')
 
 
@@ -251,6 +245,8 @@ class PDFPreprocessor(TextPreprocessor):
 
         self.__convert_pdf_to_pages(path)
         
+        os.remove(self.pdf_path)
+
         imgs_names = os.listdir(path)
 
         pages_paragraphs = []
