@@ -91,6 +91,6 @@ class TopicExtractor:
         joiner = " "
         modified_text = joiner.join(sentences)
         
-        keywords = get_nouns_multipartite(modified_text, topics_num)
+        keywords = self.get_nouns_multipartite(modified_text, topics_num)
         
         return keywords
