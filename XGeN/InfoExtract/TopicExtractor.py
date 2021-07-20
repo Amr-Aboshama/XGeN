@@ -47,7 +47,7 @@ class TopicExtractor:
             for keyword in selected_topics:
                 keyword = keyword.lower()
                 if keyword not in topics and phrase.lower().find(keyword) != -1:
-                    phrases[phrase].insert(keyword)
+                    phrases[phrase].append(keyword)
 
             self.rand.shuffle(phrases[phrase])
 

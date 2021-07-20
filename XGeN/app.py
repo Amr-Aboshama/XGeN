@@ -151,10 +151,10 @@ def processGenerateExam(directory_path, selected_topics, whq_count, boolq_count,
     questions = qgen.generateQuestions(ranker, topicExtract, filtered_phrases, full_keywords, counts, generators)
     
     quests = {
-        "wh_questions" : questions[0],
-        "bool_questions" : questions[1],
-        "tf_questions" : questions[2],
-        "mcq_questions" : questions[3], 
+        "wh_questions" : questions[2],
+        "bool_questions" : questions[3],
+        "tf_questions" : questions[1],
+        "mcq_questions" : questions[0], 
     }
 
     dummy_name = '/write2.json'
@@ -241,7 +241,7 @@ def examSpecifications_API():
     output_filename = 'questions.json'
 
     if os.path.exists(directory_path + '/' + output_filename):
-        os.remove(os.path.exists(directory_path + '/' + output_filename))
+        os.remove(directory_path + '/' + output_filename)
 
     # Open back-thread for questions generation
     Thread(target=processGenerateExam, args=(directory_path, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename)).start()
