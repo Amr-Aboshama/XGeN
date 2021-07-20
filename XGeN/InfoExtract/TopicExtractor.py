@@ -76,7 +76,7 @@ class TopicExtractor:
         for key in keyphrases:
             out.append(key[0].lower())
         
-        return 
+        return out
         
     def tokenize_sentences(self, text):
         sentences = sent_tokenize(text)
@@ -91,6 +91,6 @@ class TopicExtractor:
         joiner = " "
         modified_text = joiner.join(sentences)
         
-        keywords = get_nouns_multipartite(modified_text, topics_num)
+        keywords = self.get_nouns_multipartite(modified_text, topics_num)
         
         return keywords
