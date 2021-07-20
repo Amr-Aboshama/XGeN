@@ -76,7 +76,7 @@ class TopicExtractor:
         for key in keyphrases:
             out.append(key[0].lower())
         
-        return 
+        return out
         
     def tokenize_sentences(self, text):
         sentences = sent_tokenize(text)
