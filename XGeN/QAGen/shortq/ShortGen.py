@@ -8,6 +8,7 @@ class ShortGen(QGen):
     def __init__(self, loader):
         QGen.__init__(self, loader)
         self.answerPredictor = AnswerPredictor(loader)
+        self.model = loader.ap_model
 
 
     def generate(self, keyword_sentence_mapping, _):
@@ -24,7 +25,7 @@ class ShortGen(QGen):
             return []
         else:
             
-            generated_questions = self.__generate_normal_questions(keyword_sentence_mapping,self.device,self.tokenizer,self.qg_model)
+            generated_questions = self.__generate_normal_questions(keyword_sentence_mapping)
             
             
         #final_output["statement"] = modified_text
@@ -37,7 +38,7 @@ class ShortGen(QGen):
         return generated_questions
 
 
-    def __generate_normal_questions(self,keyword_sent_mapping,device,tokenizer,model):  #for normal one word questions
+    def __generate_normal_questions(self,keyword_sent_mapping):  #for normal one word questions
         batch_text = []
         answers = keyword_sent_mapping.keys()
         for answer in answers:
@@ -45,11 +46,11 @@ class ShortGen(QGen):
             context = "generate question: " + self._QGen__replace_choice(txt, answer, "<h1>" + answer + "<h1>") + " </s>"
             batch_text.append(context)
         
-        encoding = tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt", max_length=512, truncation=True)
-        input_ids, attention_masks = encoding["input_ids"].to(device), encoding["attention_mask"].to(device)
+        encoding = self.tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt", max_length=512, truncation=True)
+        input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
 
         with torch.no_grad():
-            outs = model.generate(input_ids=input_ids,
+            outs = self.qg_model.generate(input_ids=input_ids,
                                 attention_mask=attention_masks,
                                 max_length=150)
             
@@ -62,7 +63,7 @@ class ShortGen(QGen):
         for index, val in enumerate(answers):
             #individual_quest= {}
             out = outs[index, :]
-            dec = tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            dec = self.tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             
             Question= dec.replace('question:', '')
             Question= Question.strip()
@@ -90,7 +91,7 @@ class ShortGen(QGen):
 
         encoding = self.tokenizer.encode_plus(input, return_tensors="pt")
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
-        greedy_output = self.model.generate(input_ids=input_ids, attention_mask=attention_masks, max_length=256)
+        greedy_output = self.qg_model.generate(input_ids=input_ids, attention_mask=attention_masks, max_length=256)
         Question =  self.tokenizer.decode(greedy_output[0], skip_special_tokens=True,clean_up_tokenization_spaces=True)
         output = Question.strip().capitalize()
 
