@@ -12,7 +12,7 @@ import { timeout} from 'rxjs/operators';
 export class TopicsService {
   baseURL: string = "http://localhost:3000/";
   serverURL: string="http://localhost:5000/";
-  ngRokURL: string ="http://da2e29ba31ac.ngrok.io/";
+  ngRokURL: string ="http://0ec6ed4a49cc.ngrok.io/";
 
   constructor(private http: HttpClient) { }
 
@@ -30,7 +30,7 @@ SubmitSpecs(uuid: string , topics: string[], Qcount: Qcount): Observable<any> {
       formdata.append('boolq_count', JSON.stringify(Qcount.Booln) ); //for now
       formdata.append('tfq_count', JSON.stringify(Qcount.TF));
       formdata.append('mcq_count',JSON.stringify(Qcount.MCQ))
-      console.log('The body in service ',formdata)
+      //console.log('The body in service ',formdata)
 
       return this.http.post(this.ngRokURL + 'api/examSpecifications',formdata );
     }
@@ -38,12 +38,12 @@ SubmitSpecs(uuid: string , topics: string[], Qcount: Qcount): Observable<any> {
   //just for testing
 
   //only for test
-getExam():Observable<any>{
-  const headers = { 'content-type': 'application/json'}
+// getExam():Observable<any>{
+//   const headers = { 'content-type': 'application/json'}
 
-  return this.http.get<any>(this.baseURL+'exam',{'headers':headers}).pipe(
-    timeout(2147483647)
-);
-}
+//   return this.http.get<any>(this.baseURL+'exam',{'headers':headers}).pipe(
+//     timeout(2147483647)
+// );
+// }
 
 }
