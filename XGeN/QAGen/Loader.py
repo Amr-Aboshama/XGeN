@@ -14,6 +14,7 @@ class Loader:
     , t5_tokenizer_path = 't5-base'):
         
         self.tokenizer = T5Tokenizer.from_pretrained(t5_tokenizer_path)
+        self.tokenizer.add_tokens(['<sep>', '<hl>'])
         self.normalized_levenshtein = NormalizedLevenshtein()
         self.rand = random.Random(datetime.now())
         

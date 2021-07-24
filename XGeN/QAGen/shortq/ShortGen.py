@@ -43,7 +43,7 @@ class ShortGen(QGen):
         answers = keyword_sent_mapping.keys()
         for answer in answers:
             txt = keyword_sent_mapping[answer]
-            context = "generate question: " + txt.replace(answer, "<hl>" + answer + "<hl>") + " </s>"
+            context = "generate question: " + self._QGen__replace_choice(txt, answer, "<hl>" + answer + "<hl>") + " </s>"
             batch_text.append(context)
         
         encoding = self.tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt", max_length=512, truncation=True)
@@ -56,7 +56,7 @@ class ShortGen(QGen):
             
         output_array = []
         #output_array["questions"] =[]
-        wh_words = ['What', 'Where', 'When', 'How', 'Who', 'Why', 'How many', 'How much']
+        #wh_words = ['What', 'Where', 'When', 'How', 'Who', 'Why', 'How many', 'How much']
         
         selected_questions = set()
 
@@ -68,20 +68,19 @@ class ShortGen(QGen):
             Question= dec.replace('question:', '')
             Question= Question.strip()
             
-            if any(Question.find(wh) == 0 for wh in wh_words):
-                payload = {
-                    "context": keyword_sent_mapping[val],
-                    "question" : Question
-                }
-                print("predict answer")
-                answer = self.__predict_answer(payload)
-                print("Done prediction")
-                if Question.find(answer[:-1].lower()) == -1 and Question not in selected_questions:
-                    selected_questions.add(Question)
-                    output_array.append((Question, answer))
-                else:
-                    print("the answer in the question, we ignored that question")
-            
+            payload = {
+                "context": keyword_sent_mapping[val],
+                "question" : Question
+            }
+            print("predict answer")
+            answer = self.__predict_answer(payload)
+            print("Done prediction")
+            if Question.find(answer[:-1].lower()) == -1 and Question not in selected_questions:
+                selected_questions.add(Question)
+                output_array.append((Question, answer))
+            else:
+                print("the answer in the question, we ignored that question")
+                
         return output_array
 
 

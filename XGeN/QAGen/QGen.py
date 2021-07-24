@@ -121,7 +121,7 @@ class QGen:
         valid_sentences = []
 
         for s in sentences:
-            if s[:25].find(',') != -1 or s[:25].find(':') != -1 or s[-1] == ':':
+            if s[:25].find(',') != -1 or s[:25].find(':') != -1 or s[-1] == ':' or re.findall(r'[@#$%^&*{}|<>‘]', s):
                 continue
             
             valid_sentences.append(s)
