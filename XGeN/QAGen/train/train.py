@@ -40,14 +40,14 @@ class T5FineTuner(pl.LightningModule):
         return True
 
     def forward(
-            self, input_ids, attention_mask=None, decoder_input_ids=None, decoder_attention_mask=None, lm_labels=None
+            self, input_ids, attention_mask=None, decoder_input_ids=None, decoder_attention_mask=None, labels=None
     ):
         return self.model(
             input_ids,
             attention_mask=attention_mask,
             decoder_input_ids=decoder_input_ids,
             decoder_attention_mask=decoder_attention_mask,
-            lm_labels=lm_labels,
+            labels=labels,
         )
 
     def _step(self, batch):
