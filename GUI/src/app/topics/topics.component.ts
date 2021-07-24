@@ -55,8 +55,8 @@ export class TopicsComponent implements OnInit {
     this.uuid=localStorage.getItem("uuid");
     this.filename = localStorage.getItem("filename");
 
-    console.log("ia m uuid :" , this.uuid );
-    console.log("file",this.filename);
+    //console.log("ia m uuid :" , this.uuid );
+    //console.log("file",this.filename);
 
     ////////////////////////////////////////////////
     localStorage.removeItem('exam');
@@ -124,7 +124,8 @@ createQForm(){
 
   AddTopic(){
     this.SelectedTopics.push(this.UserTopics.getRawValue().UserT);
-    this.UserAddedTopics.push(this.UserTopics.getRawValue().UserT)
+    this.UserAddedTopics.push(this.UserTopics.getRawValue().UserT);
+    (document.getElementById("clear") as HTMLTextAreaElement).value=''
    // console.log(this.SelectedTopics);
    // console.log(this.UserAddedTopics);
   }
@@ -163,7 +164,7 @@ createQForm(){
 
 getHeartbeat(){
 
-  console.log('heart beat begun');
+ // console.log('heart beat begun');
   this.subscription = timer(0, this.minutes)
       .pipe(
         switchMap(() => {
@@ -188,13 +189,13 @@ getHeartbeat(){
           this.isLoadingExam = false;
 
           //unsubscribe
-          console.log('i am the data ',data);
+        //  console.log('i am the data ',data);
           this.subscription.unsubscribe();
 
           //navugate to exam
           this.router.navigate(['/exam'])
         }
-        console.log(data);
+      //  console.log(data);
       });
 
 
