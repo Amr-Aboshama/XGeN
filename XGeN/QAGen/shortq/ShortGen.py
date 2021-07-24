@@ -1,15 +1,12 @@
 import torch
 from QAGen.QGen import QGen
-from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 
 class ShortGen(QGen):
 
     def __init__(self, loader):
         QGen.__init__(self, loader)
-        self.answerPredictor = AnswerPredictor(loader)
-        self.model = loader.ap_model
-
+        
 
     def generate(self, keyword_sentence_mapping, _):
         
