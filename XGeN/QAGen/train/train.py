@@ -51,13 +51,13 @@ class T5FineTuner(pl.LightningModule):
         )
 
     def _step(self, batch):
-        lm_labels = batch["target_ids"]
-        lm_labels[lm_labels[:, :] == self.tokenizer.pad_token_id] = -100
+        labels = batch["target_ids"]
+        labels[labels[:, :] == self.tokenizer.pad_token_id] = -100
 
         outputs = self(
             input_ids=batch["source_ids"],
             attention_mask=batch["source_mask"],
-            lm_labels=lm_labels,
+            labels=labels,
             decoder_attention_mask=batch['target_mask']
         )
 
@@ -244,7 +244,7 @@ class BooleanDataset(Dataset):
             self.targets.append(tokenized_targets)
 
 
-dataset = BooleanDataset(tokenizer, 'boolq_data', 'boolq_val', 256)
+dataset = BooleanDataset(tokenizer, 'XGeN/boolq_data', 'boolq_val', 256)
 print("Val dataset: ",len(dataset))
 
 data = dataset[2]
@@ -254,7 +254,7 @@ print(tokenizer.decode(data['target_ids']))
 if not os.path.exists('t5_boolq'):
     os.makedirs('t5_boolq')
 
-args_dict.update({'data_dir': 'boolq_data', 'output_dir': 't5_boolq', 'num_train_epochs':4,'max_seq_length':256})
+args_dict.update({'data_dir': 'XGeN/boolq_data', 'output_dir': 't5_boolq', 'num_train_epochs':4,'max_seq_length':256})
 args = argparse.Namespace(**args_dict)
 print(args_dict)
 
