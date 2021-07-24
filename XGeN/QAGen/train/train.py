@@ -1,9 +1,8 @@
 import argparse
 import os
-import logging
 import random
 
-
+import json
 import pandas as pd
 import numpy as np
 import torch
@@ -25,7 +24,8 @@ def set_seed(seed):
   if torch.cuda.is_available():
     torch.cuda.manual_seed_all(seed)
 
-set_seed(42)
+def get_dataset(tokenizer, type_path, args):
+  return BooleanDataset(tokenizer=tokenizer, data_dir=args.data_dir, type_path=type_path,  max_len=args.max_seq_length)
 
 
 class T5FineTuner(pl.LightningModule):
@@ -68,22 +68,11 @@ class T5FineTuner(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         loss = self._step(batch)
 
-        tensorboard_logs = {"train_loss": loss}
-        return {"loss": loss, "log": tensorboard_logs}
-
-    def training_epoch_end(self, outputs):
-        avg_train_loss = torch.stack([x["loss"] for x in outputs]).mean()
-        tensorboard_logs = {"avg_train_loss": avg_train_loss}
-        return {"avg_train_loss": avg_train_loss, "log": tensorboard_logs, 'progress_bar': tensorboard_logs}
+        return {"loss": loss}
 
     def validation_step(self, batch, batch_idx):
         loss = self._step(batch)
         return {"val_loss": loss}
-
-    def validation_epoch_end(self, outputs):
-        avg_loss = torch.stack([x["val_loss"] for x in outputs]).mean()
-        tensorboard_logs = {"val_loss": avg_loss}
-        return {"avg_val_loss": avg_loss, "log": tensorboard_logs, 'progress_bar': tensorboard_logs}
 
     def configure_optimizers(self):
         "Prepare optimizer and schedule (linear warmup and decay)"
@@ -109,11 +98,6 @@ class T5FineTuner(pl.LightningModule):
         optimizer.zero_grad()
         self.lr_scheduler.step()
 
-    def get_tqdm_dict(self):
-        tqdm_dict = {"loss": "{:.3f}".format(self.trainer.avg_loss), "lr": self.lr_scheduler.get_last_lr()[-1]}
-
-        return tqdm_dict
-
     def train_dataloader(self):
         train_dataset = get_dataset(tokenizer=self.tokenizer, type_path="boolq_train", args=self.hparams)
         dataloader = DataLoader(train_dataset, batch_size=self.hparams.train_batch_size, drop_last=True, shuffle=True,
@@ -133,73 +117,39 @@ class T5FineTuner(pl.LightningModule):
         val_dataset = get_dataset(tokenizer=self.tokenizer, type_path="boolq_val", args=self.hparams)
         return DataLoader(val_dataset, batch_size=self.hparams.eval_batch_size, num_workers=4)
 
-logger = logging.getLogger(__name__)
 
-class LoggingCallback(pl.Callback):
-  def on_validation_end(self, trainer, pl_module):
-    logger.info("***** Validation results *****")
-    if pl_module.is_logger():
-      metrics = trainer.callback_metrics
-      # Log results
-      for key in sorted(metrics):
-        if key not in ["log", "progress_bar"]:
-          logger.info("{} = {}\n".format(key, str(metrics[key])))
 
-  def on_test_end(self, trainer, pl_module):
-    logger.info("***** Test results *****")
-
-    if pl_module.is_logger():
-      metrics = trainer.callback_metrics
-
-      # Log and save results to file
-      output_test_results_file = os.path.join(pl_module.hparams.output_dir, "test_results.txt")
-      with open(output_test_results_file, "w") as writer:
-        for key in sorted(metrics):
-          if key not in ["log", "progress_bar"]:
-            logger.info("{} = {}\n".format(key, str(metrics[key])))
-            writer.write("{} = {}\n".format(key, str(metrics[key])))
-
-args_dict = dict(
-    data_dir="", # path for data files
-    output_dir="", # path to save the checkpoints
-    model_name_or_path='t5-base',
-    tokenizer_name_or_path='t5-base',
-    max_seq_length=256,
-    learning_rate=3e-4,
-    weight_decay=0.0,
-    adam_epsilon=1e-8,
-    warmup_steps=0,
-    train_batch_size=6,
-    eval_batch_size=6,
-    num_train_epochs=4,
-    gradient_accumulation_steps=16,
-    n_gpu=1,
-    early_stop_callback=False,
-    fp_16=False, # if you want to enable 16-bit training then install apex and set this to true
-    opt_level='O1', # you can find out more on optimisation levels here https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
-    max_grad_norm=1.0, # if you enable 16-bit training then set this to a sensible value, 0.5 is a good default
-    seed=42,
-)
-
-train_path = "XGeN/boolq_data/boolq_train.csv"
-val_path = "XGeN/boolq_data/boolq_val.csv"
-
-train = pd.read_csv(train_path)
-print (train.head())
-
-tokenizer = T5Tokenizer.from_pretrained('t5-base')
 
 
 class BooleanDataset(Dataset):
+    # def __init__(self, tokenizer, data_dir, type_path, max_len=256):
+    #     self.path = os.path.join(data_dir, type_path + '.csv')
+
+    #     self.passage_column = "passage"
+    #     self.true_false = "answer"
+    #     self.target_column = "question"
+    #     self.title = "title"
+    #     self.data = pd.read_csv(self.path)
+
+    #     self.max_len = max_len
+    #     self.tokenizer = tokenizer
+    #     self.inputs = []
+    #     self.targets = []
+
+    #     self._build()
+
     def __init__(self, tokenizer, data_dir, type_path, max_len=256):
-        self.path = os.path.join(data_dir, type_path + '.csv')
+        self.path = os.path.join(data_dir, type_path + '.json')
 
         self.passage_column = "passage"
         self.true_false = "answer"
         self.target_column = "question"
         self.title = "title"
-        self.data = pd.read_csv(self.path)
+        self.data = None
 
+        with open(self.path, 'r') as f:
+            self.data = json.load(f)
+        
         self.max_len = max_len
         self.tokenizer = tokenizer
         self.inputs = []
@@ -221,7 +171,10 @@ class BooleanDataset(Dataset):
 
     def _build(self):
         for idx in range(len(self.data)):
-            passage,true_false,target = self.data.loc[idx, self.passage_column],self.data.loc[idx, self.true_false], self.data.loc[idx, self.target_column]
+            passage = self.data[self.passage_column]
+            true_false = self.data[self.true_false]
+            target = self.data[self.target_column]
+                        # passage,true_false,target = self.data.loc[idx, self.passage_column],self.data.loc[idx, self.true_false], self.data.loc[idx, self.target_column]
             true_false = str(true_false)
             if true_false.lower() =="true":
                 true_false ="yes"
@@ -244,17 +197,48 @@ class BooleanDataset(Dataset):
             self.targets.append(tokenized_targets)
 
 
-dataset = BooleanDataset(tokenizer, 'XGeN/boolq_data', 'boolq_val', 256)
+
+set_seed(42)
+
+args_dict = dict(
+    data_dir="XGeN/google_boolq_data", # path for data files
+    output_dir="XGeN_Model", # path to save the checkpoints
+    model_name_or_path='valhalla/t5-base-qa-qg-hl',
+    tokenizer_name_or_path='t5-base',
+    max_seq_length=256,
+    learning_rate=3e-4,
+    weight_decay=0.0,
+    adam_epsilon=1e-8,
+    warmup_steps=0,
+    train_batch_size=6,
+    eval_batch_size=6,
+    num_train_epochs=4,
+    gradient_accumulation_steps=16,
+    n_gpu=1,
+    early_stop_callback=False,
+    fp_16=False, # if you want to enable 16-bit training then install apex and set this to true
+    opt_level='O1', # you can find out more on optimisation levels here https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
+    max_grad_norm=1.0, # if you enable 16-bit training then set this to a sensible value, 0.5 is a good default
+    seed=42,
+)
+
+train_path = "XGeN/google_boolq_data/boolq_train.csv"
+val_path = "XGeN/google_boolq_data/boolq_val.csv"
+
+train = pd.read_csv(train_path)
+
+tokenizer = T5Tokenizer.from_pretrained('t5-base')
+
+dataset = BooleanDataset(tokenizer, 'XGeN/google_boolq_data', 'boolq_val', 256)
 print("Val dataset: ",len(dataset))
 
 data = dataset[2]
 print(tokenizer.decode(data['source_ids']))
 print(tokenizer.decode(data['target_ids']))
 
-if not os.path.exists('t5_boolq'):
-    os.makedirs('t5_boolq')
+if not os.path.exists('XGeN_Model'):
+    os.makedirs('XGeN_Model')
 
-args_dict.update({'data_dir': 'XGeN/boolq_data', 'output_dir': 't5_boolq', 'num_train_epochs':4,'max_seq_length':256})
 args = argparse.Namespace(**args_dict)
 print(args_dict)
 
@@ -271,12 +255,7 @@ train_params = dict(
     amp_level=args.opt_level,
     gradient_clip_val=args.max_grad_norm,
     checkpoint_callback=checkpoint_callback,
-    callbacks=[LoggingCallback()],
 )
-
-def get_dataset(tokenizer, type_path, args):
-  return BooleanDataset(tokenizer=tokenizer, data_dir=args.data_dir, type_path=type_path,  max_len=args.max_seq_length)
-
 
 
 print ("Initialize model")
@@ -290,6 +269,6 @@ trainer.fit(model)
 print ("training finished")
 
 print ("Saving model")
-model.model.save_pretrained('t5_boolq')
+model.model.save_pretrained('XGeN_Model')
 
 print ("Saved model")
