@@ -122,7 +122,7 @@ class QGen:
 
         for s in sentences:
             if s[:25].find(',') != -1 or s[:25].find(':') != -1 or \
-                    s[-1] == ':' or re.findall(r'[@#$%^&*{}|<>‘]', s) or s.find('?') or \
+                    s[-1] == ':' or re.findall(r'[@#$%^&*{}|<>‘]', s) or s.find('?') != -1 or \
                     self.__regex_search(s, "fig.") or self.__regex_search(s, "figure"):
                 continue
             
