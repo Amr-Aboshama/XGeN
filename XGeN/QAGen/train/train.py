@@ -145,10 +145,16 @@ class BooleanDataset(Dataset):
         self.true_false = "answer"
         self.target_column = "question"
         self.title = "title"
-        self.data = None
+        self.data = []
 
         with open(self.path, 'r') as f:
-            self.data = json.load(f)
+            while True:
+                line = f.readline()[:-1]
+
+                if len(line) == 0:
+                    break
+
+                self.data.append(json.loads(line))
         
         self.max_len = max_len
         self.tokenizer = tokenizer
@@ -171,9 +177,9 @@ class BooleanDataset(Dataset):
 
     def _build(self):
         for idx in range(len(self.data)):
-            passage = self.data[self.passage_column]
-            true_false = self.data[self.true_false]
-            target = self.data[self.target_column]
+            passage = self.data[idx][self.passage_column]
+            true_false = self.data[idx][self.true_false]
+            target = self.data[idx][self.target_column]
                         # passage,true_false,target = self.data.loc[idx, self.passage_column],self.data.loc[idx, self.true_false], self.data.loc[idx, self.target_column]
             true_false = str(true_false)
             if true_false.lower() =="true":
@@ -222,10 +228,8 @@ args_dict = dict(
     seed=42,
 )
 
-train_path = "XGeN/google_boolq_data/boolq_train.csv"
-val_path = "XGeN/google_boolq_data/boolq_val.csv"
-
-train = pd.read_csv(train_path)
+train_path = "XGeN/google_boolq_data/boolq_train.json"
+val_path = "XGeN/google_boolq_data/boolq_val.json"
 
 tokenizer = T5Tokenizer.from_pretrained('t5-base')
 
