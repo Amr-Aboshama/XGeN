@@ -69,7 +69,7 @@ class ShortGen(QGen):
             
             if any(Question.find(wh) == 0 for wh in wh_words):
                 payload = {
-                    "text": keyword_sent_mapping[val],
+                    "context": keyword_sent_mapping[val],
                     "question" : Question
                 }
                 print("predict answer")
