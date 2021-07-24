@@ -181,8 +181,8 @@ args_dict = dict(
     seed=42,
 )
 
-train_path = "boolq_data/boolq_train.csv"
-val_path = "boolq_data/boolq_val.csv"
+train_path = "XGeN/boolq_data/boolq_train.csv"
+val_path = "XGeN/boolq_data/boolq_val.csv"
 
 train = pd.read_csv(train_path)
 print (train.head())
