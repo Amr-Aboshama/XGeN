@@ -2,7 +2,6 @@ import argparse
 import os
 import random
 
-import json
 import pandas as pd
 import numpy as np
 import torch
@@ -122,34 +121,15 @@ class T5FineTuner(pl.LightningModule):
 
 
 class BooleanDataset(Dataset):
-    # def __init__(self, tokenizer, data_dir, type_path, max_len=256):
-    #     self.path = os.path.join(data_dir, type_path + '.csv')
-
-    #     self.passage_column = "passage"
-    #     self.true_false = "answer"
-    #     self.target_column = "question"
-    #     self.title = "title"
-    #     self.data = pd.read_csv(self.path)
-
-    #     self.max_len = max_len
-    #     self.tokenizer = tokenizer
-    #     self.inputs = []
-    #     self.targets = []
-
-    #     self._build()
-
     def __init__(self, tokenizer, data_dir, type_path, max_len=256):
-        self.path = os.path.join(data_dir, type_path + '.json')
+        self.path = os.path.join(data_dir, type_path + '.csv')
 
         self.passage_column = "passage"
         self.true_false = "answer"
         self.target_column = "question"
         self.title = "title"
-        self.data = None
+        self.data = pd.read_csv(self.path)
 
-        with open(self.path, 'r') as f:
-            self.data = json.load(f)
-        
         self.max_len = max_len
         self.tokenizer = tokenizer
         self.inputs = []
@@ -171,10 +151,7 @@ class BooleanDataset(Dataset):
 
     def _build(self):
         for idx in range(len(self.data)):
-            passage = self.data[self.passage_column]
-            true_false = self.data[self.true_false]
-            target = self.data[self.target_column]
-                        # passage,true_false,target = self.data.loc[idx, self.passage_column],self.data.loc[idx, self.true_false], self.data.loc[idx, self.target_column]
+            passage,true_false,target = self.data.loc[idx, self.passage_column],self.data.loc[idx, self.true_false], self.data.loc[idx, self.target_column]
             true_false = str(true_false)
             if true_false.lower() =="true":
                 true_false ="yes"
@@ -201,7 +178,7 @@ class BooleanDataset(Dataset):
 set_seed(42)
 
 args_dict = dict(
-    data_dir="XGeN/google_boolq_data", # path for data files
+    data_dir="XGeN/boolq_data", # path for data files
     output_dir="XGeN_Model", # path to save the checkpoints
     model_name_or_path='valhalla/t5-base-qa-qg-hl',
     tokenizer_name_or_path='t5-base',
@@ -222,19 +199,19 @@ args_dict = dict(
     seed=42,
 )
 
-train_path = "XGeN/google_boolq_data/boolq_train.csv"
-val_path = "XGeN/google_boolq_data/boolq_val.csv"
+train_path = "XGeN/boolq_data/boolq_train.csv"
+val_path = "XGeN/boolq_data/boolq_val.csv"
 
 train = pd.read_csv(train_path)
 
 tokenizer = T5Tokenizer.from_pretrained('t5-base')
 
-dataset = BooleanDataset(tokenizer, 'XGeN/google_boolq_data', 'boolq_val', 256)
-print("Val dataset: ",len(dataset))
+# dataset = BooleanDataset(tokenizer, 'XGeN/boolq_data', 'boolq_val', 256)
+# print("Val dataset: ",len(dataset))
 
-data = dataset[2]
-print(tokenizer.decode(data['source_ids']))
-print(tokenizer.decode(data['target_ids']))
+# data = dataset[2]
+# print(tokenizer.decode(data['source_ids']))
+# print(tokenizer.decode(data['target_ids']))
 
 if not os.path.exists('XGeN_Model'):
     os.makedirs('XGeN_Model')
