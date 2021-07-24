@@ -124,7 +124,8 @@ createQForm(){
 
   AddTopic(){
     this.SelectedTopics.push(this.UserTopics.getRawValue().UserT);
-    this.UserAddedTopics.push(this.UserTopics.getRawValue().UserT)
+    this.UserAddedTopics.push(this.UserTopics.getRawValue().UserT);
+    (document.getElementById("clear") as HTMLTextAreaElement).value=''
    // console.log(this.SelectedTopics);
    // console.log(this.UserAddedTopics);
   }
