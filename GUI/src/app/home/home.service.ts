@@ -15,7 +15,7 @@ export class HomeService {
 
   baseURL: string = "http://localhost:3000/";
   serverURL: string="http://localhost:5000/";
-  ngRokURL: string ="http://d565ac072033.ngrok.io/";
+  ngRokURL: string ="http://0ec6ed4a49cc.ngrok.io/";
 
 
   constructor(private http: HttpClient) { }
@@ -26,7 +26,7 @@ export class HomeService {
 
     const formdata = new FormData();
     formdata.append('text', text.Text);
-    console.log('The body in service ',formdata)
+    //console.log('The body in service ',formdata)
 
     return this.http.post(this.ngRokURL + 'api/upload/text',formdata )
   }
@@ -45,14 +45,14 @@ postFile(fileToUpload: File , pdf : any): Observable<any> {
   else
   formData.append('end',pdf.end);
 
-  console.log("###########")
+ // console.log("###########")
   return this.http.post(endpoint, formData);
 
 
 }
 
 heartBeat(uuid : string , filename : string) : Observable<any>{
-  console.log('heartbeat');
+  //console.log('heartbeat');
   const formdata = new FormData();
   formdata.append('uuid', uuid);
   formdata.append('filename' , filename);

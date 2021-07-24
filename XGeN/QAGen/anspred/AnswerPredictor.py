@@ -10,11 +10,6 @@ class AnswerPredictor:
         self.device = loader.device
         self.model = loader.ap_model
 
-    def greedy_decoding (self, inp_ids,attn_mask,model,tokenizer):
-        greedy_output = model.generate(input_ids=inp_ids, attention_mask=attn_mask, max_length=256)
-        Question =  tokenizer.decode(greedy_output[0], skip_special_tokens=True,clean_up_tokenization_spaces=True)
-        return Question.strip().capitalize()
-
     def predict_answer(self,payload):
         inp = {
             "input_text": payload.get("input_text"),

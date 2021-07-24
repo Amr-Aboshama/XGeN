@@ -27,7 +27,7 @@
                   <button type="button"
                   (click)="SelorUnsel(topic,i)"
                   [ngStyle]="{'background-color': topic.selected? '#fc9003' : '#e0ded7'}"
-                  class="btn btn-outline-dark" > + {{ topic.topic }}
+                  class="btn btn-outline-dark" >  {{ topic.topic }}
                 </button>
                 </div>
               </div>
@@ -67,7 +67,7 @@
                 <form [formGroup]="this.UserTopics">
                 <p class="lead" style="padding: 10px;"></p>
                 <label id = "normal" class="form-label">Please enter the topic you want :</label>
-                <input formControlName="UserT"  style="margin: 100px;" type="text" style="text-align: center;" class="form-control" >
+                <input formControlName="UserT" id="clear"  style="margin: 100px;" type="text" style="text-align: center;" class="form-control" >
                 <br>
                 <button type="button"
                 (click)="AddTopic()"
@@ -103,7 +103,7 @@
                 >submit</button>-->
 
 
-              <p style="color:white">
+              <p style="color:white; cursor: default; opacity: 0;">
                 Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut autc;nxn lnlxcnklknkln
               </p>
 
@@ -164,7 +164,7 @@
                 </form>
 
 
-              <p style="color:white">
+              <p style="color:white; cursor: default; opacity: 0;">
                 Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut autc;nxn lnlxcnklknkln
               </p>
 

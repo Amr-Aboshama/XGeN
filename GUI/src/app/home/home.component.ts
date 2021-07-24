@@ -107,7 +107,7 @@ uploadFileToActivity(element, text) {
 
 getHeartbeat(){
 
-  console.log('heart beat begun');
+  //console.log('heart beat begun');
   this.subscription = timer(0, this.minutes)
       .pipe(
         switchMap(() => {
@@ -125,7 +125,7 @@ getHeartbeat(){
         if(data.status == 'Finished')
         {
           //save topics in localstorage
-          console.log("i am data.topics", data.data.topics);
+          //console.log("i am data.topics", data.data.topics);
           localStorage.setItem('topics', JSON.stringify( data.data.topics));
 
           // turn off spinner
@@ -138,7 +138,7 @@ getHeartbeat(){
           //navigate to next page
           this.router.navigate(['/topics'])
         }
-        console.log(data); //for testing
+       // console.log(data); //for testing
       });
 
 
