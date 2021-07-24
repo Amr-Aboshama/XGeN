@@ -43,7 +43,7 @@ class ShortGen(QGen):
         answers = keyword_sent_mapping.keys()
         for answer in answers:
             txt = keyword_sent_mapping[answer]
-            context = "generate question: " + self._QGen__replace_choice(txt, answer, "<hl>" + answer + "<hl>") + " </s>"
+            context = "generate question: " + txt.replace(answer, "<hl>" + answer + "<hl>") + " </s>"
             batch_text.append(context)
         
         encoding = self.tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt", max_length=512, truncation=True)
