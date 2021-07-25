@@ -29,7 +29,7 @@ class QGen:
                 modified_text = modified_text.replace(".  ",". ")
 
                 sentences = topicExtract.tokenize_sentences(modified_text)
-                
+        
                 keyword_sentence_mapping = self._QGen__get_sentences_for_keyword(keywords, sentences)     
                 filtered_phrases.pop(0)
         
@@ -121,7 +121,9 @@ class QGen:
         valid_sentences = []
 
         for s in sentences:
-            if s[:25].find(',') != -1 or s[:25].find(':') != -1 or s[-1] == ':':
+            if s[:25].find(',') != -1 or s[:25].find(':') != -1 or \
+                    s[-1] == ':' or re.findall(r'[@#$%^&*{}|<>‘]', s) or s.find('?') != -1 or \
+                    len(re.findall(rf'(fig\.)|(figure)', s, flags=re.IGNORECASE)):
                 continue
             
             valid_sentences.append(s)

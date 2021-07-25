@@ -8,12 +8,13 @@ from similarity.normalized_levenshtein import NormalizedLevenshtein
 class Loader:
     def __init__(self
     , s2v_model_path = 's2v_old'
-    , qg_model_path = 'Parth/result'
+    , qg_model_path = 'valhalla/t5-base-qa-qg-hl'
     , bq_model_path = 'ramsrigouthamg/t5_boolean_questions'
     , ap_model_path = 'Parth/boolean'
     , t5_tokenizer_path = 't5-base'):
         
         self.tokenizer = T5Tokenizer.from_pretrained(t5_tokenizer_path)
+        self.tokenizer.add_tokens(['<sep>', '<hl>'])
         self.normalized_levenshtein = NormalizedLevenshtein()
         self.rand = random.Random(datetime.now())
         
