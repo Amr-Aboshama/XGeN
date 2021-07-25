@@ -223,7 +223,7 @@ def get_dataset(tokenizer, type_path, args):
 
 args_dict = dict(
     data_dir="XGeN/boolq_data",
-    output_dir="XGeN/boolq_data",
+    output_dir="/content/gdrive/MyDrive/XGeN_CHKP",
     model_name_or_path='valhalla/t5-base-qa-qg-hl',
     tokenizer_name_or_path='t5-base',
     max_seq_length=256,
@@ -241,6 +241,7 @@ args_dict = dict(
     opt_level='O1',
     max_grad_norm=1.0,
     seed=42,
+    save_strategy="epoch",
 )
 
 train_path = "XGeN/boolq_data/boolq_train.csv"
@@ -282,6 +283,6 @@ trainer.fit(model)
 print ("training finished")
 
 print ("Saving model")
-model.model.save_pretrained('XGeN_Model')
+model.model.save_pretrained('/content/gdrive/MyDrive/XGeN_Model')
 
 print ("Saved model")
