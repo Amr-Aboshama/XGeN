@@ -17,7 +17,6 @@ from QAGen.mcq.MCQGen import MCQGen
 from QAGen.boolean.BooleanGen import BoolGen
 from QAGen.tf.TFGen import TFGen
 from QAGen.shortq.ShortGen import ShortGen
-from QAGen.longq.LongGen import LongGen
 from QAGen.anspred.AnswerPredictor import AnswerPredictor
 
 from Ranker.Ranker import Ranker
@@ -38,18 +37,17 @@ print("Done TopicExtractor")
 ranker = Ranker(loader.rand)
 print("Done Ranker")
 
+ansPredict = AnswerPredictor(loader)
+print("Done AnswerPredictor")
+
 tfGen = TFGen(qgen)
 print("Done TFGen")
 boolGen = BoolGen(qgen)
 print("Done BooleanGen")
 mcqGen = MCQGen(qgen)
 print("Done MCQGen")
-shortGen = ShortGen(qgen)
+shortGen = ShortGen(qgen, ansPredict)
 print("Done ShortGen")
-longGen = LongGen(qgen)
-print("Done LongGen")
-ansPredict = AnswerPredictor(loader)
-print("Done AnswerPredictor")
 
 
 
@@ -96,7 +94,6 @@ def analyze_text(phrases, directory_path):
     
     keywords = full_keywords[:min(keywords_count, full_count)]
 
-    # TODO : Handle Async Ranker here
     phrase_topics = ranker.filter_phrases(keywords, phrases)
 
     # Save Paragraphs & Topics

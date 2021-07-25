@@ -16,7 +16,15 @@ class TextPreprocessor:
 
 
     def __resolve_coreference(self, paragraphs):
-        
+        '''
+            Resolve Coreference Resolution for each paragraph.
+            
+            Ahmed went to the school, he loves it.
+            ||
+            V
+            Ahmed went to the school, {Ahmed} loves {the school}.
+        '''
+
         coref_paragraphs = []
 
         for p in paragraphs:
@@ -67,16 +75,22 @@ class PDFPreprocessor(TextPreprocessor):
         else:
             self.end = 1000000000
 
+        # OCR Whitlist (accept them only)
         self.tesseract_config = '''-c tessedit_char_whitelist=\\'\\"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-()[];:,.!?/\\ '''
         
+        ''' Tesseract app path is --MANDATORY-- '''
         # for windows
         #self.path_to_tesseract = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
         # for linux
         self.path_to_tesseract = r"/usr/bin/tesseract"
         pytesseract.tesseract_cmd = self.path_to_tesseract
-        
 
     def __convert_pdf_to_pages(self, path):
+        '''
+            Input: PDF File path
+            --------------------------
+            Convert PDF File -> List of Images (Pages)
+        '''
 
         pages = convert_from_path(self.pdf_path)
 
@@ -84,12 +98,18 @@ class PDFPreprocessor(TextPreprocessor):
 
         end = min(len(pages), self.end)
 
-
+        # Save images
         for i in range(self.start, end):
             pages[i].save(path + '/'+str(i)+'.jpg', 'JPEG')
 
 
     def __remove_tables(self, gray):
+        '''
+            Input: Binary Image
+            Output: Binary Image
+            --------------------------
+            Remove Tables and lines in an image using Contours
+        '''
 
         ret, bin_img = cv.threshold(gray,40,255,cv.THRESH_BINARY)
         major = cv.__version__.split('.')[0]
@@ -107,7 +127,15 @@ class PDFPreprocessor(TextPreprocessor):
 
 
     def __image_hist(self, binary):
-        
+        '''
+            Input: Binary Image
+            Output: Binary Image
+            --------------------------
+            Removing Equations and images with histogram analysis
+            by virtical project then keep lines of pixels that have within some range
+            a strong candidate line of pixels.
+        '''
+
         out = np.ones(binary.shape)
         out = out.astype(np.uint8)
         
@@ -123,6 +151,7 @@ class PDFPreprocessor(TextPreprocessor):
             if vec[y] >= mn:
                 lst = y
             
+            # The existance of a strong candidate, supports the current line existance.
             if np.abs(y-lst) <= rng:
                 out[y] = np.copy(binary[y])
 
@@ -130,7 +159,7 @@ class PDFPreprocessor(TextPreprocessor):
         for y in range(len(vec)-1, -1, -1):
             if vec[y] >= mn:
                 lst = y
-            
+            # The existance of a strong candidate, supports the current line existance.
             if np.abs(y-lst) <= rng:
                 out[y] = np.copy(binary[y])
         
@@ -138,6 +167,13 @@ class PDFPreprocessor(TextPreprocessor):
 
 
     def __image_crop(self, gray):
+        '''
+            Input: Binary Image
+            Output: Binary Image
+            --------------------------
+            Crop the image virtically (i.e. collapse from right & left)
+            to remove outer noise from the text scope.
+        '''
 
         left = 0
         right = 0
@@ -166,6 +202,12 @@ class PDFPreprocessor(TextPreprocessor):
 
     # Depricated
     def __extract_paragraph(self, gray):
+        '''
+            Input: Binary Image
+            Output: List of Binary Images
+            --------------------------
+            Crop the scope of the paragraphs.
+        '''
 
         vec = []
         for y in range(gray.shape[0]):
@@ -198,6 +240,13 @@ class PDFPreprocessor(TextPreprocessor):
         
 
     def __image_to_text(self, img):
+        
+        '''
+            Input: Binary Image
+            Output: string
+            --------------------------
+            Convert an image to text using OCR.
+        '''
 
         text = pytesseract.image_to_string(img, config=self.tesseract_config)
         return text
@@ -217,6 +266,7 @@ class PDFPreprocessor(TextPreprocessor):
             - Paragraph Segmentation + Clean Paragraphs
             - Resolve Coreference Resolution
         '''
+        
         print('Started: ', img_path.split('/')[-1])
         
         img = cv.imread(img_path, cv.IMREAD_GRAYSCALE)

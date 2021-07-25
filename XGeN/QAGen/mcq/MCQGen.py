@@ -50,7 +50,7 @@ class MCQGen(QGen):
             context = self._QGen__replace_choice(sentence, key)
             context = context.capitalize()
 
-            options, answer = self._QGen__get_options(key, full_keywords)
+            options, answer = self._QGen__get_options(key, full_keywords, none_exist=True)
 
             if context[0] == '_':
                 answer = answer.capitalize()

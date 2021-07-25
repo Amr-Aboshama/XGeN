@@ -10,9 +10,10 @@ class QGen:
         self.tokenizer = loader.tokenizer
         self.device = loader.device
 
-        self.qg_model = loader.qg_model
-        self.bq_model = loader.bq_model
-        self.ap_model = loader.ap_model
+        self.model = loader.model
+        # self.qg_model = loader.qg_model
+        # self.bq_model = loader.bq_model
+        # self.ap_model = loader.ap_model
 
     
     def generateQuestions(self, ranker, topicExtract, filtered_phrases, full_keywords, counts, generators):
@@ -40,7 +41,6 @@ class QGen:
                 questions[-1] += q
                 count -= 1
             
-            # TODO : Filter Questions
             questions[-1] = ranker.random_questions(questions[-1], counts[i])
             print('Done Generator: ', i)
 
@@ -90,14 +90,15 @@ class QGen:
 
         
 
-    def __find_alternative(self, key, full_keywords):
+    def __find_alternative(self, sentence, key, full_keywords):
 
         use_near_false = self.rand.randint(0, 1)
         if not use_near_false:
             while True:
 
                 answer = self.rand.choice(full_keywords)
-                if answer.find(key) == -1 and key.find(answer) == -1:
+                if answer.find(key) == -1 and key.find(answer) == -1 and \
+                        sentence.lower().find(answer) == -1:
                     return answer
 
 
@@ -107,7 +108,8 @@ class QGen:
 
         for k in full_keywords:
             score = self.normalized_levenshtein.similarity(k, key)
-            if score >= mx_score and score <= threshold and k.find(key) == -1 and key.find(k) == -1:
+            if score >= mx_score and score <= threshold and k.find(key) == -1 and \
+                    key.find(k) == -1 and sentence.lower().find(k) == -1:
                 answer = k
                 mx_score = score
 

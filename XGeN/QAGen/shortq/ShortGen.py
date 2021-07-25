@@ -4,8 +4,9 @@ from QAGen.QGen import QGen
 
 class ShortGen(QGen):
 
-    def __init__(self, loader):
+    def __init__(self, loader, ansPredict):
         QGen.__init__(self, loader)
+        self.ansPredict = ansPredict
         
 
     def generate(self, keyword_sentence_mapping, _):
@@ -52,8 +53,6 @@ class ShortGen(QGen):
                                 max_length=150)
             
         output_array = []
-        #output_array["questions"] =[]
-        #wh_words = ['What', 'Where', 'When', 'How', 'Who', 'Why', 'How many', 'How much']
         
         selected_questions = set()
 
@@ -70,7 +69,7 @@ class ShortGen(QGen):
                 "question" : Question
             }
             print("predict answer")
-            answer = self.__predict_answer(payload)
+            answer = self.ansPredict.predict_answer(payload)
             print("Done prediction")
             if Question.find(answer[:-1].lower()) == -1 and Question not in selected_questions:
                 selected_questions.add(Question)
@@ -81,15 +80,4 @@ class ShortGen(QGen):
         return output_array
 
 
-    def __predict_answer(self,payload):
-        
-        input = "question: %s <s> context: %s </s>" % (payload["question"], payload["context"])
-
-        encoding = self.tokenizer.encode_plus(input, return_tensors="pt")
-        input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
-        greedy_output = self.qg_model.generate(input_ids=input_ids, attention_mask=attention_masks, max_length=256)
-        Question =  self.tokenizer.decode(greedy_output[0], skip_special_tokens=True,clean_up_tokenization_spaces=True)
-        output = Question.strip().capitalize()
-
-        return output
 

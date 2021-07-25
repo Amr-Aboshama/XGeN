@@ -27,6 +27,7 @@ class Ranker:
     # given the phrases with their associated topics and the selected keywords by the user then outputs
     # only the phrases that are associated to keywords contained in the selected ones by the user
     # phrases: {"phrase1":["topic1","topic2"], "phrase2":["topic1","topic3"]}  
+
     def rank_phrases(self, selected_keywords, phrases):
         ranked_phrases = []
         
