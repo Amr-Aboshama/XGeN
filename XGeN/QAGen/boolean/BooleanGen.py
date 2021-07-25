@@ -54,7 +54,7 @@ class BoolGen(QGen):
             
             # Make a false question
             if(bool(self.rand.getrandbits(1)) and self._QGen__regex_search(dec, val)):
-                option = self._QGen__find_alternative(keyword_sentence_mapping[val], val, full_keywords)
+                option = self._QGen__find_alternative(dec, val, full_keywords)
                 answer = "No"
                 correction = option + " -> " + val
                 dec = self._QGen__replace_choice(dec, val, option)
