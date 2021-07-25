@@ -10,9 +10,10 @@ class QGen:
         self.tokenizer = loader.tokenizer
         self.device = loader.device
 
-        self.qg_model = loader.qg_model
-        self.bq_model = loader.bq_model
-        self.ap_model = loader.ap_model
+        self.model = loader.model
+        # self.qg_model = loader.qg_model
+        # self.bq_model = loader.bq_model
+        # self.ap_model = loader.ap_model
 
     
     def generateQuestions(self, ranker, topicExtract, filtered_phrases, full_keywords, counts, generators):

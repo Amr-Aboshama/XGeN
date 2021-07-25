@@ -48,7 +48,7 @@ class ShortGen(QGen):
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
 
         with torch.no_grad():
-            outs = self.qg_model.generate(input_ids=input_ids,
+            outs = self.model.generate(input_ids=input_ids,
                                 attention_mask=attention_masks,
                                 max_length=150)
             
