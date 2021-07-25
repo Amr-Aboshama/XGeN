@@ -99,7 +99,7 @@ class QGen:
 
                 answer = self.rand.choice(full_keywords)
                 if answer.find(key) == -1 and key.find(answer) == -1 and \
-                        self.__regex_search(sentence, answer):
+                        self.__regex_search(sentence, answer) == 0:
                     return answer
 
 
@@ -110,7 +110,7 @@ class QGen:
         for k in full_keywords:
             score = self.normalized_levenshtein.similarity(k, key)
             if score >= mx_score and score <= threshold and k.find(key) == -1 and \
-                    key.find(k) == -1 and self.__regex_search(sentence, k):
+                    key.find(k) == -1 and self.__regex_search(sentence, k) == 0:
                 answer = k
                 mx_score = score
 
