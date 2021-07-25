@@ -91,14 +91,15 @@ class QGen:
 
         
 
-    def __find_alternative(self, key, full_keywords):
+    def __find_alternative(self, sentence, key, full_keywords):
 
         use_near_false = self.rand.randint(0, 1)
         if not use_near_false:
             while True:
 
                 answer = self.rand.choice(full_keywords)
-                if answer.find(key) == -1 and key.find(answer) == -1:
+                if answer.find(key) == -1 and key.find(answer) == -1 and \
+                        self.__regex_search(sentence, answer):
                     return answer
 
 
@@ -108,7 +109,8 @@ class QGen:
 
         for k in full_keywords:
             score = self.normalized_levenshtein.similarity(k, key)
-            if score >= mx_score and score <= threshold and k.find(key) == -1 and key.find(k) == -1:
+            if score >= mx_score and score <= threshold and k.find(key) == -1 and \
+                    key.find(k) == -1 and self.__regex_search(sentence, k):
                 answer = k
                 mx_score = score
 
