@@ -86,6 +86,9 @@ def run():
 
 def analyze_text(phrases, directory_path):
     '''
+        Input: string (Current Directory Path)
+        Outpui: List of strings (Keywords)
+        -----------------------------------------------
         Extract keywords and Filter Paragraphs.
         Write Paragraphs and keywords
     '''
@@ -109,6 +112,12 @@ def analyze_text(phrases, directory_path):
 
 
 def processUpload(directory_path, preprocessor, output_filename, text=None):
+    '''
+        Input: string , Preprocessor Object, string, string [optional]
+        -----------------------------------------------
+        - The processing thread of uploaded PDF and text APIs.
+        - Creates "keywords.json" file to be detected by heartbeats.
+    '''
 
     phrases = None
     if text:
@@ -132,7 +141,13 @@ def processUpload(directory_path, preprocessor, output_filename, text=None):
     
 
 def processGenerateExam(directory_path, selected_topics, whq_count, boolq_count, tfq_count, mcq_count, output_filename):
-    
+    '''
+        Input: string, List of strings, int, int, int, int, string
+        ----------------------------------------------------------------
+        - The processing Thread of generating exam API.
+        - Creates "questions.json" file to be detected by heartbeats.
+    '''
+
     paragraphs_topics = readJson(directory_path + "/paragraph_topics.json")
 
 
@@ -166,6 +181,13 @@ def processGenerateExam(directory_path, selected_topics, whq_count, boolq_count,
 
 @app.route("/api/upload/pdf", methods=['POST'])
 def uploadPDF_API():
+    '''
+        Request: file (PDF Content), int (start page), int (end page)
+        Response: Status, uuid, thread_filename
+        ----------------------------------------------------------------
+        Uploading PDF API.
+    '''
+
     file = request.files.get('file')
     start = int(request.form.get('start', 1))
     end = int(request.form.get('end', -1))
@@ -202,6 +224,13 @@ def uploadPDF_API():
 
 @app.route("/api/upload/text", methods=['POST'])
 def uploadText_API():
+    '''
+        Request: string (Text Content)
+        Response: Status, uuid, thread_filename
+        ----------------------------------------------------------------
+        Uploading text API.
+    '''
+
     text_payload = request.form.get('text')
 
     if text_payload is None:
@@ -231,6 +260,14 @@ def uploadText_API():
 
 @app.route("/api/examSpecifications", methods=['POST'])
 def examSpecifications_API():
+    '''
+        Request: uuid (Process uuid), List of strings (selected topics)
+                ,int (wh question count), int (bool question count)
+                , int (tfq question count), int (mcq question count)
+        Response: Status, thread_filename
+        ----------------------------------------------------------------
+        Uploading PDF API.
+    '''
     cur_uuid = request.form.get('uuid')
     selected_topics = request.form.getlist('topics')
     whq_count = int(request.form.get('whq_count', 0))
@@ -255,6 +292,13 @@ def examSpecifications_API():
 
 @app.route('/api/heartbeat', methods=['POST'])
 def heartbeat():
+    '''
+        Request: uuid, thread_filename
+        Response: Status, dictionary [optional] (data)
+        ----------------------------------------------------------------
+        Heartbeats API to check the finishing of some process.
+    '''
+
     cur_uuid = request.form.get('uuid')
     filename = request.form.get('filename')
 

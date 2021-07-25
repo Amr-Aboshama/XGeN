@@ -10,13 +10,23 @@ class QGen:
         self.tokenizer = loader.tokenizer
         self.device = loader.device
 
-        # self.model = loader.model
         self.qg_model = loader.qg_model
         self.bq_model = loader.bq_model
-        # self.ap_model = loader.ap_model
 
     
     def generateQuestions(self, ranker, topicExtract, filtered_phrases, full_keywords, counts, generators):
+        '''
+            Input: ranker object, topicextractor object, list of strings (paragraphs)
+                    , list of string (full keywords), list of int (counts of questions)
+                    , list of *QGen objects (generators)
+            Output: List of list of tuples (questions and answers and correction [optional])
+            -------------------------------------------------------------
+            General Question Generator
+            - Modify Text
+            - Get keywords to sentences mapping
+            - Generate Questions
+            - Rank Questions
+        '''
 
         questions = []
 
@@ -48,12 +58,32 @@ class QGen:
 
 
     def __get_options(self, answer, full_keywords, count = 4, none_exist = False):
-    
+        '''
+            Input: string (answer), list of strings (full keywords)
+                    , int (number of options), bool (None exists or no)
+            Output: List of strings (options)
+            --------------------------------------------------------------------------
+            Generate options for MCQ questions
+            - Adds option None of the above randomly
+            - Use option None of the aboive randomly
+        '''
+
         pool = set()
         
-        use_none = self.rand.randint(0, 1)
+        use_none = self.rand.randint(0, 9)
 
-        add_none = self.rand.randint(0, 1)
+        if use_none < 9:
+            use_none = 0
+        else:
+            use_none = 1
+
+        add_none = self.rand.randint(0, 3)
+        if add_none < 3:
+            add_none = 0
+        else:
+            add_none = 1
+
+        
     
         if not none_exist:
             use_none = 0
@@ -91,6 +121,14 @@ class QGen:
         
 
     def __find_alternative(self, sentence, key, full_keywords):
+        '''
+            Input: string (sentence), string (keyword), list of strings (full keywords)
+            Output: string (alternative)
+            --------------------------------------------------------------
+            Generates an alternative for the input "key" in one of the following ways randomly:
+            1. Random alternative without matching anyword in the sentence.
+            2. Closest alternative.
+        '''
 
         use_near_false = self.rand.randint(0, 1)
         if not use_near_false:
@@ -117,6 +155,13 @@ class QGen:
     
 
     def __get_sentences_for_keyword(self, keywords, sentences):
+        '''
+            Input: list of string (keywords), list of string (sentences)
+            Output: dictionary (keyword -> list of sentences)
+            -------------------------------------------------------------------------
+            Generate Keyword to sentences mapping
+            - If a keyword exists in a sentence, it's attached to that keyword. 
+        '''
         
         keyword_sentences = {}
 
@@ -143,6 +188,13 @@ class QGen:
 
 
     def __replace_choice(self, sentence, val, to_val = "____"):
+        '''
+            Input: string (sentence), string (value), string (to_value)
+            Output: string
+            -------------------------------------------------------------------------
+            Replace word with some specs in a sentence with another word (default: "____")
+        '''
+
         sentence
         esc_val = re.escape(val)
         sentence = re.sub(rf'([\s\'\"]){esc_val}([\s\'\"])', rf'\1{to_val}\2', sentence, flags=re.IGNORECASE)
@@ -153,6 +205,13 @@ class QGen:
         return sentence
 
     def __regex_search(self, sentence, word):
+        '''
+            Input: string (sentence), string (word)
+            Output: int (count)
+            -------------------------------------------------------------------------
+            Returns the count of existance of some word with specifications in sentence.
+        '''
+
         esc_val = re.escape(word)
 
         count = 0

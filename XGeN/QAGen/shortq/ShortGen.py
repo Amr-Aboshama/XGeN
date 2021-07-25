@@ -10,13 +10,19 @@ class ShortGen(QGen):
         
 
     def generate(self, keyword_sentence_mapping, _):
+        '''
+            Input: dictionary (keyword -> sentences)
+            Output: list of questions
+            -------------------------------------------------------------------------
+            Generate list of Wh questions with answers.
+        '''
         
+        # Merge some related sentences to form a context.
         for k in keyword_sentence_mapping.keys():
             ks_len = len(keyword_sentence_mapping[k])
             text_snippet = " ".join(keyword_sentence_mapping[k][:min(3, ks_len)])
             keyword_sentence_mapping[k] = text_snippet
 
-        #final_output = {}
 
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')
@@ -25,14 +31,9 @@ class ShortGen(QGen):
             
             generated_questions = self.__generate_normal_questions(keyword_sentence_mapping)
             
-            
-        #final_output["statement"] = modified_text
-        #final_output["questions"] = generated_questions["questions"]
-        
         if torch.device=='cuda':
             torch.cuda.empty_cache()
 
-        #return final_output
         return generated_questions
 
 
@@ -69,6 +70,7 @@ class ShortGen(QGen):
                 "question" : Question
             }
             print("predict answer")
+            # Predict answer for the generated questions.
             answer = self.ansPredict.predict_answer(payload)
             print("Done prediction")
             if Question.find(answer[:-1].lower()) == -1 and Question not in selected_questions:

@@ -8,7 +8,12 @@ class TFGen(QGen):
             
 
     def generate(self, keyword_sentence_mapping, full_keywords):
-        
+        '''
+            Input: dictionary (keyword -> sentences), list of string (full keywords)
+            Output: list of questions
+            -------------------------------------------------------------------------
+            Generate list of T/F Questions with answers and corrections.
+        '''
         
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')

@@ -8,7 +8,13 @@ class MCQGen(QGen):
 
 
     def generate(self, keyword_sentence_mapping, full_keywords):
-
+        '''
+            Input: dictionary (keyword -> sentences), list of string (full keywords)
+            Output: list of questions
+            -------------------------------------------------------------------------
+            Generate list of MCQ with answers.
+        '''
+        
         if len(keyword_sentence_mapping.keys()) == 0:
             print('No keywords in this sentence')
             return []
@@ -28,7 +34,6 @@ class MCQGen(QGen):
     def __generate_questions_mcq(self, keyword_sentence_mapping, full_keywords):
         answers = keyword_sentence_mapping.keys()
         output_array = []
-        #output_array["questions"] = []
         used_sentences = []
 
         for index, key in enumerate(answers):
@@ -45,19 +50,19 @@ class MCQGen(QGen):
                 print('No sentence for key: ', key)
                 continue
             
-            #individual_question ={}
-            
+            # Remove the answer from the question. 
             context = self._QGen__replace_choice(sentence, key)
             context = context.capitalize()
 
+            # Generate list of options.
             options, answer = self._QGen__get_options(key, full_keywords, none_exist=True)
 
+            # Capitalize the first character
             if context[0] == '_':
                 answer = answer.capitalize()
                 options = [o.capitalize() for o in options]
 
 
-            #output_array["questions"].append(individual_question)
             output_array.append((context,answer, options))
 
             used_sentences.append(sentence)

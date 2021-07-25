@@ -9,7 +9,14 @@ class BoolGen(QGen):
 
 
     def generate(self, keyword_sentence_mapping, full_keywords):
+        '''
+            Input: dictionary (keyword -> sentences), list of string (full keywords)
+            Output: list of questions
+            -------------------------------------------------------------------------
+            Generate list of Boolean questions with answers.
+        '''
         
+        # Merge some related sentences to form a context.
         for k in keyword_sentence_mapping.keys():
             ks_len = len(keyword_sentence_mapping[k])
             text_snippet = " ".join(keyword_sentence_mapping[k][:min(3, ks_len)])
@@ -19,6 +26,7 @@ class BoolGen(QGen):
             print('No keywords in this sentence')
             return []
 
+        # Batch Queries Preparation
         batch_text = []
         answers = keyword_sentence_mapping.keys()
         for answer in answers:
@@ -26,10 +34,13 @@ class BoolGen(QGen):
             text = "truefalse: %s passage: %s </s>" % (txt, True)
             batch_text.append(text)
         
+        # Encode Batch using T5 tokenizer
         encoding = self.tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt", max_length=512, truncation=True)
+        # extract input_ids and attention masks of the batch
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
         
         with torch.no_grad():
+            # Generate the questions
             outs = self.bq_model.generate( input_ids=input_ids,
                                         attention_mask=attention_masks,
                                         max_length=256,
@@ -44,6 +55,7 @@ class BoolGen(QGen):
         for index, val in enumerate(answers):
             out = outs[index, :]
             print(0)
+            # Decode the generated questions
             dec = self.tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             if dec.find('Is there') == 0:
                 continue
