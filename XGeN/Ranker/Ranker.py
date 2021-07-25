@@ -22,7 +22,6 @@ class Ranker:
         return filtered_phrases
 
     # phrases: {"phrase1":["topic1","topic2"], "phrase2":["topic1","topic3"]}
-    # TODO : Rank based on the frequent topics   
     def rank_phrases(self, selected_keywords, phrases):
         ranked_phrases = []
         

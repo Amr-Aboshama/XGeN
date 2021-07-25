@@ -4,7 +4,7 @@ class AnswerPredictor:
     def __init__(self, loader):
         self.tokenizer = loader.tokenizer
         self.device = loader.device
-        self.model = loader.model
+        self.model = loader.qg_model
 
 
     def predict_answer(self,payload):

@@ -48,13 +48,11 @@ class ShortGen(QGen):
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
 
         with torch.no_grad():
-            outs = self.model.generate(input_ids=input_ids,
+            outs = self.qg_model.generate(input_ids=input_ids,
                                 attention_mask=attention_masks,
                                 max_length=150)
             
         output_array = []
-        #output_array["questions"] =[]
-        #wh_words = ['What', 'Where', 'When', 'How', 'Who', 'Why', 'How many', 'How much']
         
         selected_questions = set()
 

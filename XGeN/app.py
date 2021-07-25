@@ -94,7 +94,6 @@ def analyze_text(phrases, directory_path):
     
     keywords = full_keywords[:min(keywords_count, full_count)]
 
-    # TODO : Handle Async Ranker here
     phrase_topics = ranker.filter_phrases(keywords, phrases)
 
     # Save Paragraphs & Topics

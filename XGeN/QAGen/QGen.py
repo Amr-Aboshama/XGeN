@@ -41,7 +41,6 @@ class QGen:
                 questions[-1] += q
                 count -= 1
             
-            # TODO : Filter Questions
             questions[-1] = ranker.random_questions(questions[-1], counts[i])
             print('Done Generator: ', i)
 

@@ -30,7 +30,7 @@ class BoolGen(QGen):
         input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
         
         with torch.no_grad():
-            outs = self.model.generate( input_ids=input_ids,
+            outs = self.bq_model.generate( input_ids=input_ids,
                                         attention_mask=attention_masks,
                                         max_length=256,
                                         num_beams=10,
