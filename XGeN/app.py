@@ -85,6 +85,10 @@ def run():
 
 
 def analyze_text(phrases, directory_path):
+    '''
+        Extract keywords and Filter Paragraphs.
+        Write Paragraphs and keywords
+    '''
 
     text = " ".join(phrases)
 
